@@ -1,0 +1,118 @@
+{
+  "name": "Property",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "price": {
+      "type": "number"
+    },
+    "bedrooms": {
+      "type": "number"
+    },
+    "size_sqm": {
+      "type": "number"
+    },
+    "floor": {
+      "type": "number"
+    },
+    "neighborhood": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "string"
+    },
+    "latitude": {
+      "type": "number"
+    },
+    "longitude": {
+      "type": "number"
+    },
+    "match_score": {
+      "type": "number"
+    },
+    "recommendation_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "warning": {
+      "type": "string"
+    },
+    "is_top_choice": {
+      "type": "boolean",
+      "default": false
+    },
+    "virtual_tour": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "start_room_id": {
+          "type": "string"
+        },
+        "rooms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "object",
+                "properties": {
+                  "en": {
+                    "type": "string"
+                  },
+                  "ru": {
+                    "type": "string"
+                  },
+                  "hy": {
+                    "type": "string"
+                  }
+                }
+              },
+              "panorama_url": {
+                "type": "string"
+              },
+              "hotspots": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "target_room_id": {
+                      "type": "string"
+                    },
+                    "x": {
+                      "type": "number"
+                    },
+                    "y": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "title",
+    "price",
+    "bedrooms",
+    "neighborhood",
+    "image_url",
+    "latitude",
+    "longitude"
+  ]
+}

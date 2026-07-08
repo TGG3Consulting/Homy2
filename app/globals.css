@@ -1,0 +1,275 @@
+@import 'leaflet/dist/leaflet.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== Homy design tokens — emerald · light default + .dark toggle ===== */
+:root {
+  --background: 210 20% 98%;
+  --foreground: 218 30% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 218 30% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 218 30% 10%;
+  --primary: 161 81% 21%;            /* emerald #0A6045 */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 20% 95%;
+  --secondary-foreground: 218 25% 18%;
+  --muted: 210 20% 95%;
+  --muted-foreground: 215 12% 43%;
+  --accent: 158 44% 94%;             /* light emerald tint */
+  --accent-foreground: 161 81% 18%;
+  --destructive: 356 84% 60%;        /* #F0616A */
+  --destructive-foreground: 0 0% 100%;
+  --border: 214 18% 90%;
+  --input: 214 18% 90%;
+  --ring: 160 80% 36%;               /* emerald-hi #12A574 */
+  --radius: 0.75rem;
+  /* brand hi/amber for direct use */
+  --em-hi: 160 80% 36%;
+  --amber: 40 73% 55%;
+}
+
+.dark {
+  --background: 222 27% 5%;          /* #080A0E */
+  --foreground: 220 20% 96%;         /* #F2F4F7 */
+  --card: 218 25% 8%;                /* #0E1218 */
+  --card-foreground: 220 20% 96%;
+  --popover: 218 25% 9%;
+  --popover-foreground: 220 20% 96%;
+  --primary: 160 80% 36%;            /* brighter emerald on dark */
+  --primary-foreground: 160 60% 7%;
+  --secondary: 218 20% 14%;
+  --secondary-foreground: 220 20% 96%;
+  --muted: 218 20% 14%;
+  --muted-foreground: 218 12% 62%;   /* #8B93A3 */
+  --accent: 160 42% 15%;
+  --accent-foreground: 158 70% 72%;
+  --destructive: 356 84% 62%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 14% 18%;
+  --input: 220 14% 18%;
+  --ring: 160 80% 45%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+body {
+  font-family: var(--font-montserrat), var(--font-noto-armenian), system-ui, sans-serif;
+}
+
+/* ===== Homy 20C button — emerald text + growing gradient underline ===== */
+.btn-20c {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  color: hsl(var(--primary));
+  background: none;
+  border: 0;
+  padding: 0.55rem 0.2rem;
+  cursor: pointer;
+  line-height: 1.15;
+  transition: color .25s ease;
+}
+.btn-20c::before {
+  content: '';
+  position: absolute; left: 2px; right: 2px; bottom: 1px; height: 2px;
+  border-radius: 2px; background: hsl(var(--border));
+}
+.btn-20c::after {
+  content: '';
+  position: absolute; left: 2px; bottom: 1px; width: calc(100% - 4px); height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--em-hi)));
+  transform-origin: left;
+  transition: transform .28s cubic-bezier(.22,1,.36,1);
+}
+.btn-20c:hover { color: hsl(var(--em-hi)); }
+.btn-20c > span { display: inline-block; transition: transform .28s cubic-bezier(.22,1,.36,1); }
+.btn-20c:hover > span { transform: translateY(-2px); }
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* Prevent horizontal overflow on mobile */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Chat Interface Styles */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #12A574;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0A6045;
+}
+
+/* Firefox / standard scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #12A574 #f1f1f1;
+}
+.dark * {
+  scrollbar-color: #0B6E4F rgba(255,255,255,.06);
+}
+
+/* Message animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Bounce animation for typing indicator */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .max-w-4xl {
+    max-width: 100%;
+  }
+}
+
+/* Smooth transitions */
+button {
+  transition: all 0.2s ease-in-out;
+}
+
+textarea {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Markdown Content Styling */
+.markdown-content {
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+.markdown-content > *:first-child {
+  margin-top: 0;
+}
+
+.markdown-content > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Emoji support */
+.markdown-content {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+}
+
+/* Property cards in messages */
+.property-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.property-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+}
+
+/* Number badges */
+.number-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Price highlight */
+.price-highlight {
+  background: linear-gradient(135deg, #f0e7ff 0%, #e9d5ff 100%);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #6b21a8;
+}
+
+/* Source link style */
+.source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #6b7280;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.source-link:hover {
+  background: #e5e7eb;
+  color: #4b5563;
+}

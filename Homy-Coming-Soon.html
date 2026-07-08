@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homy — Скоро · Слой доверия в недвижимости Армении</title>
+<meta name="description" content="Homy — AI-эксперт по недвижимости Армении. Не доска объявлений, а слой доверия. Скоро запуск.">
+<meta property="og:title" content="Homy — Скоро. Слой доверия.">
+<meta property="og:description" content="AI-разбор каждого объекта в Армении. Честно о плюсах и рисках.">
+<meta name="theme-color" content="#EAF2EE">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Noto+Sans+Armenian:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --ink:#141A20; --muted:#5E6976; --soft:#39414D;
+    --em:#0A6045; --em-hi:#12A574; --em-deep:#074A34;
+    --hair:rgba(20,24,31,.10); --card:rgba(255,255,255,.66);
+  }
+  html,body{height:100%}
+  body{
+    font-family:'Montserrat','Noto Sans Armenian',system-ui,sans-serif;
+    color:var(--ink); -webkit-font-smoothing:antialiased; overflow-x:hidden; position:relative; min-height:100vh;
+    background:
+      radial-gradient(90% 60% at 50% -10%, #E4F4EC 0%, transparent 55%),
+      linear-gradient(180deg,#F7F9FA 0%, #EDF4F0 60%, #E6F1EB 100%);
+  }
+  /* soft floating emerald blobs */
+  .blob{position:fixed;z-index:0;pointer-events:none;border-radius:50%;filter:blur(60px);opacity:.5}
+  .blob.a{width:520px;height:520px;left:-120px;top:-80px;background:radial-gradient(circle,#63D6AE,transparent 70%);animation:float1 14s ease-in-out infinite}
+  .blob.b{width:460px;height:460px;right:-100px;bottom:-120px;background:radial-gradient(circle,#8FE6C6,transparent 70%);animation:float2 17s ease-in-out infinite}
+  @keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}}
+  @keyframes float2{0%,100%{transform:translate(0,0)}50%{transform:translate(-36px,-28px)}}
+  #fall{position:fixed;inset:0;z-index:1;display:block;pointer-events:none}
+  /* megapolis skyline */
+  #city{position:fixed;left:0;right:0;bottom:0;z-index:1;display:block;pointer-events:none}
+
+  .wrap{position:relative;z-index:3;min-height:100vh;display:flex;flex-direction:column;
+    max-width:1120px;margin:0 auto;padding:26px clamp(20px,5vw,52px) 34px}
+  .top{position:relative;display:flex;align-items:center;justify-content:center;gap:16px;min-height:60px;margin-top:16px}
+  .brand{font-size:clamp(37px,5.2vw,56px);font-weight:900;letter-spacing:-.035em;display:inline-flex;align-items:center;line-height:1}
+  .brand .m{color:var(--em)}
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--em-hi);margin-left:12px;align-self:flex-start;margin-top:6px;
+    box-shadow:0 0 14px rgba(18,165,116,.85);animation:pulse 2.2s ease-in-out infinite}
+  .lang{position:absolute;right:0;top:50%;transform:translateY(-50%)}
+  @keyframes pulse{0%,100%{opacity:.5;transform:scale(.85)}50%{opacity:1;transform:scale(1.25)}}
+
+  /* language switch */
+  .lang{display:flex;gap:2px;background:rgba(255,255,255,.7);border:1px solid var(--hair);
+    border-radius:999px;padding:4px;backdrop-filter:blur(10px);box-shadow:0 6px 18px rgba(20,40,30,.06)}
+  .lang button{font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.03em;color:var(--muted);
+    background:none;border:0;padding:8px 13px;border-radius:999px;cursor:pointer;transition:.2s}
+  .lang button.on{color:#fff;background:linear-gradient(180deg,var(--em-hi),var(--em));box-shadow:0 4px 12px rgba(10,96,69,.35)}
+  .lang button:not(.on):hover{color:var(--em)}
+
+  .hero{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:30px 0 200px}
+  .kicker{position:relative;isolation:isolate;overflow:hidden;display:inline-flex;align-items:center;gap:12px;
+    font-size:clamp(12.5px,1.5vw,15px);font-weight:800;letter-spacing:.24em;text-transform:uppercase;color:var(--em-deep);
+    border-radius:999px;padding:14px 30px;box-shadow:0 14px 34px rgba(10,96,69,.16)}
+  .kicker::before{content:'';position:absolute;inset:0;z-index:-2;border-radius:inherit;
+    background:conic-gradient(from 0deg, transparent 0deg, rgba(18,165,116,0) 55deg, var(--em-hi) 120deg, #8FEBCB 148deg, var(--em-hi) 176deg, rgba(18,165,116,0) 250deg, transparent 360deg);
+    animation:spin 4.5s linear infinite}
+  .kicker::after{content:'';position:absolute;inset:1.7px;z-index:-1;border-radius:inherit;
+    background:linear-gradient(180deg,#FFFFFF,#EFF8F3);box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
+  @keyframes spin{to{transform:rotate(1turn)}}
+  .kicker .sweep{position:absolute;inset:0;z-index:0;border-radius:inherit;overflow:hidden;pointer-events:none}
+  .kicker .sweep::before{content:'';position:absolute;top:0;left:-55%;width:38%;height:100%;transform:skewX(-20deg);
+    background:linear-gradient(90deg,transparent,rgba(43,192,145,.22),transparent);animation:ksweep 3.6s ease-in-out infinite}
+  @keyframes ksweep{0%,58%{left:-55%}100%{left:135%}}
+  .kicker i,.kicker span[data-i18n]{position:relative;z-index:2}
+  .kicker i{width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#5FE3BB,var(--em-hi));
+    box-shadow:0 0 0 0 rgba(18,165,116,.55);animation:ring 1.9s ease-out infinite}
+  @keyframes ring{0%{box-shadow:0 0 0 0 rgba(18,165,116,.5)}70%{box-shadow:0 0 0 9px rgba(18,165,116,0)}100%{box-shadow:0 0 0 0 rgba(18,165,116,0)}}
+
+  h1{font-size:clamp(30px,7.4vw,86px);font-weight:900;letter-spacing:-.035em;line-height:1.04;margin-top:26px;color:#111820}
+  h1 .grad{background:linear-gradient(100deg,var(--em),#18B37D 55%,var(--em));
+    -webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% auto;animation:shine 6s linear infinite}
+  @keyframes shine{to{background-position:200% center}}
+  .lede{margin-top:22px;max-width:640px;font-size:clamp(14px,1.7vw,16.5px);line-height:1.7;color:var(--soft)}
+
+  .stats{margin-top:44px;display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(18px,5vw,50px)}
+  .stat{text-align:center}
+  .stat b{font-size:clamp(24px,3.2vw,34px);font-weight:800;letter-spacing:-.02em;color:var(--em-deep)}
+  .stat span{display:block;font-size:12px;color:var(--muted);margin-top:5px}
+
+  footer{position:relative;z-index:3;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
+    align-items:center;font-size:12px;color:var(--muted);padding-top:24px;border-top:1px solid var(--hair)}
+  footer .trust{display:inline-flex;align-items:center;gap:7px}
+  footer .trust svg{color:var(--em)}
+
+  .rise{opacity:0;transform:translateY(22px);animation:rise .9s cubic-bezier(.22,1,.36,1) forwards}
+  .rise.d1{animation-delay:.05s}.rise.d2{animation-delay:.18s}.rise.d3{animation-delay:.32s}
+  .rise.d4{animation-delay:.48s}.rise.d5{animation-delay:.64s}
+  @keyframes rise{to{opacity:1;transform:none}}
+  html[lang="hy"] h1{letter-spacing:-.02em}
+  @media(max-width:900px){ .wrap{padding-left:clamp(16px,4vw,40px);padding-right:clamp(16px,4vw,40px)} }
+  @media(max-width:760px){ .top{margin-top:8px;min-height:48px} .lede{max-width:90vw} .stats{gap:clamp(22px,7vw,40px)} .hero{padding:22px 0 150px} }
+  @media(max-width:600px){ .brand{font-size:clamp(28px,8.5vw,42px)} .lang button{padding:7px 9px;font-size:11px}
+    .hero{padding:16px 0 130px} h1{margin-top:16px} .kicker{padding:11px 20px;letter-spacing:.18em} }
+  @media(max-width:480px){ .brand{font-size:clamp(25px,9vw,38px)} .brand .dot{width:8px;height:8px;margin-left:9px;margin-top:5px}
+    h1{font-size:clamp(25px,8.4vw,40px);margin-top:14px} .lede{font-size:13px;line-height:1.6;margin-top:16px}
+    .kicker{font-size:10.5px;padding:10px 16px;letter-spacing:.12em;gap:9px} .stat b{font-size:21px} .stats{margin-top:34px}
+    footer{font-size:11px;flex-direction:column;gap:6px;text-align:center} footer .trust{margin:0 auto} }
+  @media(max-width:360px){ .lang button{padding:6px 7px;font-size:10.5px} .lang{gap:1px;padding:3px} }
+  @media(max-height:600px){ .hero{padding:12px 0 100px} h1{margin-top:12px} .stats{margin-top:26px} }
+  @media(prefers-reduced-motion:reduce){ .blob,.brand .dot,.kicker i,h1 .grad{animation:none} .rise{animation:none;opacity:1;transform:none} }
+</style>
+</head>
+<body>
+  <div class="blob a"></div>
+  <div class="blob b"></div>
+  <canvas id="fall"></canvas>
+  <canvas id="city"></canvas>
+
+  <div class="wrap">
+    <div class="top rise d1">
+      <div class="brand">Ho<span class="m">m</span>y<span class="dot"></span></div>
+      <div class="lang" id="lang">
+        <button data-l="hy">ՀՅ</button><button data-l="ru" class="on">RU</button><button data-l="en">EN</button>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="kicker rise d2"><span class="sweep"></span><i></i><span data-i18n="kicker">Скоро</span></div>
+      <h1 class="rise d3"><span data-i18n="h1a">Не просто объявления,</span><br><span class="grad" data-i18n="h1b">а слой доверия.</span></h1>
+      <p class="lede rise d4" data-i18n="lede">Homy разбирает каждый объект в Армении по фактам — застройщик, юридическая чистота, район, маршрут, инвестиция — и честно показывает и плюсы, и риски.</p>
+      <div class="stats rise d5">
+        <div class="stat"><b class="cu" data-to="1500" data-suf="+">0</b><span data-i18n="s1">объектов в анализе</span></div>
+        <div class="stat"><b class="cu" data-to="98" data-suf="%">0</b><span data-i18n="s2">точность подбора</span></div>
+      </div>
+    </div>
+
+    <footer class="rise d5">
+      <span data-i18n="foot">© 2026 Homy · Ереван, Армения</span>
+      <span class="trust"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V5z"/><path d="m9 12 2 2 4-4"/></svg> <span data-i18n="trust">Слой доверия, а не брокер</span></span>
+    </footer>
+  </div>
+
+<script>
+/* ---------- i18n ---------- */
+const I18N={
+  ru:{kicker:'Скоро',h1a:'Не просто объявления,',h1b:'а слой доверия.',
+    lede:'Homy разбирает каждый объект в Армении по фактам — застройщик, юридическая чистота, район, маршрут, инвестиция — и честно показывает и плюсы, и риски.',
+    s1:'объектов в анализе',s2:'точность подбора',foot:'© 2026 Homy · Ереван, Армения',trust:'Слой доверия, а не брокер'},
+  en:{kicker:'Coming soon',h1a:'Not just listings —',h1b:'a trust layer.',
+    lede:'Homy analyzes every property in Armenia by the facts — developer, legal status, neighborhood, commute, investment — and honestly shows both the upsides and the risks.',
+    s1:'properties in analysis',s2:'match accuracy',foot:'© 2026 Homy · Yerevan, Armenia',trust:'A trust layer, not a broker'},
+  hy:{kicker:'Շուտով',h1a:'Ոչ թե պարզապես հայտարարություններ,',h1b:'այլ վստահության շերտ։',
+    lede:'Homy-ն վերլուծում է Հայաստանի յուրաքանչյուր անշարժ գույքը փաստերով՝ կառուցապատող, իրավական մաքրություն, թաղամաս, երթուղի, ներդրում, և ազնվորեն ցույց է տալիս և՛ առավելությունները, և՛ ռիսկերը։',
+    s1:'օբյեկտ վերլուծության մեջ',s2:'ընտրության ճշգրտություն',foot:'© 2026 Homy · Երևան, Հայաստան',trust:'Վստահության շերտ, ոչ թե բրոքեր'}
+};
+function setLang(l){
+  document.documentElement.lang=l;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); if(I18N[l][k]!=null) el.textContent=I18N[l][k]; });
+  document.querySelectorAll('#lang button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));
+}
+document.getElementById('lang').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) setLang(b.dataset.l); });
+setLang('ru');
+
+/* ---------- count-up ---------- */
+(function(){
+  document.querySelectorAll('.cu').forEach(el=>{
+    const to=+el.dataset.to, suf=el.dataset.suf||'', dur=1500, t0=performance.now();
+    (function step(t){ const k=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-k,3);
+      el.textContent=Math.round(to*e).toLocaleString('ru-RU')+suf; if(k<1)requestAnimationFrame(step); })(t0);
+  });
+})();
+
+/* ---------- falling houses ---------- */
+(function(){
+  const cv=document.getElementById('fall'), ctx=cv.getContext('2d');
+  let W,H,DPR,items=[];
+  const COLORS=['rgba(10,96,69,ALPHA)','rgba(18,165,116,ALPHA)','rgba(120,140,155,ALPHA)'];
+  function size(){ DPR=Math.min(2,window.devicePixelRatio||1); W=cv.width=innerWidth*DPR; H=cv.height=innerHeight*DPR;
+    cv.style.width=innerWidth+'px'; cv.style.height=innerHeight+'px'; build(); }
+  function mk(top){
+    const s=(Math.random()*22+14)*DPR;
+    return { x:Math.random()*W, y: top?(-Math.random()*H*0.6 - s):(Math.random()*H),
+      s:s, vy:(Math.random()*0.5+0.32)*DPR, rot:(Math.random()-.5)*0.5, vr:(Math.random()-.5)*0.006,
+      sway:Math.random()*Math.PI*2, sw:(Math.random()*0.4+0.2),
+      c:COLORS[(Math.random()*COLORS.length)|0], a:Math.random()*0.22+0.12 };
+  }
+  function build(){ const n=Math.max(16,Math.min(42,Math.round(innerWidth/44))); items=[]; for(let i=0;i<n;i++) items.push(mk(false)); }
+  function house(o){
+    const s=o.s, col=o.c.replace('ALPHA',o.a.toFixed(3));
+    ctx.save(); ctx.translate(o.x,o.y); ctx.rotate(o.rot);
+    ctx.fillStyle=col;
+    // roof
+    ctx.beginPath(); ctx.moveTo(-s*0.56,-s*0.08); ctx.lineTo(0,-s*0.62); ctx.lineTo(s*0.56,-s*0.08); ctx.closePath(); ctx.fill();
+    // body
+    ctx.beginPath();
+    const r=s*0.08, x=-s*0.44, y=-s*0.08, w=s*0.88, h=s*0.6;
+    ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); ctx.fill();
+    // door (cut, lighter)
+    ctx.fillStyle=o.c.replace('ALPHA',(o.a*0.55).toFixed(3)).replace(/rgba\([^,]+,[^,]+,[^,]+/,'rgba(255,255,255');
+    ctx.fillRect(-s*0.1,y+h-s*0.3,s*0.2,s*0.3);
+    ctx.restore();
+  }
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    for(const o of items){
+      o.y+=o.vy; o.sway+=0.01; o.x+=Math.sin(o.sway)*o.sw*DPR*0.35; o.rot+=o.vr;
+      if(o.y - o.s > H){ Object.assign(o, mk(true)); }
+      house(o);
+    }
+    requestAnimationFrame(frame);
+  }
+  addEventListener('resize',size);
+  size(); requestAnimationFrame(frame);
+})();
+
+
+/* ---------- megapolis skyline ---------- */
+(function(){
+  const cv=document.getElementById('city'); if(!cv)return; const ctx=cv.getContext('2d');
+  let W,H,DPR,bld=[];
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  function size(){
+    DPR=Math.min(2,window.devicePixelRatio||1);
+    const hpx=Math.round(Math.min(230, innerHeight*0.34));
+    W=cv.width=innerWidth*DPR; H=cv.height=hpx*DPR;
+    cv.style.width=innerWidth+'px'; cv.style.height=hpx+'px'; gen();
+  }
+  function gen(){
+    bld=[]; let x=-12*DPR;
+    while(x<W+24*DPR){
+      const layer=Math.random()<0.42?0:1;
+      const w=rnd(layer?36:44, layer?62:88)*DPR;
+      const h=(layer? rnd(H*0.5,H*0.98) : rnd(H*0.28,H*0.62));
+      const roof=['flat','flat','ant','step','pin'][Math.random()*5|0];
+      const b={x,w,h,layer,roof,win:[]};
+      const cols=Math.max(2,Math.floor(w/(11*DPR))), pad=w*0.16, cw=(w-pad*2)/cols;
+      const rows=Math.max(2,Math.floor((h-16*DPR)/(12*DPR)));
+      for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+        if(Math.random()<0.12)continue;
+        b.win.push({dx:pad+c*cw+cw*0.16, dy:13*DPR+r*12*DPR, w:cw*0.68, h:6*DPR,
+          lit:Math.random()<0.24, ph:Math.random()*6.28, sp:rnd(0.001,0.0028)});
+      }
+      bld.push(b); x+=w+rnd(1,9)*DPR;
+    }
+    bld.sort((a,b)=>a.layer-b.layer);
+  }
+  function frame(t){
+    ctx.clearRect(0,0,W,H);
+    for(const b of bld){
+      const top=H-b.h, cxp=b.x+b.w/2;
+      ctx.fillStyle=b.layer?'rgba(41,96,74,0.92)':'rgba(150,188,168,0.5)';
+      ctx.fillRect(b.x,top,b.w,b.h);
+      if(b.roof==='ant'){ ctx.fillRect(cxp-1*DPR, top-22*DPR, 2*DPR, 22*DPR); ctx.beginPath(); ctx.arc(cxp,top-22*DPR,2.4*DPR,0,7); ctx.fillStyle='rgba(43,192,145,0.9)'; ctx.fill(); ctx.fillStyle=b.layer?'rgba(41,96,74,0.92)':'rgba(150,188,168,0.5)'; }
+      else if(b.roof==='step'){ ctx.fillRect(b.x+b.w*0.22, top-12*DPR, b.w*0.56, 12*DPR); ctx.fillRect(b.x+b.w*0.36, top-22*DPR, b.w*0.28, 10*DPR); }
+      else if(b.roof==='pin'){ ctx.beginPath(); ctx.moveTo(b.x+b.w*0.3,top); ctx.lineTo(cxp,top-26*DPR); ctx.lineTo(b.x+b.w*0.7,top); ctx.closePath(); ctx.fill(); }
+      for(const wnd of b.win){
+        if(wnd.lit){ const a=0.5+0.5*Math.sin(t*wnd.sp+wnd.ph); ctx.fillStyle='rgba(43,192,145,'+(0.28+a*0.55).toFixed(3)+')'; }
+        else ctx.fillStyle=b.layer?'rgba(226,244,236,0.34)':'rgba(255,255,255,0.28)';
+        ctx.fillRect(b.x+wnd.dx, top+wnd.dy, wnd.w, wnd.h);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  addEventListener('resize',size);
+  size(); requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         

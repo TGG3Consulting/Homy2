@@ -1,0 +1,1 @@
+**ТОЛЬКО из API через curl http://localhost:3000/api/properties**

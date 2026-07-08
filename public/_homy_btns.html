@@ -1,0 +1,99 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Homy — 15 вариантов кнопок</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root,[data-theme="dark"]{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#F2F4F7;--muted:#8B93A3;--soft:#C5CAD3;--hair:rgba(255,255,255,.10);--em-hi:#2BC091;--em:#0B6E4F;--em-lo:#052A1D;--amber:#E0A83B}
+[data-theme="light"]{--bg:#EEF0F3;--surface:#FFFFFF;--surface2:#F4F6F8;--ink:#14181F;--muted:#6A7382;--soft:#39414D;--hair:rgba(20,24,31,.10);--em-hi:#1EA574;--em:#0A6045;--em-lo:#04281C;--amber:#B9822A}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;padding:40px 32px 80px;transition:background .3s}
+.top{max-width:1280px;margin:0 auto 30px;display:flex;align-items:center;gap:16px}
+.top .brand{font-size:22px;font-weight:800;letter-spacing:-.02em}.top .brand .m{color:var(--em)}
+.top .t{font-size:13px;font-weight:600;color:var(--muted)}
+.tgl{margin-left:auto;display:flex;gap:2px;background:var(--surface2);border:1px solid var(--hair);border-radius:999px;padding:3px}
+.tgl .o{width:36px;height:28px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;font-size:14px}
+.tgl .o.on{color:#fff;background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em))}
+.hint{max-width:1280px;margin:0 auto 26px;font-size:13px;color:var(--soft);line-height:1.6;background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:16px 18px}
+.grid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.cell{background:var(--surface);border:1px solid var(--hair);border-radius:18px;padding:26px 22px 20px;display:flex;flex-direction:column;align-items:center;gap:0;min-height:186px;position:relative;overflow:hidden}
+.cell .num{position:absolute;top:12px;left:14px;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.05em}
+.cell .stage{flex:1;display:flex;align-items:center;justify-content:center;width:100%;padding:14px 0 18px}
+.cell .name{font-size:13.5px;font-weight:700;text-align:center}
+.cell .desc{font-size:11.5px;color:var(--muted);text-align:center;margin-top:5px;line-height:1.45}
+/* base label reset */
+.b{font-family:inherit;cursor:pointer;font-weight:700;font-size:14px;border:0;display:inline-flex;align-items:center;justify-content:center;gap:9px;transition:.18s ease}
+.ico{width:16px;height:16px;flex:none}
+/* ============ 15 VARIANTS ============ */
+/* 1 Flat Ink */
+.v1{background:var(--em);color:#fff;padding:12px 26px;border-radius:10px}
+.v1:hover{background:#0d7d59;transform:translateY(-1px)}
+/* 2 Gradient Sheen */
+.v2{color:#fff;padding:12px 26px;border-radius:12px;background:linear-gradient(180deg,var(--em-hi),var(--em));box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+.v2:hover{filter:brightness(1.06);transform:translateY(-1px)}
+/* 3 Glass Emerald */
+.v3{color:var(--em-hi);padding:12px 26px;border-radius:12px;background:color-mix(in srgb,var(--em) 20%,transparent);border:1px solid color-mix(in srgb,var(--em-hi) 45%,transparent);backdrop-filter:blur(8px)}
+.v3:hover{background:color-mix(in srgb,var(--em) 32%,transparent);color:#fff}
+/* 4 Outline to Fill */
+.v4{color:var(--em);padding:12px 26px;border-radius:11px;background:transparent;border:1.5px solid var(--em);font-weight:600}
+.v4:hover{background:var(--em);color:#fff}
+/* 5 Ghost Ink */
+.v5{color:var(--em);padding:12px 20px;border-radius:10px;background:transparent;font-weight:600}
+.v5:hover{background:color-mix(in srgb,var(--em) 12%,transparent)}
+/* 6 Pill Soft */
+.v6{background:var(--em);color:#fff;padding:13px 30px;border-radius:999px;box-shadow:0 10px 22px color-mix(in srgb,var(--em) 45%,transparent)}
+.v6:hover{transform:translateY(-2px);box-shadow:0 16px 30px color-mix(in srgb,var(--em) 55%,transparent)}
+/* 7 Sharp Corporate */
+.v7{background:var(--em);color:#fff;padding:13px 28px;border-radius:4px;letter-spacing:.02em}
+.v7:hover{background:#0d7d59}
+/* 8 Dual-tone Keyline */
+.v8{color:#fff;padding:12px 26px;border-radius:12px;background:var(--em);box-shadow:inset 0 -2px 0 rgba(3,28,20,.55),inset 0 1px 0 rgba(255,255,255,.18)}
+.v8:hover{transform:translateY(-1px)}
+/* 9 Neon Edge */
+.v9{color:var(--em-hi);padding:12px 26px;border-radius:11px;background:var(--surface2);border:1px solid var(--em-hi);box-shadow:0 0 0 1px color-mix(in srgb,var(--em-hi) 30%,transparent),0 0 18px color-mix(in srgb,var(--em-hi) 30%,transparent)}
+.v9:hover{background:color-mix(in srgb,var(--em-hi) 14%,transparent);box-shadow:0 0 22px color-mix(in srgb,var(--em-hi) 55%,transparent)}
+/* 10 Frosted Dark + dot */
+.v10{color:var(--ink);padding:12px 24px;border-radius:12px;background:color-mix(in srgb,var(--ink) 8%,transparent);border:1px solid var(--hair);backdrop-filter:blur(10px)}
+.v10 .dot{width:8px;height:8px;border-radius:50%;background:var(--em-hi);box-shadow:0 0 8px var(--em-hi)}
+.v10:hover{border-color:color-mix(in srgb,var(--em-hi) 50%,transparent)}
+/* 11 Gradient Border */
+.v11{color:var(--ink);padding:12px 26px;border-radius:12px;background:var(--surface);position:relative;border:1.5px solid transparent;background-image:linear-gradient(var(--surface),var(--surface)),linear-gradient(120deg,var(--em-hi),var(--em));background-origin:border-box;background-clip:padding-box,border-box}
+.v11:hover{color:var(--em-hi)}
+/* 12 Elevated */
+.v12{background:var(--em);color:#fff;padding:14px 30px;border-radius:14px;box-shadow:0 14px 30px rgba(0,0,0,.35)}
+.v12:hover{transform:translateY(-2px);box-shadow:0 20px 40px rgba(0,0,0,.45)}
+/* 13 Icon-lead */
+.v13{background:var(--em);color:#fff;padding:12px 24px 12px 18px;border-radius:12px}
+.v13:hover{background:#0d7d59}
+/* 14 Asterism Accent (brand signature, subtle) */
+.v14{color:#fff;padding:12px 28px;border-radius:12px;background:radial-gradient(140% 180% at 78% 8%,var(--em-hi),var(--em) 55%);position:relative;overflow:hidden}
+.v14::after{content:'';position:absolute;top:-40%;right:14%;width:2px;height:180%;background:linear-gradient(180deg,transparent,rgba(220,255,240,.85),transparent);transform:rotate(22deg);filter:blur(1px);opacity:.6}
+.v14:hover{filter:brightness(1.05);transform:translateY(-1px)}
+/* 15 Mono Contrast (ink primary) */
+.v15{background:var(--ink);color:var(--bg);padding:13px 28px;border-radius:12px}
+.v15 .k{color:var(--em-hi)}
+.v15:hover{opacity:.88}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+</style></head>
+<body data-theme="dark">
+<div class="top"><div class="brand">Ho<span class="m">m</span>y</div><div class="t">15 вариантов основной кнопки · выбери номер</div>
+<div class="tgl"><span class="o on" id="tgD" onclick="document.body.dataset.theme='dark';this.classList.add('on');document.getElementById('tgL').classList.remove('on')">☾</span><span class="o" id="tgL" onclick="document.body.dataset.theme='light';this.classList.add('on');document.getElementById('tgD').classList.remove('on')">☀</span></div></div>
+<div class="hint">Все — фирменный тёмный изумруд + Montserrat, без «аптечной» плоской таблетки. Наведи курсор — у каждой свой ховер. Переключи тёмную/светлую вверху справа. Скажи номер (или несколько), и я раскатаю выбранный стиль на все кнопки продукта.</div>
+<div class="grid">
+<div class="cell"><span class="num">01</span><div class="stage"><button class="b v1">Начать поиск</button></div><div class="name">Flat Ink</div><div class="desc">Чистая матовая заливка, тугой радиус. Строгий SaaS-минимализм.</div></div>
+<div class="cell"><span class="num">02</span><div class="stage"><button class="b v2">Начать поиск</button></div><div class="name">Gradient Sheen</div><div class="desc">Вертикальный градиент + тонкий верхний блик. Мягкий объём без «надутости».</div></div>
+<div class="cell"><span class="num">03</span><div class="stage"><button class="b v3">Начать поиск</button></div><div class="name">Glass Emerald</div><div class="desc">Полупрозрачное стекло с изумрудным свечением. Технологично.</div></div>
+<div class="cell"><span class="num">04</span><div class="stage"><button class="b v4">Начать поиск</button></div><div class="name">Outline → Fill</div><div class="desc">Контур, заливается при наведении. Лёгкая, «дышащая».</div></div>
+<div class="cell"><span class="num">05</span><div class="stage"><button class="b v5">Начать поиск</button></div><div class="name">Ghost Ink</div><div class="desc">Текст без фона — для второстепенных действий.</div></div>
+<div class="cell"><span class="num">06</span><div class="stage"><button class="b v6">Начать поиск</button></div><div class="name">Pill Soft</div><div class="desc">Скруглённая пилюля с цветной тенью. Дружелюбно-премиально.</div></div>
+<div class="cell"><span class="num">07</span><div class="stage"><button class="b v7">Начать поиск</button></div><div class="name">Sharp Corporate</div><div class="desc">Острые углы 4px. Корпоративно, серьёзно.</div></div>
+<div class="cell"><span class="num">08</span><div class="stage"><button class="b v8">Начать поиск</button></div><div class="name">Dual-tone Keyline</div><div class="desc">Тёмная нижняя кромка 1px = аккуратная глубина.</div></div>
+<div class="cell"><span class="num">09</span><div class="stage"><button class="b v9">Начать поиск</button></div><div class="name">Neon Edge</div><div class="desc">Тёмный фон + светящийся изумрудный контур. Tech/AI-вайб.</div></div>
+<div class="cell"><span class="num">10</span><div class="stage"><button class="b v10"><span class="dot"></span>Начать поиск</button></div><div class="name">Frosted + Dot</div><div class="desc">Матовое стекло, «онлайн»-точка. Спокойно, дорого.</div></div>
+<div class="cell"><span class="num">11</span><div class="stage"><button class="b v11">Начать поиск</button></div><div class="name">Gradient Border</div><div class="desc">Прозрачный центр, изумрудная градиентная рамка.</div></div>
+<div class="cell"><span class="num">12</span><div class="stage"><button class="b v12">Начать поиск</button></div><div class="name">Elevated</div><div class="desc">Крупный мягкий дроп-шэдоу — кнопка «парит».</div></div>
+<div class="cell"><span class="num">13</span><div class="stage"><button class="b v13"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Начать поиск</button></div><div class="name">Icon-lead</div><div class="desc">Ведущая иконка + подпись. Понятное действие.</div></div>
+<div class="cell"><span class="num">14</span><div class="stage"><button class="b v14">Начать поиск</button></div><div class="name">Asterism (фирменный)</div><div class="desc">Один тонкий блик-астеризм в углу — подпись бренда, тонко.</div></div>
+<div class="cell"><span class="num">15</span><div class="stage"><button class="b v15">Начать <span class="k">поиск</span></button></div><div class="name">Mono Contrast</div><div class="desc">Чернильная кнопка, изумрудный акцент в тексте.</div></div>
+</div>
+</body></html>

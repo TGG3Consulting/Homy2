@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homy — Пачка 3 · Вовлечение и аккаунт</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root,[data-theme="dark"]{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#F2F4F7;--muted:#8B93A3;--soft:#C5CAD3;
+    --hair:rgba(255,255,255,.10);--em-hi:#2BC091;--em:#0B6E4F;--em-lo:#052A1D;--amber:#E0A83B;--danger:#F0616A;--card-shadow:inset 0 0 0 1px rgba(255,255,255,.06),0 24px 60px rgba(0,0,0,.45)}
+  [data-theme="light"]{--bg:#EEF0F3;--surface:#FFFFFF;--surface2:#FAFAF8;--ink:#14181F;--muted:#6A7382;--soft:#39414D;
+    --hair:rgba(20,24,31,.10);--em-hi:#26B083;--em:#0A6045;--em-lo:#04281C;--amber:#B9822A;--danger:#D8434B;--card-shadow:0 4px 24px rgba(20,20,26,.08)}
+  body{font-family:'Montserrat',sans-serif;background:#c9ccd2;color:#14181F;-webkit-font-smoothing:antialiased;padding:34px 24px 90px}
+  .pagehead{max-width:1300px;margin:0 auto 26px;display:flex;align-items:center;gap:16px}
+  .pagehead .brand{font-size:20px;font-weight:800;letter-spacing:-.02em}.pagehead .brand .m{color:#0A6045}
+  .pagehead .t{font-size:13px;font-weight:600;color:#4b5563}
+  .tgl{margin-left:auto;display:flex;gap:2px;background:#fff;border:1px solid #d5d8de;border-radius:999px;padding:3px}
+  .tgl .o{width:34px;height:28px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#6a7382;cursor:pointer}
+  .tgl .o.on{color:#fff;background:radial-gradient(120% 160% at 50% 18%,#2BC091,#04281C)}
+  .screen{max-width:1300px;margin:0 auto 44px}
+  .screen-h{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#3a4150;margin-bottom:14px}.screen-h b{color:#0A6045}
+  .frames{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+  .web{flex:1;min-width:700px;border-radius:16px;overflow:hidden;background:var(--bg);box-shadow:0 20px 50px rgba(0,0,0,.2);border:1px solid rgba(0,0,0,.15)}
+  .webbar{height:34px;background:var(--surface);display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid var(--hair)}
+  .webbar i{width:10px;height:10px;border-radius:50%;background:var(--muted);opacity:.5}
+  .webview{height:560px;overflow:auto;background:var(--bg);color:var(--ink)}.webview::-webkit-scrollbar{width:6px}.webview::-webkit-scrollbar-thumb{background:var(--hair);border-radius:3px}
+  .mob{width:340px;flex:none}.caplbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:8px}
+  .phone{width:340px;height:700px;border:9px solid #16171c;border-radius:40px;overflow:hidden;background:var(--bg);box-shadow:0 24px 60px rgba(0,0,0,.28)}
+  .mobview{height:100%;overflow:auto;color:var(--ink)}.mobview::-webkit-scrollbar{width:0}
+
+  .em3d{position:relative;overflow:hidden;color:#fff;border:0;background:radial-gradient(135% 175% at 50% 14%,var(--em-hi),var(--em));box-shadow:0 2px 6px rgba(4,40,28,.20),inset 0 1px 0 rgba(255,255,255,.10),inset 0 -2px 5px rgba(3,28,20,.16)}
+  .em3d::after{content:none}
+  .em3d>*{position:relative;z-index:2}
+  .hd{padding:18px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--hair)}.hd h2{font-size:19px;font-weight:700}.hd .n{font-size:12px;color:var(--muted)}
+  .chip{font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--hair);background:var(--surface);color:var(--soft);cursor:pointer}
+  .chip.active{color:#fff;border-color:transparent;background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em))}
+  .btn{font-family:inherit;font-weight:600;border-radius:11px;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:7px;justify-content:center}
+  .btn-primary{color:#fff;font-size:13px;padding:11px 18px}.btn-sec{background:transparent;border-color:var(--hair);color:var(--ink);font-size:12.5px;padding:9px 14px}
+  .avatar{border-radius:50%;background-size:cover;background-position:center;flex:none}
+  .stars{color:var(--amber);letter-spacing:1px;font-size:13px}
+  .card{background:var(--surface);border-radius:16px;overflow:hidden;box-shadow:var(--card-shadow)}
+  .card .ph{position:relative;aspect-ratio:16/11;background-size:cover;background-position:center}
+  .card .ph .ring{position:absolute;top:12px;left:12px;width:36px;height:36px}.card .ph .ring svg{transform:rotate(-90deg)}.card .ph .ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+  .card .b{padding:13px}.card .cp{font-size:18px;font-weight:700;letter-spacing:-.02em}.card .cp span{font-size:10px;color:var(--muted);font-weight:500;margin-left:4px}
+  .card .ct{font-size:13px;font-weight:600;margin-top:5px}.card .cl{font-size:11px;color:var(--muted);margin-top:3px}
+
+  /* A6 tour */
+  .tour{position:relative;height:100%}
+  .tour .pano{position:absolute;inset:0;background-size:cover;background-position:center}
+  .tour .pano::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.55),transparent 40%)}
+  .tour .badge{position:absolute;top:16px;left:16px;font-size:11px;font-weight:700;color:#fff;background:rgba(10,13,18,.55);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.15);padding:7px 12px;border-radius:999px;display:flex;align-items:center;gap:7px;z-index:3}
+  .hot{position:absolute;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;color:#0A6045;cursor:pointer;z-index:3;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+  .hot::after{content:'';position:absolute;inset:-8px;border-radius:50%;border:2px solid rgba(255,255,255,.6);animation:hp 2.2s ease-out infinite}
+  @keyframes hp{0%{transform:scale(.7);opacity:.8}100%{transform:scale(1.8);opacity:0}}
+  .rooms{position:absolute;left:16px;right:16px;bottom:16px;display:flex;gap:8px;z-index:3;overflow:auto;padding-bottom:2px}
+  .rooms .rm{width:78px;height:56px;border-radius:10px;background-size:cover;background-position:center;flex:none;border:2px solid transparent;cursor:pointer;position:relative}
+  .rooms .rm.on{border-color:var(--em-hi)}
+  .rooms .rm span{position:absolute;left:0;right:0;bottom:0;font-size:9px;color:#fff;background:rgba(0,0,0,.5);padding:2px 4px;text-align:center}
+
+  /* A7 reviews */
+  .rev-sum{display:flex;gap:28px;align-items:center;padding:20px 24px;border-bottom:1px solid var(--hair)}
+  .rev-sum .big{text-align:center}.rev-sum .big b{font-size:40px;font-weight:800;letter-spacing:-.02em;display:block}.rev-sum .big span{font-size:11px;color:var(--muted)}
+  .rev-sum .bars{flex:1;max-width:320px}
+  .rbar{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);margin:3px 0}
+  .rbar .t{width:56px}.rbar .track{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}.rbar .fill{height:100%;background:var(--amber)}
+  .review{display:flex;gap:12px;padding:16px 0;border-bottom:1px solid var(--hair)}
+  .review .av{width:40px;height:40px}
+  .review .nm{font-size:13.5px;font-weight:600}.review .meta{font-size:11px;color:var(--muted);margin-top:2px}
+  .review p{font-size:13px;color:var(--soft);line-height:1.55;margin-top:8px}
+
+  /* A14 chat */
+  .chatwrap{display:flex;flex-direction:column;height:100%}
+  .chat-h{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--hair)}
+  .chat-h .av{width:40px;height:40px}
+  .chat-h .nm{font-size:14px;font-weight:700}.chat-h .st{font-size:11px;color:var(--em);display:flex;align-items:center;gap:5px;margin-top:2px}.chat-h .st i{width:6px;height:6px;border-radius:50%;background:var(--em);box-shadow:0 0 8px var(--em)}
+  .stream{flex:1;overflow:auto;padding:18px 20px;display:flex;flex-direction:column;gap:12px}.stream::-webkit-scrollbar{width:0}
+  .msg{max-width:75%;font-size:13px;line-height:1.5;padding:11px 14px;border-radius:14px}
+  .msg.them{align-self:flex-start;background:var(--surface2);color:var(--soft);border-radius:14px 14px 14px 4px}
+  .msg.me{align-self:flex-end;color:#fff;border-radius:14px 14px 4px 14px}
+  .msg .tm{font-size:9.5px;opacity:.6;margin-top:4px}
+  .propchip{align-self:flex-start;display:flex;gap:10px;background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:8px;max-width:80%}
+  .propchip .th{width:56px;height:44px;border-radius:8px;background-size:cover;background-position:center;flex:none}
+  .propchip b{font-size:12px}.propchip span{font-size:11px;color:var(--muted)}
+  .composer{flex:none;padding:12px 16px;border-top:1px solid var(--hair);display:flex;align-items:center;gap:9px}
+  .composer input{flex:1;background:var(--surface2);border:1px solid var(--hair);border-radius:12px;padding:11px 13px;font-size:13px;color:var(--ink);font-family:inherit;outline:none}
+  .composer .send{width:40px;height:40px;border-radius:12px;flex:none;display:flex;align-items:center;justify-content:center}
+
+  /* C2 notifications */
+  .notif{display:flex;gap:13px;padding:14px 0;border-bottom:1px solid var(--hair);align-items:flex-start}
+  .notif .ic{width:38px;height:38px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--em) 14%,transparent);color:var(--em)}
+  .notif.amber .ic{background:color-mix(in srgb,var(--amber) 16%,transparent);color:var(--amber)}
+  .notif .tx b{font-size:13.5px;font-weight:600}.notif .tx p{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}.notif .tm{font-size:11px;color:var(--muted);margin-left:auto;flex:none}
+  .notif.unread{position:relative}.notif.unread::before{content:'';position:absolute;left:-14px;top:22px;width:6px;height:6px;border-radius:50%;background:var(--em)}
+
+  /* C1 dashboard */
+  .dash{padding:22px 24px}
+  .dsec{margin-bottom:24px}.dsec .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.dsec .sh h3{font-size:15px;font-weight:700}.dsec .sh a{font-size:12px;color:var(--em);font-weight:600;cursor:pointer}
+  .dgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .resume{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:16px}
+  .resume .ava{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+  .resume b{font-size:14px}.resume span{font-size:12px;color:var(--muted)}
+  .dstats{display:flex;gap:12px}.dstat{flex:1;background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:14px}.dstat b{font-size:22px;font-weight:800;letter-spacing:-.02em}.dstat span{font-size:11px;color:var(--muted);display:block;margin-top:2px}
+
+  .mnav{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:8px;padding:11px 14px;background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+  .mnav .bk{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;background:none;border:0;font-family:inherit;padding:0}.mnav .bk svg{color:var(--em)}
+  .wnav{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:16px;padding:11px 20px;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+  .wnav .bk{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--em);cursor:pointer;background:none;border:0;font-family:inherit}
+  .lmw{position:relative}
+  .lmw .lm-btn{background:none;border:0;font-family:inherit;font-weight:800;cursor:pointer;color:var(--ink);display:inline-flex;align-items:center;gap:0;letter-spacing:-.02em;padding:0}
+  .lmw .lm-btn .m{color:var(--em)}.lmw .lm-btn>svg{opacity:.55;margin-left:5px}
+  .wnav .lm-btn{font-size:15px}.mnav .lm-btn{font-size:13px}
+  .lm-pop{position:absolute;top:calc(100% + 8px);z-index:60;min-width:232px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.45);padding:8px}
+  .wnav .lm-pop{left:0}.mnav .lm-pop{right:0}.lmw:not(.open) .lm-pop{display:none}
+  .lm-head{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 12px 4px}
+  .lm-i{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;font-size:13.5px;font-weight:500;color:var(--ink);cursor:pointer;text-decoration:none}
+  .lm-i:hover{background:color-mix(in srgb,var(--muted) 12%,transparent)}
+  .lm-i svg{color:var(--muted);flex:none}.lm-i.acc{color:var(--em)}.lm-i.acc svg{color:var(--em)}
+  .lm-sep{height:1px;background:var(--hair);margin:6px 4px}
+
+
+  .opwrap{margin:0 auto;display:flex;align-items:center}
+  .opbtn{position:relative;width:32px;height:32px;border:0;background:none;cursor:pointer;padding:0}
+  .opbtn .opav{display:block;width:32px;height:32px;border-radius:50%;background-size:cover;background-position:center;border:2px solid var(--surface);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+  .opbtn .opdot{position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:var(--em);border:2px solid var(--surface)}
+
+  /* seller reviews */
+  .seller{display:flex;gap:14px;align-items:center;padding:18px 24px;border-bottom:1px solid var(--hair);flex-wrap:wrap}
+  .seller .av{width:56px;height:56px;border-radius:50%;background-size:cover;background-position:center;flex:none}
+  .seller .nm{font-size:16px;font-weight:700;display:flex;align-items:center;gap:7px}
+  .seller .role{font-size:12px;color:var(--muted);margin-top:2px}
+  .seller .meta{font-size:12px;color:var(--soft);margin-top:7px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .seller .rate{margin-left:auto;text-align:center}.seller .rate b{font-size:30px;font-weight:800;letter-spacing:-.02em;display:block}
+  /* live chat widget (desktop) */
+  .a14ctx{position:relative;height:100%;overflow:hidden}
+  .ctxbg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(3px) brightness(.45)}
+  .ctxnote{position:absolute;top:16px;left:20px;z-index:2;font-size:12px;color:var(--soft);background:color-mix(in srgb,var(--surface) 80%,transparent);backdrop-filter:blur(6px);border:1px solid var(--hair);border-radius:10px;padding:8px 12px}
+  .livewidget{position:absolute;right:20px;bottom:20px;width:344px;max-height:calc(100% - 40px);background:var(--surface);border:1px solid var(--hair);border-radius:18px;box-shadow:0 30px 70px rgba(0,0,0,.55);display:flex;flex-direction:column;overflow:hidden;z-index:3}
+  .lw-h{display:flex;align-items:center;gap:10px;padding:13px 15px;border-bottom:1px solid var(--hair)}
+  .lw-h .av{width:34px;height:34px;border-radius:50%;background-size:cover;background-position:center;flex:none}
+  .lw-h .nm{font-size:13.5px;font-weight:700}.lw-h .st{font-size:10.5px;color:var(--em);display:flex;align-items:center;gap:5px}.lw-h .st i{width:5px;height:5px;border-radius:50%;background:var(--em)}
+  .lw-h .mn{margin-left:auto;width:30px;height:30px;border-radius:9px;background:rgba(127,127,140,.14);display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer}
+  .lw-body{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+  .lw-comp{padding:10px 12px;border-top:1px solid var(--hair);display:flex;gap:8px;align-items:center}
+  .lw-comp input{flex:1;background:var(--surface2);border:1px solid var(--hair);border-radius:11px;padding:9px 11px;font-size:12.5px;color:var(--ink);font-family:inherit;outline:none}
+  .lw-comp .send{width:36px;height:36px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center}
+  /* mobile op sheet (swipe like Homy) */
+  .a14m{position:relative;height:600px;overflow:hidden}
+  .opsheet{position:absolute;left:0;right:0;bottom:0;height:86%;background:var(--surface);border-top-left-radius:22px;border-top-right-radius:22px;border:1px solid var(--hair);border-bottom:0;box-shadow:0 -18px 50px rgba(0,0,0,.55);display:flex;flex-direction:column;overflow:hidden}
+  .opsheet .grab{padding:10px 0 4px;display:flex;justify-content:center;flex:none;cursor:grab}.opsheet .grab i{width:40px;height:5px;border-radius:999px;background:var(--hair)}
+  .swipehint{position:absolute;left:0;right:0;bottom:calc(86% + 8px);text-align:center;font-size:11px;color:var(--soft);z-index:2}
+
+  /* ===== Pack4 auth/onboarding ===== */
+  .authwrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:38px 20px;background:radial-gradient(120% 90% at 50% -10%,color-mix(in srgb,var(--em) 15%,transparent),transparent 55%)}
+  .acard{width:100%;max-width:392px;background:var(--surface);border:1px solid var(--hair);border-radius:20px;box-shadow:var(--card-shadow);padding:30px 30px 26px}
+  .acard .lg{font-size:22px;font-weight:800;letter-spacing:-.02em;text-align:center}.acard .lg .m{color:var(--em)}
+  .acard h1{font-size:19px;font-weight:700;text-align:center;margin-top:16px}
+  .acard .sub{font-size:12.5px;color:var(--muted);text-align:center;margin-top:7px;line-height:1.5}
+  .field{margin-top:15px}.field>label{font-size:11.5px;font-weight:600;color:var(--soft);display:block;margin-bottom:6px}
+  .inp{display:flex;align-items:center;gap:9px;background:var(--surface2);border:1px solid var(--hair);border-radius:12px;padding:11px 13px}
+  .inp.focus{border-color:var(--em);box-shadow:0 0 0 3px color-mix(in srgb,var(--em) 18%,transparent)}
+  .inp svg{color:var(--muted);flex:none}
+  .inp input{flex:1;background:none;border:0;outline:none;font-family:inherit;font-size:13.5px;color:var(--ink);min-width:0}
+  .inp .eye{color:var(--muted);cursor:pointer}
+  .abtn{width:100%;padding:13px;font-size:14px;font-weight:700;border-radius:12px;margin-top:20px;border:0;font-family:inherit;cursor:pointer}
+  .arow{display:flex;align-items:center;justify-content:space-between;margin-top:13px;font-size:12px}
+  .alink{color:var(--em);font-weight:600;cursor:pointer;text-decoration:none}
+  .adiv{display:flex;align-items:center;gap:12px;margin:19px 0;color:var(--muted);font-size:11px}.adiv::before,.adiv::after{content:'';flex:1;height:1px;background:var(--hair)}
+  .altbtn{width:100%;padding:12px;border:1px solid var(--hair);border-radius:12px;background:var(--surface2);color:var(--ink);font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;font-family:inherit}
+  .altbtn svg{color:var(--em)}
+  .afoot{text-align:center;font-size:12.5px;color:var(--muted);margin-top:20px}
+  .otp{display:flex;gap:9px;justify-content:center;margin-top:22px}
+  .otp .d{width:44px;height:54px;border-radius:12px;background:var(--surface2);border:1px solid var(--hair);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--ink)}
+  .otp .d.f{border-color:var(--em);box-shadow:0 0 0 3px color-mix(in srgb,var(--em) 22%,transparent)}
+  .otp .d.e{color:var(--muted)}
+  .resend{text-align:center;font-size:12px;color:var(--muted);margin-top:18px}.resend b{color:var(--soft)}
+  .check{display:flex;align-items:flex-start;gap:9px;margin-top:16px;font-size:11.5px;color:var(--soft);line-height:1.5;cursor:pointer}
+  .check .bx{width:18px;height:18px;border-radius:5px;border:1px solid var(--hair);flex:none;margin-top:1px;display:flex;align-items:center;justify-content:center}
+  .check .bx.on{background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em));border-color:transparent;color:#fff}
+  .pwmeter{display:flex;gap:5px;margin-top:9px}.pwmeter i{flex:1;height:4px;border-radius:2px;background:var(--surface2)}.pwmeter i.on{background:var(--em-hi)}.pwmeter i.mid{background:var(--amber)}
+  .pwhint{font-size:11px;color:var(--muted);margin-top:7px}
+  .trustline{display:flex;align-items:center;gap:7px;justify-content:center;font-size:11px;color:var(--muted);margin-top:18px}.trustline svg{color:var(--em)}
+  /* onboarding */
+  .onbwrap{padding:28px 26px 34px;max-width:560px;margin:0 auto}
+  .prog{display:flex;gap:6px;margin-bottom:22px}.prog i{flex:1;height:5px;border-radius:3px;background:var(--surface2)}.prog i.on{background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em))}
+  .onb-q{font-size:22px;font-weight:700;letter-spacing:-.01em}.onb-s{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.5}
+  .opts{display:flex;flex-direction:column;gap:11px;margin-top:22px}
+  .opt{display:flex;align-items:center;gap:14px;padding:15px;border:1px solid var(--hair);border-radius:14px;background:var(--surface);cursor:pointer}
+  .opt.on{border-color:var(--em);box-shadow:0 0 0 3px color-mix(in srgb,var(--em) 16%,transparent)}
+  .opt .ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--em) 14%,transparent);color:var(--em);flex:none}
+  .opt b{font-size:14.5px;font-weight:600}.opt p{font-size:12px;color:var(--muted);margin-top:2px}
+  .opt .rd{margin-left:auto;width:20px;height:20px;border-radius:50%;border:2px solid var(--hair);flex:none}.opt.on .rd{border-color:var(--em);background:radial-gradient(circle at 50% 38%,var(--em-hi),var(--em))}
+  .chipset{display:flex;flex-wrap:wrap;gap:9px;margin-top:8px}
+  .oc{font-size:12.5px;font-weight:600;padding:9px 15px;border-radius:999px;border:1px solid var(--hair);background:var(--surface);color:var(--soft);cursor:pointer}
+  .oc.on{color:#fff;border-color:transparent;background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em))}
+  .onb-nav{display:flex;gap:12px;margin-top:26px}.onb-nav .abtn{margin-top:0}
+  .skip{background:none;border:0;color:var(--muted);font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+
+  /* ===== 20C — единый стиль кнопок (global rollout) ===== */
+  .btn.btn-primary,.btn-primary,.abtn,button.abtn,.cta,.call,.book,.up{
+    background:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;
+    color:var(--em)!important;width:fit-content!important;min-width:0!important;padding:9px 3px!important;
+    position:relative!important;overflow:visible!important;font-weight:700!important;
+    display:inline-flex!important;align-items:center;gap:8px;line-height:1.15;letter-spacing:0}
+  .abtn{margin-left:auto!important;margin-right:auto!important}
+  .btn.btn-primary::before,.abtn::before,.cta::before,.call::before,.book::before,.up::before{
+    content:''!important;position:absolute;left:3px;right:3px;bottom:1px;height:2px;border-radius:2px;background:var(--hair)}
+  .btn.btn-primary::after,.abtn::after,.cta::after,.call::after,.book::after,.up::after{
+    content:''!important;position:absolute;left:3px;bottom:1px;width:calc(100% - 6px);height:3px;border-radius:3px;
+    background:linear-gradient(90deg,var(--em),var(--em-hi));transition:transform .28s cubic-bezier(.22,1,.36,1);transform-origin:left}
+  .btn.btn-primary>span,.abtn>span,.cta>*{display:inline-block;transition:transform .28s cubic-bezier(.22,1,.36,1)}
+  .btn.btn-primary:hover>span,.abtn:hover>span{transform:translateY(-2px)}
+  .btn.btn-primary:hover,.abtn:hover,.cta:hover,.call:hover,.book:hover,.up:hover{color:var(--em-hi)!important}
+  /* secondary → растущая линия на ховере */
+  .btn-sec,.altbtn{background:none!important;border:0!important;box-shadow:none!important;border-radius:0!important;
+    color:var(--soft)!important;padding:9px 3px!important;width:fit-content!important;position:relative!important;overflow:visible!important;
+    font-weight:600!important;display:inline-flex!important;align-items:center;gap:7px}
+  .btn-sec::after,.altbtn::after{content:''!important;position:absolute;left:3px;bottom:1px;width:0;height:2px;border-radius:2px;background:var(--em);transition:width .28s cubic-bezier(.22,1,.36,1)}
+  .btn-sec:hover,.altbtn:hover{color:var(--em)!important}
+  .btn-sec:hover::after,.altbtn:hover::after{width:calc(100% - 6px)}
+  /* MARK20C */
+
+  /* ===== Pack7 content + service ===== */
+  .cnav{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:14px;padding:12px 22px;background:color-mix(in srgb,var(--surface) 93%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+  .cnav .links{display:flex;gap:4px;margin-left:8px}
+  .cnav .links a{font-size:12.5px;font-weight:600;color:var(--muted);padding:7px 10px;border-radius:9px;text-decoration:none;cursor:pointer}
+  .cnav .links a.on{color:var(--em);box-shadow:inset 0 -2.5px 0 0 var(--em);border-radius:0;font-weight:700}
+  .cnav .right{margin-left:auto;display:flex;align-items:center;gap:12px}
+  .cbk{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:var(--em);background:none;border:0;font-family:inherit;cursor:pointer;padding:0}
+  .cwrap{padding:30px 26px 34px;max-width:900px;margin:0 auto}
+  .chero{text-align:center;padding:14px 0 6px}
+  .chero .kick{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--em);margin-bottom:12px}
+  .chero h1{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.12}
+  .chero p{font-size:14px;color:var(--soft);margin-top:12px;line-height:1.6;max-width:560px;margin-left:auto;margin-right:auto}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:30px}
+  .step{background:var(--surface);border:1px solid var(--hair);border-radius:16px;padding:20px 18px;text-align:left}
+  .step .n{width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em));margin-bottom:14px}
+  .step h3{font-size:15px;font-weight:700}.step p{font-size:12.5px;color:var(--muted);margin-top:7px;line-height:1.55}
+  .feats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
+  .feat{background:var(--surface);border:1px solid var(--hair);border-radius:16px;padding:20px}
+  .feat .ic{width:42px;height:42px;border-radius:12px;background:color-mix(in srgb,var(--em) 14%,transparent);color:var(--em);display:flex;align-items:center;justify-content:center;margin-bottom:13px}
+  .feat h3{font-size:14.5px;font-weight:700}.feat p{font-size:12.5px;color:var(--muted);margin-top:7px;line-height:1.55}
+  .aud{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:26px}
+  .audc{background:var(--surface);border:1px solid var(--hair);border-radius:18px;padding:24px;position:relative;overflow:hidden}
+  .audc .ph{height:130px;border-radius:12px;background-size:cover;background-position:center;margin-bottom:16px}
+  .audc h3{font-size:18px;font-weight:700}.audc ul{list-style:none;margin-top:12px;display:flex;flex-direction:column;gap:9px}
+  .audc li{font-size:12.5px;color:var(--soft);display:flex;gap:9px;align-items:flex-start}.audc li svg{color:var(--em);flex:none;margin-top:1px}
+  .statrow{display:flex;gap:14px;margin-top:26px}.statrow .s{flex:1;background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:18px;text-align:center}
+  .statrow .s b{font-size:26px;font-weight:800;letter-spacing:-.02em;display:block}.statrow .s span{font-size:11.5px;color:var(--muted)}
+  .team{display:flex;gap:20px;margin-top:20px;flex-wrap:wrap;justify-content:center}
+  .tm{text-align:center}.tm .av{width:72px;height:72px;border-radius:50%;background-size:cover;background-position:center;margin:0 auto 10px}.tm b{font-size:13px;font-weight:600;display:block}.tm span{font-size:11.5px;color:var(--muted)}
+  .estate{min-height:440px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 26px}
+  .estate .big{width:84px;height:84px;border-radius:24px;display:flex;align-items:center;justify-content:center;margin-bottom:22px}
+  .estate .big.em{background:color-mix(in srgb,var(--em) 14%,transparent);color:var(--em)}
+  .estate .big.amber{background:color-mix(in srgb,var(--amber) 15%,transparent);color:var(--amber)}
+  .estate .big.muted{background:color-mix(in srgb,var(--muted) 14%,transparent);color:var(--muted)}
+  .estate .code{font-size:56px;font-weight:800;letter-spacing:-.03em;color:var(--em);line-height:1}
+  .estate h1{font-size:23px;font-weight:700;margin-top:16px}
+  .estate p{font-size:13.5px;color:var(--muted);margin-top:10px;line-height:1.6;max-width:400px}
+  .estate .acts{display:flex;gap:18px;align-items:center;margin-top:24px}
+  .emailrow{display:flex;gap:10px;margin-top:22px;max-width:400px;width:100%}
+  .emailrow .inp{flex:1}
+</style>
+<body data-theme="dark">
+<div class="pagehead"><div class="brand">Ho<span class="m">m</span>y</div><div class="t">Пачка 7 · Контент и служебные (гость)</div><div class="tgl"><span class="o on" id="tgD" onclick="setT('dark')">☾</span><span class="o" id="tgL" onclick="setT('light')">☀</span></div></div>
+<div class="screen"><div class="screen-h"><b>F2</b> · Как это работает</div><div class="frames"><div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview"><div class="cnav"><div class="lmw"><button class="lm-btn">Ho<span class="m">m</span>y <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="lm-pop"><div class="lm-i acc">Войти</div><div class="lm-i">Главная</div></div></div><button class="cbk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Назад</button><div class="links"><a class="">Как это работает</a><a class="">Для кого</a><a class="">О нас</a></div><div class="right"><button class="btn btn-primary em3d" style="padding:8px 4px"><span>Войти</span></button></div></div><div class="cwrap"><div class="chero"><div class="kick">Как это работает</div><h1>Не доска объявлений.<br>Слой доверия.</h1><p>Homy разбирает каждый объект по фактам и честно показывает и плюсы, и риски — чтобы вы решали с открытыми глазами.</p></div><div class="steps"><div class="step"><div class="n">1</div><h3>Опишите запрос</h3><p>Обычными словами: «2-комн, тихий район, рядом школа, до 350 000».</p></div><div class="step"><div class="n">2</div><h3>Homy разбирает</h3><p>ИИ проверяет застройщика, юр. чистоту, район, маршрут, инвестицию.</p></div><div class="step"><div class="n">3</div><h3>Честный отчёт</h3><p>Плюсы и минусы без прикрас — совпадение с запросом и риски.</p></div><div class="step"><div class="n">4</div><h3>Просмотр и сделка</h3><p>Запись к агенту, сопровождение до ключей.</p></div></div><div class="statrow"><div class="s"><b>1 500</b><span>объектов проверено</span></div><div class="s"><b>98%</b><span>точность подбора</span></div><div class="s"><b>4</b><span>района Еревана</span></div></div><div style="text-align:center;margin-top:26px"><button class="btn btn-primary em3d"><span>Начать поиск</span></button></div></div></div></div><div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview"><div class="cnav" style="padding:11px 14px;gap:9px"><button class="cbk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="lmw"><button class="lm-btn">Ho<span class="m">m</span>y <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="lm-pop"><div class="lm-i acc">Войти</div><div class="lm-i">Главная</div></div></div><div class="right"><button class="btn btn-primary em3d" style="padding:6px 3px"><span>Войти</span></button></div></div><div class="cwrap" style="padding:22px 16px"><div class="chero" style="padding:6px 0"><div class="kick">Как это работает</div><h1 style="font-size:24px">Не доска.<br>Слой доверия.</h1><p style="font-size:13px">Homy честно показывает и плюсы, и риски каждого объекта.</p></div><div class="steps" style="grid-template-columns:1fr;margin-top:20px"><div class="step"><div class="n">1</div><h3>Опишите запрос</h3><p>Обычными словами.</p></div><div class="step"><div class="n">2</div><h3>Homy разбирает</h3><p>Застройщик, юр. чистота, район.</p></div><div class="step"><div class="n">3</div><h3>Честный отчёт</h3><p>Плюсы и минусы.</p></div></div><button class="btn btn-primary em3d" style="margin-top:18px"><span>Начать поиск</span></button></div></div></div></div></div></div>
+<div class="screen"><div class="screen-h"><b>F3</b> · Для покупателей / владельцев</div><div class="frames"><div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview"><div class="cnav"><div class="lmw"><button class="lm-btn">Ho<span class="m">m</span>y <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="lm-pop"><div class="lm-i acc">Войти</div><div class="lm-i">Главная</div></div></div><button class="cbk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Назад</button><div class="links"><a class="">Как это работает</a><a class="">Для кого</a><a class="">О нас</a></div><div class="right"><button class="btn btn-primary em3d" style="padding:8px 4px"><span>Войти</span></button></div></div><div class="cwrap"><div class="chero"><div class="kick">Для кого Homy</div><h1>Одна платформа —<br>две стороны сделки</h1><p>Покупателям — уверенность в выборе. Владельцам и брокерам — инструменты и доверие клиентов.</p></div><div class="aud"><div class="audc"><div class="ph" style="background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=280&fit=crop')"></div><h3>Покупателям и арендаторам</h3><ul><li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Честный разбор: плюсы и минусы каждого объекта</li><li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Проверка застройщика и юридической чистоты</li><li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Маршрут, инфраструктура, парковка — без сюрпризов</li><li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Запись на просмотр и сопровождение</li></ul><button class="btn btn-primary em3d" style="margin-top:16px"><span>Найти жильё</span></button></div><div class="audc"><div class="ph" style="background-image:url('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=280&fit=crop')"></div><h3>Владельцам и брокерам</h3><ul><li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Кабинет: объявления, статусы, статистика</li><li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Лиды и клиенты в одном месте</li><li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Согласование просмотров с покупателями</li><li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Честное объявление = больше доверия</li></ul><button class="btn btn-primary em3d" style="margin-top:16px"><span>Разместить объект</span></button></div></div></div></div></div><div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview"><div class="cnav" style="padding:11px 14px;gap:9px"><button class="cbk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="lmw"><button class="lm-btn">Ho<span class="m">m</span>y <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="lm-pop"><div class="lm-i acc">Войти</div><div class="lm-i">Главная</div></div></div><div class="right"><button class="btn btn-primary em3d" style="padding:6px 3px"><span>Войти</span></button></div></div><div class="cwrap" style="padding:22px 16px"><div class="chero" style="padding:6px 0"><div class="kick">Для кого</div><h1 style="font-size:23px">Две стороны сделки</h1></div><div class="aud" style="grid-template-columns:1fr;margin-top:18px"><div class="audc" style="padding:18px"><div class="ph" style="height:110px;background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=280&fit=crop')"></div><h3 style="font-size:16px">Покупателям</h3><ul><li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Честный разбор объекта</li><li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Проверка застройщика</li></ul><button class="btn btn-primary em3d" style="margin-top:12px"><span>Найти жильё</span></button></div><div class="audc" style="padding:18px"><div class="ph" style="height:110px;background-image:url('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=280&fit=crop')"></div><h3 style="font-size:16px">Владельцам</h3><ul><li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Кабинет и статистика</li><li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Лиды и просмотры</li></ul><button class="btn btn-primary em3d" style="margin-top:12px"><span>Разместить</span></button></div></div></div></div></div></div></div></div>
+<div class="screen"><div class="screen-h"><b>F4</b> · О нас</div><div class="frames"><div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview"><div class="cnav"><div class="lmw"><button class="lm-btn">Ho<span class="m">m</span>y <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="lm-pop"><div class="lm-i acc">Войти</div><div class="lm-i">Главная</div></div></div><button class="cbk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Назад</button><div class="links"><a class="">Как это работает</a><a class="">Для кого</a><a class="">О нас</a></div><div class="right"><button class="btn btn-primary em3d" style="padding:8px 4px"><span>Войти</span></button></div></div><div class="cwrap"><div class="chero"><div class="kick">О нас</div><h1>Мы делаем рынок<br>недвижимости честным</h1><p>Homy — ИИ-эксперт по недвижимости Армении. Мы не брокер и не доска объявлений, а слой доверия: проверяем факты и честно говорим о рисках.</p></div><div class="feats"><div class="feat"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V5z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>Честность</h3><p>Показываем минусы, а не только плюсы. Данные не продаём.</p></div><div class="feat"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div><h3>ИИ-разбор</h3><p>Застройщик, юр. чистота, район, инвестиция — по фактам.</p></div><div class="feat"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3z"/><path d="M9 3v15M15 6v15"/></svg></div><h3>Локально</h3><p>Глубоко знаем Ереван: районы, маршруты, инфраструктуру.</p></div></div><div class="statrow"><div class="s"><b>2023</b><span>основана</span></div><div class="s"><b>1 500+</b><span>объектов</span></div><div class="s"><b>4 800</b><span>пользователей</span></div><div class="s"><b>37</b><span>сделок/мес</span></div></div><h3 style="text-align:center;font-size:16px;font-weight:700;margin-top:30px">Команда</h3><div class="team"><div class="tm"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=120&h=120&fit=crop')"></div><b>Давид Петросян</b><span>CEO</span></div><div class="tm"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&h=120&fit=crop')"></div><b>Анна Акопян</b><span>Head of Agents</span></div><div class="tm"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop')"></div><b>Нарек Саркисян</b><span>ML Lead</span></div></div></div></div></div><div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview"><div class="cnav" style="padding:11px 14px;gap:9px"><button class="cbk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="lmw"><button class="lm-btn">Ho<span class="m">m</span>y <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="lm-pop"><div class="lm-i acc">Войти</div><div class="lm-i">Главная</div></div></div><div class="right"><button class="btn btn-primary em3d" style="padding:6px 3px"><span>Войти</span></button></div></div><div class="cwrap" style="padding:22px 16px"><div class="chero" style="padding:6px 0"><div class="kick">О нас</div><h1 style="font-size:23px">Рынок жилья — честным</h1><p style="font-size:13px">Не брокер и не доска, а слой доверия.</p></div><div class="feats" style="grid-template-columns:1fr;margin-top:18px"><div class="feat"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V5z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>Честность</h3><p>Показываем минусы, данные не продаём.</p></div><div class="feat"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div><h3>ИИ-разбор</h3><p>Факты о застройщике и объекте.</p></div></div><div class="statrow" style="margin-top:18px"><div class="s"><b>1 500+</b><span>объектов</span></div><div class="s"><b>4 800</b><span>юзеров</span></div></div></div></div></div></div></div></div>
+<div class="screen"><div class="screen-h"><b>F5</b> · Coming soon (скоро запуск)</div><div class="frames"><div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview"><div class="cnav"><div class="lmw"><button class="lm-btn">Ho<span class="m">m</span>y <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="lm-pop"><div class="lm-i acc">Войти</div><div class="lm-i">Главная</div></div></div><button class="cbk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Назад</button><div class="links"><a class="">Как это работает</a><a class="">Для кого</a><a class="">О нас</a></div><div class="right"><button class="btn btn-primary em3d" style="padding:8px 4px"><span>Войти</span></button></div></div><div class="estate"><div class="big em"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg></div><h1>Скоро запуск</h1><p>Мы готовим ИИ-разбор новостроек Еревана. Оставьте email — сообщим первым, когда откроем.</p><div class="emailrow"><div class="field inp" style="margin:0"><input placeholder="you@example.com"></div><button class="btn btn-primary em3d"><span>Уведомить меня</span></button></div><div class="acts"><button class="btn btn-sec">На главную</button></div></div></div></div><div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview"><div class="cnav" style="padding:11px 14px;gap:9px"><button class="cbk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="lmw"><button class="lm-btn">Ho<span class="m">m</span>y <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="lm-pop"><div class="lm-i acc">Войти</div><div class="lm-i">Главная</div></div></div><div class="right"><button class="btn btn-primary em3d" style="padding:6px 3px"><span>Войти</span></button></div></div><div class="estate" style="min-height:520px"><div class="big em"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg></div><h1>Скоро запуск</h1><p style="font-size:13px">Оставьте email — сообщим первым.</p><div class="emailrow" style="flex-direction:column"><div class="field inp" style="margin:0"><input placeholder="you@example.com"></div><button class="btn btn-primary em3d"><span>Уведомить меня</span></button></div></div></div></div></div></div></div>
+<div class="screen"><div class="screen-h"><b>F6</b> · 404 — страница не найдена</div><div class="frames"><div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview"><div class="cnav"><div class="lmw"><button class="lm-btn">Ho<span class="m">m</span>y <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="lm-pop"><div class="lm-i acc">Войти</div><div class="lm-i">Главная</div></div></div><button class="cbk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Назад</button><div class="links"><a class="">Как это работает</a><a class="">Для кого</a><a class="">О нас</a></div><div class="right"><button class="btn btn-primary em3d" style="padding:8px 4px"><span>Войти</span></button></div></div><div class="estate"><div class="code">404</div><h1>Такой страницы нет</h1><p>Возможно, объявление снято или ссылка устарела. Давайте вернёмся к поиску жилья.</p><div class="acts"><button class="btn btn-primary em3d"><span>На главную</span></button><button class="btn btn-sec">К результатам поиска</button></div></div></div></div><div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview"><div class="cnav" style="padding:11px 14px;gap:9px"><button class="cbk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="lmw"><button class="lm-btn">Ho<span class="m">m</span>y <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="lm-pop"><div class="lm-i acc">Войти</div><div class="lm-i">Главная</div></div></div><div class="right"><button class="btn btn-primary em3d" style="padding:6px 3px"><span>Войти</span></button></div></div><div class="estate" style="min-height:520px"><div class="code">404</div><h1>Страницы нет</h1><p style="font-size:13px">Ссылка устарела или объявление снято.</p><div class="acts" style="flex-direction:column;gap:12px"><button class="btn btn-primary em3d"><span>На главную</span></button></div></div></div></div></div></div></div>
+<div class="screen"><div class="screen-h"><b>F7</b> · Ошибка / offline</div><div class="frames"><div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview"><div class="cnav"><div class="lmw"><button class="lm-btn">Ho<span class="m">m</span>y <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="lm-pop"><div class="lm-i acc">Войти</div><div class="lm-i">Главная</div></div></div><button class="cbk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Назад</button><div class="links"><a class="">Как это работает</a><a class="">Для кого</a><a class="">О нас</a></div><div class="right"><button class="btn btn-primary em3d" style="padding:8px 4px"><span>Войти</span></button></div></div><div class="estate"><div class="big amber"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div><h1>Что-то пошло не так</h1><p>Нет соединения или сервис временно недоступен. Проверьте интернет и попробуйте снова — ваши поиски и избранное сохранены.</p><div class="acts"><button class="btn btn-primary em3d"><span>Повторить</span></button><button class="btn btn-sec">На главную</button></div></div></div></div><div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview"><div class="cnav" style="padding:11px 14px;gap:9px"><button class="cbk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="lmw"><button class="lm-btn">Ho<span class="m">m</span>y <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="lm-pop"><div class="lm-i acc">Войти</div><div class="lm-i">Главная</div></div></div><div class="right"><button class="btn btn-primary em3d" style="padding:6px 3px"><span>Войти</span></button></div></div><div class="estate" style="min-height:520px"><div class="big amber"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div><h1>Что-то пошло не так</h1><p style="font-size:13px">Нет соединения. Поиски сохранены.</p><div class="acts" style="flex-direction:column;gap:12px"><button class="btn btn-primary em3d"><span>Повторить</span></button></div></div></div></div></div></div></div>
+
+<script>function setT(t){document.body.dataset.theme=t;document.getElementById('tgD').classList.toggle('on',t==='dark');document.getElementById('tgL').classList.toggle('on',t==='light');}</script>
+<script>document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.lm-btn');var all=document.querySelectorAll('.lmw');if(b){var w=b.closest('.lmw');var o=w.classList.contains('open');all.forEach(function(x){x.classList.remove('open')});if(!o)w.classList.add('open');e.stopPropagation();return;}all.forEach(function(x){x.classList.remove('open')});});</script>
+</body>
+</html>

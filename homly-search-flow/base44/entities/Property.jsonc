@@ -1,0 +1,61 @@
+{
+  "name": "Property",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "price": {
+      "type": "number"
+    },
+    "bedrooms": {
+      "type": "number"
+    },
+    "size_sqm": {
+      "type": "number"
+    },
+    "floor": {
+      "type": "number"
+    },
+    "neighborhood": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "string"
+    },
+    "latitude": {
+      "type": "number"
+    },
+    "longitude": {
+      "type": "number"
+    },
+    "match_score": {
+      "type": "number"
+    },
+    "recommendation_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "warning": {
+      "type": "string"
+    },
+    "is_top_choice": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "title",
+    "price",
+    "bedrooms",
+    "neighborhood",
+    "image_url",
+    "latitude",
+    "longitude"
+  ]
+}

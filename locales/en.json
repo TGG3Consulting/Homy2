@@ -1,0 +1,1187 @@
+{
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "signUp": "Sign up",
+    "signIn": "Sign in",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "patronymic": "Patronymic",
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back",
+    "subtitle": "Here is an overview of your activity",
+    "nav": {
+      "overview": "Overview",
+      "settings": "Settings",
+      "favorites": "Favorites",
+      "viewings": "Viewings",
+      "searches": "Saved Searches",
+      "recommendations": "Recommendations",
+      "listings": "My Listings",
+      "inquiries": "Inquiries",
+      "addListing": "Add Listing",
+      "clients": "Clients",
+      "properties": "Properties",
+      "deals": "Deals",
+      "messages": "Messages",
+      "support": "Support",
+      "logout": "Logout"
+    },
+    "actions": {
+      "newSearch": "New Search",
+      "viewFavorites": "View Favorites",
+      "scheduleViewing": "Schedule Viewing",
+      "getRecommendations": "Get Recommendations",
+      "addListing": "Add Listing",
+      "manageListings": "Manage Listings",
+      "viewInquiries": "View Inquiries",
+      "viewCalendar": "View Calendar",
+      "addClient": "Add Client",
+      "searchProperties": "Search Properties",
+      "trackDeals": "Track Deals"
+    },
+    "stats": {
+      "favorites": "Favorites",
+      "scheduledViewings": "Scheduled",
+      "completedViewings": "Completed",
+      "propertiesViewed": "Viewed",
+      "searches": "Searches",
+      "recommended": "Recommended",
+      "totalListings": "Total Listings",
+      "pending": "Pending",
+      "approved": "Approved",
+      "totalViews": "Total Views",
+      "inquiries": "Inquiries",
+      "upcomingViewings": "Upcoming",
+      "clients": "Clients",
+      "propertiesManaged": "Properties",
+      "viewingsConducted": "Viewings",
+      "dealsClosed": "Deals Closed"
+    },
+    "userType": {
+      "buyer": "Buyer",
+      "renter": "Renter",
+      "owner": "Property Owner",
+      "agent": "Real Estate Agent",
+      "consultant": "Consultant"
+    },
+    "sections": {
+      "overview": "Overview",
+      "quickActions": "Quick Actions"
+    },
+    "mainContent": {
+      "title": "Your Dashboard",
+      "description": "Select an option from the sidebar to view more details, or use quick actions to get started."
+    },
+    "error": {
+      "title": "Something went wrong"
+    },
+    "recommendations": {
+      "title": "Recommended for You",
+      "subtitle": "AI-selected matches based on your preferences",
+      "emptyTitle": "No recommendations yet",
+      "emptyDescription": "Start searching for properties to get personalized recommendations based on your preferences.",
+      "setPreferences": "Set Preferences"
+    }
+  },
+  "userSettings": {
+    "title": "Account Settings",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "notLoggedIn": "Please log in to view your settings",
+    "profile": "Profile Information",
+    "email": "Email",
+    "phone": "Phone",
+    "verified": "Verified",
+    "preferences": "Preferences",
+    "language": "Language",
+    "userType": "User Type",
+    "notifications": "Email Notifications",
+    "notificationsDesc": "Receive updates about new properties",
+    "searchPreferences": "Search Preferences",
+    "preferredDistricts": "Preferred Districts",
+    "budgetRange": "Budget Range (USD)",
+    "minimum": "Minimum",
+    "maximum": "Maximum",
+    "roomCount": "Room Count",
+    "accountActions": "Account Actions",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "updatePassword": "Update Password",
+    "deleteAccount": "Delete Account",
+    "deleteWarningTitle": "This action cannot be undone",
+    "deleteWarningDesc": "All your data, favorites, and viewing history will be permanently deleted.",
+    "password": "Password",
+    "typeToConfirm": "Type \"DELETE MY ACCOUNT\" to confirm",
+    "confirmDelete": "Delete My Account",
+    "memberSince": "Member since",
+    "userTypes": {
+      "buyer": "Buyer",
+      "renter": "Renter",
+      "owner": "Property Owner",
+      "agent": "Agent"
+    }
+  },
+  "recommendations": {
+    "topPick": "Top Pick",
+    "whyRecommended": "Why recommended?"
+  },
+  "features": {
+    "parking": "Parking",
+    "balcony": "Balcony",
+    "petFriendly": "Pet-friendly",
+    "virtualTour": "Virtual Tour",
+    "verified": "Verified"
+  },
+  "errors": {
+    "fetchFailed": "Failed to load data",
+    "saveFailed": "Failed to save property"
+  },
+  "common": {
+    "homly": "Homy",
+    "tagline": "Talk to your future home",
+    "description": "Homy is the first AI real estate expert that gives you a complete, clear and personalized view of every property.",
+    "analysisStatement": "Homy analyzes properties beyond the listing: developer background, legal signals, infrastructure, commute, environment, noise, parking, family suitability and investment potential.",
+    "howItWorks": "How it works",
+    "buy": "Buy",
+    "rent": "Rent",
+    "owners": "Owners",
+    "sell": "Sell",
+    "listProperty": "List a property",
+    "forAgencies": "For agencies",
+    "startSearch": "Start your search",
+    "startBuyingSearch": "Start buying search",
+    "startRentalSearch": "Start rental search",
+    "back": "Back",
+    "backToOwners": "Back to Owners",
+    "backToSearch": "Back to search",
+    "newSearch": "New search",
+    "close": "Close",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "save": "Save",
+    "share": "Share",
+    "hide": "Hide",
+    "more": "More",
+    "report": "Report problem",
+    "compare": "Compare",
+    "scheduleViewing": "Schedule viewing",
+    "viewDetails": "View details",
+    "contact": "Contact",
+    "contactAgent": "Contact agent",
+    "submit": "Submit",
+    "tryAgain": "Try Again",
+    "seeAll": "See all",
+    "retry": "Try again",
+    "comingSoon": "Coming Soon",
+    "featureInDevelopment": "This feature is under development.",
+    "backToDashboard": "Back to Dashboard",
+    "submitting": "Submitting...",
+    "cancel": "Cancel"
+  },
+  "footer": {
+    "brandDescription": "AI-powered real estate search platform in Armenia",
+    "stats": "1,500 properties · 15 cities · 350+ deals",
+    "company": "Company",
+    "legal": "Legal",
+    "contacts": "Contacts",
+    "aboutUs": "About us",
+    "howItWorks": "How it works",
+    "forBuyers": "For buyers",
+    "forRenters": "For renters",
+    "forOwners": "For owners",
+    "forAgencies": "For agencies",
+    "partners": "Partners",
+    "careers": "Careers",
+    "publicOffer": "Public offer",
+    "termsOfService": "Terms of service",
+    "privacyPolicy": "Privacy policy",
+    "realEstateLegislation": "Real estate legislation",
+    "cookies": "Cookies",
+    "support": "Support",
+    "telegram": "Telegram",
+    "whatsApp": "WhatsApp",
+    "email": "Email",
+    "officeAddress": "Office address",
+    "copyright": "© 2026 Homy. All rights reserved."
+  },
+  "trustMetrics": {
+    "propertiesAnalyzed": "properties analyzed",
+    "citiesCovered": "cities covered",
+    "dealsAssisted": "deals assisted",
+    "aiAccuracy": "AI accuracy"
+  },
+  "whatHomyDoes": {
+    "title": "What Homy does",
+    "description": "Homy is not a listings board. It is an AI real estate expert.",
+    "item1": "Analyzes developer reputation",
+    "item2": "Checks legal risk signals",
+    "item3": "Evaluates location quality",
+    "item4": "Explains every recommendation",
+    "item5": "Helps schedule viewings"
+  },
+  "userTypeChips": {
+    "buy": "Buy",
+    "rent": "Rent",
+    "sell": "Sell",
+    "listProperty": "List a property",
+    "forAgencies": "For agencies"
+  },
+  "searchField": {
+    "placeholder": "Describe your ideal home...",
+    "button": "Search",
+    "examples": {
+      "family": "Family apartment near a good school",
+      "quiet": "Quiet 2-bedroom in Kentron",
+      "pet": "Pet-friendly with parking",
+      "budget": "Under 200,000 AMD, Arabkir"
+    }
+  },
+  "howItWorksPage": {
+    "title": "How Homy works",
+    "subtitle": "Homy turns real estate search into a guided AI experience — from your first request to a scheduled viewing.",
+    "badge": "Not a chatbot. Not a listings board. Homy is your AI real estate expert.",
+    "sectionTitle": "From search to viewing in five steps",
+    "comparisonTitle": "Homy vs. traditional property websites",
+    "traditionalLabel": "Traditional websites",
+    "homlyLabel": "Homy",
+    "cta": "Start your search",
+    "ctaSub": "Tell Homy what you're looking for — in your own words.",
+    "demo": "Homy AI · Demo",
+    "demoQuery": "\"Family apartment near a good school in Yerevan\"",
+    "tomorrowViewing": "Tomorrow at 15:30",
+    "arabkirYerevan": "Arabkir, Yerevan",
+    "criteriaChips": [
+      "Budget",
+      "Location",
+      "Family needs",
+      "Schools",
+      "Safety"
+    ],
+    "steps": {
+      "0": {
+        "label": "You describe your need",
+        "title": "Describe what you need",
+        "desc": "Tell Homy your budget, lifestyle, family needs, preferred location and priorities in natural language."
+      },
+      "1": {
+        "label": "Homy extracts criteria",
+        "title": "Homy analyzes the market",
+        "desc": "Homy searches listings, market data, developer backgrounds and available risk signals."
+      },
+      "2": {
+        "label": "Analyzing the market",
+        "title": "Developer & risk check",
+        "desc": "Homy checks developer history, legal signals, ownership data and transaction risk indicators."
+      },
+      "3": {
+        "label": "Properties appear",
+        "title": "Location & infrastructure",
+        "desc": "Evaluates commute, noise, ecology, parking, schools, playgrounds and daily infrastructure quality."
+      },
+      "4": {
+        "label": "Best match highlighted",
+        "title": "Best options with reasoning",
+        "desc": "Homy recommends properties with clear explanations, match scores and investment potential analysis."
+      },
+      "5": {
+        "label": "AI explains the choice",
+        "title": "AI explains the choice"
+      },
+      "6": {
+        "label": "Scheduling opens",
+        "title": "Scheduling opens"
+      }
+    },
+    "extractingCriteria": "Extracting criteria",
+    "analyzing": "Analyzing 1,500 properties across 15 cities…",
+    "homlyReasoning": "Homy's reasoning",
+    "reasoningText": "Best balance of school access, quiet location, size and budget. The 3-bedroom layout gives each child their own room, and the playground across the street is a rare bonus.",
+    "viewingAvailable": "Viewing available",
+    "new": "New",
+    "scheduleViewing": "Schedule viewing",
+    "step": "Step",
+    "of": "of",
+    "traditionalItems": [
+      "Endless listings with no curation",
+      "Outdated information",
+      "No explanation of why something fits",
+      "You do all the work alone"
+    ],
+    "homlyItems": [
+      "Understands your request in context",
+      "Analyzes real, current data",
+      "Explains every recommendation",
+      "Helps you take the next step"
+    ]
+  },
+  "forBuyersPage": {
+    "title": "Buy property with an AI real estate expert",
+    "subtitle": "Homy helps you find, compare, evaluate and prepare for buying the right property — from search to deal.",
+    "cta": "Start buying search",
+    "howHomyWorks": "How Homy works",
+    "sectionTitle": "Everything a buyer needs in one place",
+    "deepTitle": "Deeper analysis than any listing site",
+    "deepSubtitle": "Homy gives buyers a complete AI-powered view — from developer history and legal signals to investment potential.",
+    "disclaimer": "Homy provides AI-powered analysis based on available data. It does not replace legal, notarial or professional due diligence.",
+    "demoTitle": "See how Homy helps you buy",
+    "comparisonTitle": "Buying with Homy vs. the traditional way",
+    "traditionalLabel": "Traditional buying",
+    "homlyLabel": "Buying with Homy",
+    "ctaSub": "Describe what you're looking for — Homy does the rest.",
+    "features": {
+      "matching": {
+        "title": "Property matching",
+        "desc": "Tell Homy your budget, lifestyle, family needs and preferred location. AI finds the most relevant properties."
+      },
+      "district": {
+        "title": "District comparison",
+        "desc": "Compare neighborhoods by price, infrastructure, schools, commute, safety and long-term potential."
+      },
+      "price": {
+        "title": "Price check",
+        "desc": "Homy helps you understand whether the asking price looks fair compared with similar properties."
+      },
+      "mortgage": {
+        "title": "Mortgage support",
+        "desc": "Estimate monthly payments, down payment, affordability and financing scenarios."
+      },
+      "documents": {
+        "title": "Document checklist",
+        "desc": "See which documents and ownership details should be checked before moving forward."
+      },
+      "risk": {
+        "title": "Property risk analysis",
+        "desc": "Homy highlights possible risks: old building, unclear pricing, renovation costs, location trade-offs or legal concerns."
+      },
+      "support": {
+        "title": "Support until the deal",
+        "desc": "Homy helps you ask the right questions, contact the representative, schedule viewings and prepare for the next step."
+      }
+    },
+    "deepFeatures": {
+      "developer": {
+        "title": "Developer background",
+        "desc": "Understand the developer's history, active projects and available risk signals."
+      },
+      "legal": {
+        "title": "Legal risk signals",
+        "desc": "Homy checks available data for lawsuits, ownership issues and potential double-sale risks."
+      },
+      "commute": {
+        "title": "Commute intelligence",
+        "desc": "Compare travel time to and from work using traffic-aware routes from multiple map sources."
+      },
+      "location": {
+        "title": "Location quality",
+        "desc": "Evaluate noise, ecology, distance from highways, parking, playgrounds and daily infrastructure."
+      },
+      "investment": {
+        "title": "Investment potential",
+        "desc": "Analyze price dynamics, construction pace, transaction activity and market demand."
+      },
+      "cadastre": {
+        "title": "Cadastre-based signals",
+        "desc": "Where data is available, Homy compares transaction activity and property signals with official cadastre data."
+      }
+    },
+    "traditionalItems": [
+      "Too many listings",
+      "Unclear prices",
+      "Hard to compare districts",
+      "Buyer checks everything alone"
+    ],
+    "homlyItems": [
+      "AI narrows the search",
+      "Explains recommendations",
+      "Compares districts and prices",
+      "Highlights risks",
+      "Helps move toward the deal"
+    ]
+  },
+  "forRentersPage": {
+    "title": "Rent the right home faster",
+    "subtitle": "Homy helps you find apartments that match your lifestyle, budget, family needs and daily routine — then helps you arrange a viewing.",
+    "badge": "For renters — find, understand and secure the right apartment",
+    "howHomyWorks": "How Homy works",
+    "sectionTitle": "How Homy helps renters",
+    "cta": "Start rental search",
+    "ctaSub": "Tell Homy what you're looking for — in your own words.",
+    "demoLabel": "Homy AI · Rental Demo",
+    "checklistTitle": "What Homy helps you check before renting",
+    "comparisonTitle": "Renting: traditional vs. Homy",
+    "traditionalLabel": "Traditional renting",
+    "homlyLabel": "Renting with Homy",
+    "features": {
+      "matching": {
+        "title": "Fast rental matching",
+        "desc": "Describe what you need in natural language and Homy quickly finds the most relevant rental options."
+      },
+      "filters": {
+        "title": "Smart filters for real life",
+        "desc": "Filter by district, school proximity, children, pets, parking, commute, playgrounds and daily infrastructure."
+      },
+      "terms": {
+        "title": "Rental terms check",
+        "desc": "Homy helps you understand deposit, payment terms, contract duration, move-in conditions and restrictions."
+      },
+      "cost": {
+        "title": "Monthly cost clarity",
+        "desc": "See rent, estimated utilities, heating costs, deposit and other monthly expenses in one clear view."
+      },
+      "lifestyle": {
+        "title": "Family and lifestyle fit",
+        "desc": "Understand if the apartment is suitable for children, pets, quiet living, schools, parks and supermarkets nearby."
+      },
+      "viewing": {
+        "title": "Viewing coordination",
+        "desc": "Homy helps you contact the representative, ask the right questions and schedule a viewing."
+      }
+    },
+    "traditionalItems": [
+      "Too many listings",
+      "Unclear rental terms",
+      "Hidden monthly costs",
+      "Hard to know if it fits family needs",
+      "You contact everyone manually"
+    ],
+    "homlyItems": [
+      "AI narrows the search",
+      "Explains why each apartment fits",
+      "Checks rent conditions",
+      "Estimates monthly costs",
+      "Helps schedule the viewing"
+    ],
+    "checklist": [
+      "Deposit amount",
+      "Utility and heating costs",
+      "Contract duration",
+      "Move-in date",
+      "Furniture and appliances",
+      "Children and pet policy",
+      "Parking availability",
+      "Street noise",
+      "Distance to schools, parks, supermarkets and pharmacies"
+    ],
+    "costBreakdown": {
+      "title": "Monthly cost breakdown",
+      "rent": "Rent",
+      "utilities": "Utilities",
+      "heating": "Heating (winter)",
+      "deposit": "Deposit",
+      "total": "Total / month"
+    },
+    "steps": {
+      "0": "Renter describes need",
+      "1": "Homy extracts criteria",
+      "2": "Analyzing rental market",
+      "3": "Properties appear",
+      "4": "Best match highlighted",
+      "5": "Monthly cost breakdown",
+      "6": "Schedule viewing"
+    },
+    "extractingCriteria": "Extracting criteria",
+    "analyzing": "Analyzing rental listings across Yerevan…",
+    "scheduleViewing": "Schedule viewing",
+    "viewingAvailable": "Viewing available",
+    "demoQuery": "\"3-bedroom apartment near a school in Arabkir, pet-friendly, under 200,000 AMD\"",
+    "tomorrowViewing": "Tomorrow at 15:30",
+    "arabkirYerevan": "Arabkir, Yerevan",
+    "demoChips": [
+      "Budget",
+      "District",
+      "Children",
+      "Pets",
+      "School",
+      "Commute"
+    ]
+  },
+  "forOwnersPage": {
+    "title": "List your property with AI",
+    "subtitle": "Homy helps owners present their property better, reach relevant clients and manage interest with less noise.",
+    "cta": "List your property",
+    "ctaSub": "It's free. Add your property and let AI find the right clients.",
+    "howItWorks": "How Homy works",
+    "sectionTitle": "See how it works",
+    "demoLabel": "Homy AI · Owner Demo",
+    "dashboardTitle": "Your owner dashboard",
+    "comparisonTitle": "Traditional listing vs. Homy listing",
+    "traditionalLabel": "Traditional listing",
+    "homlyLabel": "Listing with Homy",
+    "trustText": "Homy helps owners create better listings, but does not replace legal, notarial or professional transaction advice.",
+    "features": {
+      "free": {
+        "title": "Free property listing",
+        "desc": "Add your apartment, house or commercial space to Homy for free."
+      },
+      "verification": {
+        "title": "Listing verification",
+        "desc": "Homy checks the listing details, photos, location and basic information before showing it to users."
+      },
+      "aiDescription": {
+        "title": "AI-generated property description",
+        "desc": "Homy helps create a clear, attractive and structured property description based on real details."
+      },
+      "matching": {
+        "title": "Relevant client matching",
+        "desc": "Your property is shown to users whose budget, location, lifestyle and needs match the listing."
+      },
+      "communication": {
+        "title": "Communication assistance",
+        "desc": "Homy helps answer common questions, organize requests and guide clients toward a viewing."
+      },
+      "stats": {
+        "title": "Listing performance statistics",
+        "desc": "See views, saves, inquiries, match quality and viewing interest in one simple dashboard."
+      }
+    },
+    "demoSteps": {
+      "0": "Upload property photos",
+      "1": "Homy generates listing",
+      "2": "Homy verifies details",
+      "3": "AI matches with clients",
+      "4": "Qualified inquiries arrive",
+      "5": "Viewing request created"
+    },
+    "now": "Now",
+    "dashboard": {
+      "status": "Listing status",
+      "verified": "Verified",
+      "views": "Views",
+      "saves": "Saves",
+      "inquiries": "Qualified inquiries",
+      "viewings": "Scheduled viewings",
+      "matchQuality": "Match quality",
+      "exampleProperty": "Arabkir — 3-bedroom apartment",
+      "aiSuggestion": "AI suggestion",
+      "suggestionText": "Adding interior photos could increase inquiry rate by 34%. Listings with 8+ photos receive twice as many qualified inquiries."
+    },
+    "traditionalItems": [
+      "Many irrelevant messages",
+      "Manual description writing",
+      "Weak client qualification",
+      "No clear analytics",
+      "Owner handles everything alone"
+    ],
+    "homlyItems": [
+      "AI improves the listing",
+      "Shows it to relevant clients",
+      "Filters weak matches",
+      "Helps with communication",
+      "Provides performance data"
+    ]
+  },
+  "listPropertyPage": {
+    "title": "List your property",
+    "subtitle": "Add your property details and let Homy match it with relevant clients.",
+    "propertyType": "Property type",
+    "types": [
+      "Apartment",
+      "House",
+      "Commercial space",
+      "Land plot",
+      "Other"
+    ],
+    "location": "Location",
+    "locationPlaceholder": "City, district, street",
+    "price": "Price (AMD / month)",
+    "pricePlaceholder": "e.g. 200,000",
+    "area": "Area (m²)",
+    "areaPlaceholder": "e.g. 85",
+    "rooms": "Number of rooms",
+    "roomsPlaceholder": "e.g. 3",
+    "description": "Description",
+    "descriptionPlaceholder": "Tell us about your property — condition, features, nearby amenities...",
+    "photos": "Photos",
+    "photosDrag": "Drag photos here or click to upload",
+    "photosHint": "Up to 20 photos · JPG, PNG, WEBP",
+    "contact": "Your contact",
+    "contactPlaceholder": "Phone number or email",
+    "submitListing": "Submit listing",
+    "successTitle": "Received your listing",
+    "successText": "Homy will review your property details and match it with relevant buyers and renters. You'll hear from us soon.",
+    "backToOwners": "Back to Owners",
+    "errors": {
+      "typeRequired": "Property type is required",
+      "locationRequired": "Location is required",
+      "priceRequired": "Price is required",
+      "priceInvalid": "Please enter a valid price",
+      "areaRequired": "Area is required",
+      "roomsRequired": "Number of rooms is required",
+      "contactRequired": "Contact information is required"
+    }
+  },
+  "resultsPage": {
+    "curatedForYou": "Curated for you",
+    "curatedSubtitle": "Hand-picked from {count} best matches",
+    "noResults": "No properties found matching your criteria.",
+    "aiPanelTitle": "Homy AI",
+    "aiAnalyzing": "AI is analyzing your request...",
+    "thinking": "Thinking...",
+    "chatPlaceholder": "Ask Homy anything about these properties…",
+    "chatTitle": "Chat about this property",
+    "send": "Send",
+    "extractedCriteria": "Extracted criteria",
+    "chatPlaceholderRefine": "Ask Homy to refine…",
+    "contact": "Contact",
+    "chat": "Message",
+    "call": "Call",
+    "personalConsultant": "Personal consultant",
+    "bestOverallFit": "Best overall fit:",
+    "analyzed": "analyzed",
+    "suitable": "suitable",
+    "recommended": "recommended",
+    "neighborhoods": "neighborhoods",
+    "verifiedBadge": "Developer · legal · commute · infrastructure verified",
+    "userMessage1": "We are a family of four with two children. We are looking for a long-term rental apartment in Yerevan for up to 200,000 AMD per month. We need at least two bedrooms, a safe neighborhood and a good school nearby.",
+    "aiResponse1": "I analyzed {analyzed} available listings. {suitable} match your main criteria, and these {recommended} are the strongest options for your family.",
+    "errorMessage": "I encountered an issue loading properties. Please try again.",
+    "insightText": "It offers the strongest balance of schools, safety, apartment size and commute time within your budget.",
+    "filterCriteria": [
+      "Up to 200,000 AMD",
+      "2+ bedrooms",
+      "Family of four",
+      "Good school nearby",
+      "Safe neighborhood",
+      "Long-term rental"
+    ],
+    "filterUpTo": "Up to {amount} AMD",
+    "filterBedrooms": "{count}+ bedrooms",
+    "filterLongTerm": "Long-term rental",
+    "filterSchool": "Good school nearby",
+    "saveSearch": "Save search",
+    "updateSearch": "Update search",
+    "saveOptions": "Save search",
+    "saveAsNew": "Save as new",
+    "saveAsNewOption": "Save as new",
+    "saveAsNewDesc": "Create a new saved search",
+    "overwriteOption": "Overwrite existing",
+    "overwriteDesc": "Update a previously saved search",
+    "overwriteExisting": "Overwrite existing",
+    "overwrite": "Overwrite",
+    "selectSearch": "Select search to overwrite",
+    "noSavedSearches": "No saved searches",
+    "commentOptional": "Comment (optional)",
+    "commentPlaceholder": "E.g., search for family",
+    "searchSaved": "Search saved",
+    "searchUpdated": "Search updated",
+    "saveFailed": "Failed to save search",
+    "saveLimit": "Saved searches limit reached (20)",
+    "restoredSearch": "Restored saved search from",
+    "tabMap": "Map",
+    "tabProperties": "Properties",
+    "tabChat": "Chat"
+  },
+  "savedSearches": {
+    "title": "Saved Searches",
+    "of": "of",
+    "emptyTitle": "No saved searches",
+    "emptyDescription": "Save your searches to quickly return to them later",
+    "remove": "Remove",
+    "property": "property",
+    "properties": "properties",
+    "errorLoading": "Failed to load saved searches",
+    "errorRemoving": "Failed to remove search",
+    "retry": "Try again"
+  },
+  "propertyCard": {
+    "topChoice": "Top choice",
+    "month": "/month",
+    "match": "match",
+    "beds": "beds",
+    "bed": "bed",
+    "floor": "Floor",
+    "sqm": "m²",
+    "viewDetails": "View details",
+    "save": "Save",
+    "compare": "Compare",
+    "scheduleViewing": "Schedule viewing",
+    "askHomy": "Ask Homy",
+    "removeFromCompare": "Remove from compare",
+    "badges": {
+      "developerChecked": "Developer checked",
+      "commuteAnalyzed": "Commute analyzed",
+      "goodEcology": "Good ecology"
+    },
+    "unsave": "Remove from saved"
+  },
+  "propertyDetail": {
+    "month": "month",
+    "matchScore": "match score",
+    "verifiedListing": "Verified listing",
+    "homlyTopChoice": "Homy's top choice",
+    "homlyTake": "Homy's take",
+    "topChoiceDescription": "This is our strongest recommendation for your family. It hits every criterion — budget, bedrooms, school proximity, and neighborhood safety. The 3-bedroom layout means each child gets their own room, and the playground across the street is a rare bonus in Yerevan rentals.",
+    "standardDescription": "This {bedrooms}-bedroom apartment in {location} matches {matchScore}% of your criteria. It's a solid option worth considering for your family's needs.",
+    "bestTake": "This is our strongest recommendation for your family. It hits every criterion — budget, bedrooms, school proximity, and neighborhood safety. The 3-bedroom layout means each child gets their own room, and the playground across the street is a rare bonus in Yerevan rentals.",
+    "advantages": "Advantages",
+    "consideration": "Consideration",
+    "monthlyCosts": "Monthly costs",
+    "rent": "Rent",
+    "utilities": "Utilities",
+    "deposit": "Deposit",
+    "brickBuilding": "Brick building",
+    "bedroom": "bedroom",
+    "bedrooms": "bedrooms",
+    "nearby": "Nearby — schools, parks & transit",
+    "virtualTour": "Virtual Tour",
+    "floor": "Floor {floor}",
+    "depositMonth": "month",
+    "defaultAgentName": "Contact Agent",
+    "unknownOwner": "Property Owner",
+    "verified": "Verified",
+    "agent": "Agent",
+    "owner": "Owner",
+    "contact": "Contact",
+    "requestViewing": "Request Viewing",
+    "writeToOwner": "Message"
+  },
+  "viewingRequest": {
+    "title": "Request a Viewing",
+    "defaultAgent": "Property Agent",
+    "date": "Date",
+    "time": "Time",
+    "selectTime": "Select time",
+    "message": "Message (optional)",
+    "messagePlaceholder": "Any special requests or questions...",
+    "send": "Send Request",
+    "sending": "Sending...",
+    "selectDateTime": "Please select date and time",
+    "success": "Viewing Request Sent!",
+    "successMessage": "The property owner will review your request and respond soon."
+  },
+  "propertyIntelligence": {
+    "title": "Homy property intelligence",
+    "tabs": {
+      "legal": "Developer & legal",
+      "location": "Location & lifestyle",
+      "infrastructure": "Daily infrastructure",
+      "investment": "Investment view"
+    },
+    "homlyView": "Homy's view",
+    "viewBest": "This property is strong for family living, has good infrastructure access and moderate investment potential, but requires additional legal document verification before moving forward.",
+    "viewOther": "This property shows solid location scores and acceptable risk signals. We recommend verifying ownership documents and checking commute times in person.",
+    "sourcesText": "Sources: public registry data, developer records",
+    "cadastreText": "Cadastre-based signals available for this area",
+    "aiDisclaimer": "Homy provides AI-powered analysis and risk signals based on available data. It does not replace legal, notarial or professional due diligence.",
+    "legal": {
+      "developerBackground": "Developer background",
+      "activeLegalClaims": "Active legal claims",
+      "doubleSaleRisk": "Double-sale risk signals",
+      "ownershipRegistration": "Ownership registration",
+      "titleDocumentation": "Title documentation",
+      "verified": "Verified",
+      "unverified": "Unverified",
+      "noneFound": "None found",
+      "noSignals": "No signals",
+      "riskDetected": "Risk detected",
+      "singleOwner": "Single owner",
+      "single_owner": "Single owner",
+      "complete": "Complete",
+      "reviewRecommended": "Review recommended",
+      "pending_verification": "Pending verification"
+    },
+    "location": {
+      "commuteAM": "Commute to center (AM peak)",
+      "commutePM": "Commute from center (PM peak)",
+      "distanceHighway": "Distance from highway",
+      "noiseEstimate": "Noise estimate",
+      "ecologyIndex": "Ecology index",
+      "parkingAvailability": "Parking availability",
+      "playgroundsNearby": "Playgrounds nearby",
+      "parksGreen": "Parks and green zones",
+      "min18": "18 min",
+      "min24": "24 min",
+      "m350": "350 m",
+      "low": "Low",
+      "good": "Good",
+      "streetLot": "Street + lot",
+      "within300m": "2 within 300 m",
+      "arabkirPark": "Arabkir Park — 5 min"
+    },
+    "infra": {
+      "supermarkets": "Supermarkets",
+      "pharmacies": "Pharmacies",
+      "banks": "Banks",
+      "schools": "Schools",
+      "kindergartens": "Kindergartens",
+      "publicTransport": "Public transport",
+      "gyms": "Gyms and services",
+      "nearby3": "3 nearby",
+      "nearby2": "2 nearby",
+      "nearby4": "4 nearby",
+      "school55": "School #55 — 8 min",
+      "within500m": "2 within 500 m",
+      "busStop": "Bus stop — 2 min"
+    },
+    "invest": {
+      "investmentScore": "Investment score",
+      "priceVsMarket": "Price vs. market",
+      "constructionPace": "Construction pace",
+      "transactionPace": "Transaction pace",
+      "demandSignals": "Demand signals"
+    }
+  },
+  "propertyGallery": {
+    "allPhotos": "All photos",
+    "allCategories": "All",
+    "seeAll": "See all"
+  },
+  "propertyActionBar": {
+    "saved": "Saved",
+    "hidden": "Hidden",
+    "save": "Save",
+    "hide": "Hide",
+    "share": "Share",
+    "more": "More",
+    "report": "Report problem",
+    "linkCopied": "Link copied!",
+    "copyLink": "Copy link",
+    "shareVia": "Share via",
+    "selectIssue": "Select an issue",
+    "reportSubmitted": "Thank you! Your report has been submitted.",
+    "issues": {
+      "inaccurate": "Inaccurate information",
+      "outdated": "Outdated listing",
+      "suspicious": "Suspicious listing",
+      "duplicate": "Duplicate listing",
+      "other": "Other"
+    }
+  },
+  "schedulePage": {
+    "title": "Schedule a viewing",
+    "propertySummary": "Property summary",
+    "selectTime": "Select a time",
+    "previewChecklist": "Before the viewing",
+    "confirmViewing": "Confirm viewing",
+    "viewingConfirmed": "Viewing confirmed!",
+    "confirmedText": "Your viewing has been scheduled. The contact details have been sent.",
+    "chatTitle": "Chat with consultant",
+    "chatPlaceholder": "Ask about the property...",
+    "noProperty": "Please select a property first",
+    "noPropertyDesc": "Go back to the results and choose a property to schedule a viewing.",
+    "propertyNotFound": "Property not found",
+    "propertyNotFoundDesc": "The property you selected could not be found. It may have been removed.",
+    "backToResults": "Back to results",
+    "whyHomyRecommends": "Why Homy recommends",
+    "viewingSet": "Viewing set",
+    "selectTimeHint": "Select a time slot from the owner's availability",
+    "selected": "Selected",
+    "viewingReady": "Viewing ready to confirm",
+    "reschedule": "Reschedule",
+    "addToCalendar": "Add to calendar",
+    "getDirections": "Get directions",
+    "viewingAssistant": "Homy viewing assistant",
+    "contact": "Contact",
+    "chatPlaceholderViewing": "Ask about the viewing or suggest another time…",
+    "trustLabels": [
+      "No payment before viewing",
+      "Developer background checked",
+      "Legal signals reviewed",
+      "Reminder will be sent"
+    ],
+    "days": [
+      "M",
+      "T",
+      "W",
+      "T",
+      "F",
+      "S",
+      "S"
+    ],
+    "times": [
+      "09:00 – 11:00",
+      "11:00 – 13:00",
+      "14:00 – 16:00",
+      "16:00 – 18:00",
+      "18:00 – 20:00"
+    ],
+    "checklist": [
+      "Confirm ownership documents",
+      "Ask about developer history",
+      "Verify deposit terms",
+      "Check noise during peak hours",
+      "Inspect parking availability",
+      "Ask about utilities and maintenance",
+      "Check actual commute time",
+      "Verify playgrounds and nearby infrastructure"
+    ],
+    "consultant": {
+      "name": "Anna Hakobyan",
+      "role": "Personal consultant"
+    },
+    "chatMessages": {
+      "user1": "We would like to see the apartment this weekend.",
+      "assistant1": "The representative is available on **Saturday at 14:00**. I can confirm this time and prepare a viewing checklist for you.",
+      "agent1": "Saturday at 14:00 works. Please confirm.",
+      "agentName": "Representative"
+    },
+    "quickActions": [
+      "Ask about deposit",
+      "Ask about documents",
+      "Contact agent",
+      "Compare with another property"
+    ]
+  },
+  "buyerDemo": {
+    "assistant": "Homy AI · Buying assistant",
+    "step": "Step",
+    "of": "of",
+    "userMessage": "\"Looking to buy a 3-bedroom apartment in Yerevan, up to $85,000, near a good school\"",
+    "extractingCriteria": "Extracting criteria",
+    "districtsCompared": "District comparison",
+    "priceCheck": "Price check",
+    "priceCheckText": "$78,000 is 8% below the Arabkir average for 3-room apartments",
+    "riskAnalysis": "Risk analysis",
+    "viewingAvailable": "Viewing available",
+    "new": "New",
+    "scheduleViewing": "Schedule viewing",
+    "arabkirSchools": "— schools ★★★★ · safety ★★★★★",
+    "kentronTransit": "— transit ★★★★★ · price ★★★",
+    "sidebarLabels": [
+      "You describe your need",
+      "Criteria extracted",
+      "Properties found",
+      "Districts compared",
+      "Price check",
+      "Risks analyzed",
+      "Schedule viewing"
+    ],
+    "criteriaChips": [
+      "Budget: $85k",
+      "3 bedrooms",
+      "Yerevan",
+      "Near school",
+      "Buy"
+    ],
+    "risks": [
+      "Building year: 1985 — check structural report",
+      "Ownership: 1 owner — clean title"
+    ]
+  },
+  "virtualTour": {
+    "startTour": "Start virtual tour",
+    "unavailable": "Virtual tour unavailable",
+    "unavailableDesc": "This property doesn't have a 360° virtual tour yet.",
+    "close": "Close tour",
+    "loading": "Loading panorama...",
+    "error": "Failed to load panorama",
+    "retry": "Try again",
+    "hint": "Drag to look around · Scroll to zoom",
+    "previous": "Previous room",
+    "next": "Next room",
+    "fullscreen": "Fullscreen",
+    "exitFullscreen": "Exit fullscreen",
+    "of": "of",
+    "current": "Current"
+  },
+  "aboutUsPage": {
+    "heroTitle": "Building the future of real estate in Armenia",
+    "heroSubtitle": "Homy is Armenia's first AI-powered proptech startup, created to make property search, evaluation and transactions clearer, safer and more intelligent.",
+    "ctaStartSearch": "Start your search",
+    "ctaHowItWorks": "How Homy works",
+    "storyTitle": "Our story",
+    "storyText": "Finding a home should not mean searching through hundreds of outdated listings, comparing incomplete information and making important decisions alone.\n\nHomy combines real property listings, market data, location intelligence and AI analysis in one platform. It helps users understand not only what a property looks like, but whether it truly fits their lifestyle, budget and long-term goals.",
+    "missionTitle": "Our mission",
+    "missionText": "To bring transparency, intelligence and trust to Armenia's real estate market.",
+    "mission1Title": "Better decisions",
+    "mission1Text": "Give buyers and renters complete, understandable property information.",
+    "mission2Title": "Less uncertainty",
+    "mission2Text": "Highlight advantages, compromises, costs and potential risks.",
+    "mission3Title": "Smarter connections",
+    "mission3Text": "Connect properties with the people they are genuinely relevant to.",
+    "differentTitle": "What makes Homy different",
+    "differentStatement": "Homy is not a chatbot and not another listings board. It is an AI real estate expert built around real data and real user decisions.",
+    "different1": "understands natural-language requests",
+    "different2": "analyzes real listings and market data",
+    "different3": "evaluates districts and infrastructure",
+    "different4": "reviews developer and legal risk signals",
+    "different5": "compares commute, ecology, noise and parking",
+    "different6": "estimates investment potential",
+    "different7": "helps arrange viewings and move toward a deal",
+    "teamTitle": "Meet the founders",
+    "founder1Name": "Founder Name",
+    "founder1Role": "Co-founder & CEO",
+    "founder1Bio": "Leads Homy's product vision, business strategy and development of a more transparent real estate ecosystem.",
+    "founder2Name": "Founder Name",
+    "founder2Role": "Co-founder & CTO",
+    "founder2Bio": "Leads AI, data infrastructure, integrations and the technology behind Homy's property intelligence."
+  },
+  "voiceAssistant": {
+    "talkToHomy": "Talk to Homy",
+    "listening": "Listening…",
+    "thinking": "Thinking…",
+    "speaking": "…",
+    "homlyIsSpeaking": "Homy is speaking",
+    "pause": "Pause",
+    "resume": "Resume",
+    "stop": "Stop",
+    "mute": "Mute",
+    "retry": "Retry",
+    "error": {
+      "denied": "Microphone access denied",
+      "unsupported": "Voice not supported in this browser",
+      "noSpeech": "No speech detected — try again",
+      "network": "Connection issue — try again",
+      "recognitionFailed": "Could not understand — please try again"
+    }
+  },
+  "aiChat": {
+    "initialMessage": "This apartment in Arabkir is my top recommendation for your family. It's a 3-bedroom unit just an 8-minute walk from School #55, on a quiet residential street with a playground nearby. At 195,000 AMD/month, it fits your budget perfectly.",
+    "askPrice": "Ask about price",
+    "compare": "Compare",
+    "contactAgent": "Contact agent",
+    "scheduleViewing": "Schedule viewing",
+    "placeholder": "Ask Homy about this property…",
+    "chatTitle": "Chat about this property",
+    "consultantName": "Anna Hakobyan",
+    "consultantRole": "Personal consultant",
+    "contact": "Contact",
+    "replies": [
+      "Based on the listing data, the owner is open to reasonable offers. The current price of 195,000 AMD is already competitive for Arabkir, but I'd suggest offering 185,000 AMD as a starting point for negotiation.",
+      "Comparing with option #2 (the modern 3-room on Arabkir Park): this apartment has more square meters (85 vs 78) and is closer to schools, but option #2 is in a newer building. For a family with children, I'd lean toward this one for the school proximity.",
+      "I can help with that. The owner's contact details are available once you confirm interest. Would you like me to prepare a pre-viewing checklist for this property?",
+      "Heating costs in Arabkir average around 18,000–22,000 AMD per month during winter. This building was renovated in 2019, so the insulation is better than average. Utilities including water and electricity typically add another 12,000–15,000 AMD monthly.",
+      "The street noise level is low — it's a residential side street with mostly local traffic. Three previous tenants confirmed the area is quiet, especially in the evenings."
+    ]
+  },
+  "favorites": {
+    "title": "Saved Properties",
+    "emptyTitle": "No saved properties yet",
+    "emptyDescription": "Properties you save will appear here. Start exploring to find your perfect home.",
+    "property": "property",
+    "properties": "properties",
+    "remove": "Remove from favorites",
+    "errorLoading": "Failed to load your saved properties",
+    "errorRemoving": "Failed to remove property from favorites",
+    "errorAuth": "Please log in to view your favorites",
+    "retry": "Retry"
+  },
+  "viewings": {
+    "title": "My Viewings",
+    "total": "total",
+    "upcoming": "Upcoming",
+    "completed": "Completed",
+    "addViewing": "Add Viewing",
+    "noUpcoming": "No upcoming viewings",
+    "noUpcomingDesc": "You have no scheduled property viewings. Browse properties and schedule a viewing to get started.",
+    "noCompleted": "No completed viewings",
+    "noCompletedDesc": "Your completed viewings will appear here after you attend them.",
+    "browseProperties": "Browse Properties",
+    "viewProperty": "View Property",
+    "cancel": "Cancel",
+    "tryAgain": "Try again",
+    "sessionExpired": "Session expired. Please log in again.",
+    "priceOnRequest": "Price on request",
+    "call": "Call",
+    "propertyOwner": "Property Owner",
+    "agent": "Agent",
+    "contactAvailable": "Contact available",
+    "status": {
+      "pending": "Pending",
+      "pending_client": "Awaiting client response",
+      "pending_agent": "Awaiting agent response",
+      "confirmed": "Confirmed",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "approve": "Confirm",
+    "proposeOtherTime": "Propose different time",
+    "cancelViewing": "Cancel viewing",
+    "send": "Send",
+    "awaitingYourResponse": "Requires your response",
+    "awaitingClientResponse": "Awaiting client response",
+    "awaitingAgentResponse": "Awaiting agent response",
+    "cancelledByYou": "Cancelled by you",
+    "cancelledByOther": "Cancelled by other party",
+    "proposeTimeTitle": "Propose different time",
+    "proposeTimeSubtitle": "Select a new date and time for the viewing",
+    "commentPlaceholder": "Add a comment (optional)...",
+    "commentLabel": "Comment",
+    "viewingCreatedPendingClient": "Viewing created. Awaiting client confirmation.",
+    "viewingCreatedPendingAgent": "Viewing request sent. Awaiting confirmation.",
+    "viewingApproved": "Viewing confirmed!",
+    "viewingProposed": "New time proposed. Awaiting response.",
+    "viewingCancelled": "Viewing cancelled.",
+    "client": "Client",
+    "agentOwner": "Agent/Owner",
+    "proposedBy": "Proposed by",
+    "createdBy": "Created by",
+    "from": "from"
+  },
+  "compare": {
+    "title": "Compare Properties",
+    "comparing": "Comparing {count} properties",
+    "property": "Property",
+    "addToCompare": "Add to compare",
+    "removeFromCompare": "Remove from compare",
+    "inCompare": "In compare",
+    "maxReached": "Maximum 4 properties",
+    "compareNow": "Compare",
+    "clearAll": "Clear all",
+    "remove": "Remove",
+    "addProperty": "Add property",
+    "emptyTitle": "No properties to compare",
+    "emptyDescription": "Add properties to your comparison list by clicking the compare button on property cards.",
+    "noProperties": "No properties to compare",
+    "browseProperties": "Browse Properties",
+    "scheduleViewing": "Schedule",
+    "sqm": "m²",
+    "yes": "Yes",
+    "no": "No",
+    "fields": {
+      "price": "Price",
+      "pricePerSqm": "Price per m²",
+      "area": "Area",
+      "rooms": "Rooms",
+      "bathrooms": "Bathrooms",
+      "district": "District",
+      "floor": "Floor",
+      "yearBuilt": "Year built",
+      "condition": "Condition",
+      "buildingType": "Building type",
+      "parking": "Parking",
+      "petsAllowed": "Pets allowed",
+      "matchScore": "Match score"
+    },
+    "conditions": {
+      "new": "New",
+      "renovation": "Renovated",
+      "needsRepair": "Needs repair",
+      "shell": "Shell & core"
+    },
+    "buildingTypes": {
+      "brick": "Brick",
+      "panel": "Panel",
+      "monolith": "Monolith"
+    }
+  },
+  "chat": {
+    "close": "Close",
+    "connecting": "Connecting…",
+    "conversationClosed": "Conversation closed",
+    "errorCreatingConversation": "Couldn't start chat",
+    "homySupport": "Homy Support",
+    "homySupportShort": "Support",
+    "loading": "Loading…",
+    "minimize": "Minimize",
+    "offline": "Offline",
+    "online": "Online",
+    "propertyInquiry": "Property inquiry",
+    "sendFailed": "Failed to send",
+    "typeMessage": "Type a message…"
+  }
+}

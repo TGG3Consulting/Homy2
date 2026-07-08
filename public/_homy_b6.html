@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homy — Пачка 3 · Вовлечение и аккаунт</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root,[data-theme="dark"]{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#F2F4F7;--muted:#8B93A3;--soft:#C5CAD3;
+    --hair:rgba(255,255,255,.10);--em-hi:#2BC091;--em:#0B6E4F;--em-lo:#052A1D;--amber:#E0A83B;--danger:#F0616A;--card-shadow:inset 0 0 0 1px rgba(255,255,255,.06),0 24px 60px rgba(0,0,0,.45)}
+  [data-theme="light"]{--bg:#EEF0F3;--surface:#FFFFFF;--surface2:#FAFAF8;--ink:#14181F;--muted:#6A7382;--soft:#39414D;
+    --hair:rgba(20,24,31,.10);--em-hi:#26B083;--em:#0A6045;--em-lo:#04281C;--amber:#B9822A;--danger:#D8434B;--card-shadow:0 4px 24px rgba(20,20,26,.08)}
+  body{font-family:'Montserrat',sans-serif;background:#c9ccd2;color:#14181F;-webkit-font-smoothing:antialiased;padding:34px 24px 90px}
+  .pagehead{max-width:1300px;margin:0 auto 26px;display:flex;align-items:center;gap:16px}
+  .pagehead .brand{font-size:20px;font-weight:800;letter-spacing:-.02em}.pagehead .brand .m{color:#0A6045}
+  .pagehead .t{font-size:13px;font-weight:600;color:#4b5563}
+  .tgl{margin-left:auto;display:flex;gap:2px;background:#fff;border:1px solid #d5d8de;border-radius:999px;padding:3px}
+  .tgl .o{width:34px;height:28px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#6a7382;cursor:pointer}
+  .tgl .o.on{color:#fff;background:radial-gradient(120% 160% at 50% 18%,#2BC091,#04281C)}
+  .screen{max-width:1300px;margin:0 auto 44px}
+  .screen-h{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#3a4150;margin-bottom:14px}.screen-h b{color:#0A6045}
+  .frames{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+  .web{flex:1;min-width:700px;border-radius:16px;overflow:hidden;background:var(--bg);box-shadow:0 20px 50px rgba(0,0,0,.2);border:1px solid rgba(0,0,0,.15)}
+  .webbar{height:34px;background:var(--surface);display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid var(--hair)}
+  .webbar i{width:10px;height:10px;border-radius:50%;background:var(--muted);opacity:.5}
+  .webview{height:560px;overflow:auto;background:var(--bg);color:var(--ink)}.webview::-webkit-scrollbar{width:6px}.webview::-webkit-scrollbar-thumb{background:var(--hair);border-radius:3px}
+  .mob{width:340px;flex:none}.caplbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:8px}
+  .phone{width:340px;height:700px;border:9px solid #16171c;border-radius:40px;overflow:hidden;background:var(--bg);box-shadow:0 24px 60px rgba(0,0,0,.28)}
+  .mobview{height:100%;overflow:auto;color:var(--ink)}.mobview::-webkit-scrollbar{width:0}
+
+  .em3d{position:relative;overflow:hidden;color:#fff;border:0;background:radial-gradient(135% 175% at 50% 14%,var(--em-hi),var(--em));box-shadow:0 2px 6px rgba(4,40,28,.20),inset 0 1px 0 rgba(255,255,255,.10),inset 0 -2px 5px rgba(3,28,20,.16)}
+  .em3d::after{content:none}
+  .em3d>*{position:relative;z-index:2}
+  .hd{padding:18px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--hair)}.hd h2{font-size:19px;font-weight:700}.hd .n{font-size:12px;color:var(--muted)}
+  .chip{font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--hair);background:var(--surface);color:var(--soft);cursor:pointer}
+  .chip.active{color:#fff;border-color:transparent;background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em))}
+  .btn{font-family:inherit;font-weight:600;border-radius:11px;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:7px;justify-content:center}
+  .btn-primary{color:#fff;font-size:13px;padding:11px 18px}.btn-sec{background:transparent;border-color:var(--hair);color:var(--ink);font-size:12.5px;padding:9px 14px}
+  .avatar{border-radius:50%;background-size:cover;background-position:center;flex:none}
+  .stars{color:var(--amber);letter-spacing:1px;font-size:13px}
+  .card{background:var(--surface);border-radius:16px;overflow:hidden;box-shadow:var(--card-shadow)}
+  .card .ph{position:relative;aspect-ratio:16/11;background-size:cover;background-position:center}
+  .card .ph .ring{position:absolute;top:12px;left:12px;width:36px;height:36px}.card .ph .ring svg{transform:rotate(-90deg)}.card .ph .ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+  .card .b{padding:13px}.card .cp{font-size:18px;font-weight:700;letter-spacing:-.02em}.card .cp span{font-size:10px;color:var(--muted);font-weight:500;margin-left:4px}
+  .card .ct{font-size:13px;font-weight:600;margin-top:5px}.card .cl{font-size:11px;color:var(--muted);margin-top:3px}
+
+  /* A6 tour */
+  .tour{position:relative;height:100%}
+  .tour .pano{position:absolute;inset:0;background-size:cover;background-position:center}
+  .tour .pano::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.55),transparent 40%)}
+  .tour .badge{position:absolute;top:16px;left:16px;font-size:11px;font-weight:700;color:#fff;background:rgba(10,13,18,.55);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.15);padding:7px 12px;border-radius:999px;display:flex;align-items:center;gap:7px;z-index:3}
+  .hot{position:absolute;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;color:#0A6045;cursor:pointer;z-index:3;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+  .hot::after{content:'';position:absolute;inset:-8px;border-radius:50%;border:2px solid rgba(255,255,255,.6);animation:hp 2.2s ease-out infinite}
+  @keyframes hp{0%{transform:scale(.7);opacity:.8}100%{transform:scale(1.8);opacity:0}}
+  .rooms{position:absolute;left:16px;right:16px;bottom:16px;display:flex;gap:8px;z-index:3;overflow:auto;padding-bottom:2px}
+  .rooms .rm{width:78px;height:56px;border-radius:10px;background-size:cover;background-position:center;flex:none;border:2px solid transparent;cursor:pointer;position:relative}
+  .rooms .rm.on{border-color:var(--em-hi)}
+  .rooms .rm span{position:absolute;left:0;right:0;bottom:0;font-size:9px;color:#fff;background:rgba(0,0,0,.5);padding:2px 4px;text-align:center}
+
+  /* A7 reviews */
+  .rev-sum{display:flex;gap:28px;align-items:center;padding:20px 24px;border-bottom:1px solid var(--hair)}
+  .rev-sum .big{text-align:center}.rev-sum .big b{font-size:40px;font-weight:800;letter-spacing:-.02em;display:block}.rev-sum .big span{font-size:11px;color:var(--muted)}
+  .rev-sum .bars{flex:1;max-width:320px}
+  .rbar{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);margin:3px 0}
+  .rbar .t{width:56px}.rbar .track{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}.rbar .fill{height:100%;background:var(--amber)}
+  .review{display:flex;gap:12px;padding:16px 0;border-bottom:1px solid var(--hair)}
+  .review .av{width:40px;height:40px}
+  .review .nm{font-size:13.5px;font-weight:600}.review .meta{font-size:11px;color:var(--muted);margin-top:2px}
+  .review p{font-size:13px;color:var(--soft);line-height:1.55;margin-top:8px}
+
+  /* A14 chat */
+  .chatwrap{display:flex;flex-direction:column;height:100%}
+  .chat-h{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--hair)}
+  .chat-h .av{width:40px;height:40px}
+  .chat-h .nm{font-size:14px;font-weight:700}.chat-h .st{font-size:11px;color:var(--em);display:flex;align-items:center;gap:5px;margin-top:2px}.chat-h .st i{width:6px;height:6px;border-radius:50%;background:var(--em);box-shadow:0 0 8px var(--em)}
+  .stream{flex:1;overflow:auto;padding:18px 20px;display:flex;flex-direction:column;gap:12px}.stream::-webkit-scrollbar{width:0}
+  .msg{max-width:75%;font-size:13px;line-height:1.5;padding:11px 14px;border-radius:14px}
+  .msg.them{align-self:flex-start;background:var(--surface2);color:var(--soft);border-radius:14px 14px 14px 4px}
+  .msg.me{align-self:flex-end;color:#fff;border-radius:14px 14px 4px 14px}
+  .msg .tm{font-size:9.5px;opacity:.6;margin-top:4px}
+  .propchip{align-self:flex-start;display:flex;gap:10px;background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:8px;max-width:80%}
+  .propchip .th{width:56px;height:44px;border-radius:8px;background-size:cover;background-position:center;flex:none}
+  .propchip b{font-size:12px}.propchip span{font-size:11px;color:var(--muted)}
+  .composer{flex:none;padding:12px 16px;border-top:1px solid var(--hair);display:flex;align-items:center;gap:9px}
+  .composer input{flex:1;background:var(--surface2);border:1px solid var(--hair);border-radius:12px;padding:11px 13px;font-size:13px;color:var(--ink);font-family:inherit;outline:none}
+  .composer .send{width:40px;height:40px;border-radius:12px;flex:none;display:flex;align-items:center;justify-content:center}
+
+  /* C2 notifications */
+  .notif{display:flex;gap:13px;padding:14px 0;border-bottom:1px solid var(--hair);align-items:flex-start}
+  .notif .ic{width:38px;height:38px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--em) 14%,transparent);color:var(--em)}
+  .notif.amber .ic{background:color-mix(in srgb,var(--amber) 16%,transparent);color:var(--amber)}
+  .notif .tx b{font-size:13.5px;font-weight:600}.notif .tx p{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}.notif .tm{font-size:11px;color:var(--muted);margin-left:auto;flex:none}
+  .notif.unread{position:relative}.notif.unread::before{content:'';position:absolute;left:-14px;top:22px;width:6px;height:6px;border-radius:50%;background:var(--em)}
+
+  /* C1 dashboard */
+  .dash{padding:22px 24px}
+  .dsec{margin-bottom:24px}.dsec .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.dsec .sh h3{font-size:15px;font-weight:700}.dsec .sh a{font-size:12px;color:var(--em);font-weight:600;cursor:pointer}
+  .dgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .resume{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:16px}
+  .resume .ava{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+  .resume b{font-size:14px}.resume span{font-size:12px;color:var(--muted)}
+  .dstats{display:flex;gap:12px}.dstat{flex:1;background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:14px}.dstat b{font-size:22px;font-weight:800;letter-spacing:-.02em}.dstat span{font-size:11px;color:var(--muted);display:block;margin-top:2px}
+
+  .mnav{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:8px;padding:11px 14px;background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+  .mnav .bk{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;background:none;border:0;font-family:inherit;padding:0}.mnav .bk svg{color:var(--em)}
+  .wnav{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:16px;padding:11px 20px;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+  .wnav .bk{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--em);cursor:pointer;background:none;border:0;font-family:inherit}
+  .lmw{position:relative}
+  .lmw .lm-btn{background:none;border:0;font-family:inherit;font-weight:800;cursor:pointer;color:var(--ink);display:inline-flex;align-items:center;gap:0;letter-spacing:-.02em;padding:0}
+  .lmw .lm-btn .m{color:var(--em)}.lmw .lm-btn>svg{opacity:.55;margin-left:5px}
+  .wnav .lm-btn{font-size:15px}.mnav .lm-btn{font-size:13px}
+  .lm-pop{position:absolute;top:calc(100% + 8px);z-index:60;min-width:232px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.45);padding:8px}
+  .wnav .lm-pop{left:0}.mnav .lm-pop{right:0}.lmw:not(.open) .lm-pop{display:none}
+  .lm-head{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 12px 4px}
+  .lm-i{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;font-size:13.5px;font-weight:500;color:var(--ink);cursor:pointer;text-decoration:none}
+  .lm-i:hover{background:color-mix(in srgb,var(--muted) 12%,transparent)}
+  .lm-i svg{color:var(--muted);flex:none}.lm-i.acc{color:var(--em)}.lm-i.acc svg{color:var(--em)}
+  .lm-sep{height:1px;background:var(--hair);margin:6px 4px}
+
+
+  .opwrap{margin:0 auto;display:flex;align-items:center}
+  .opbtn{position:relative;width:32px;height:32px;border:0;background:none;cursor:pointer;padding:0}
+  .opbtn .opav{display:block;width:32px;height:32px;border-radius:50%;background-size:cover;background-position:center;border:2px solid var(--surface);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+  .opbtn .opdot{position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:var(--em);border:2px solid var(--surface)}
+
+  /* seller reviews */
+  .seller{display:flex;gap:14px;align-items:center;padding:18px 24px;border-bottom:1px solid var(--hair);flex-wrap:wrap}
+  .seller .av{width:56px;height:56px;border-radius:50%;background-size:cover;background-position:center;flex:none}
+  .seller .nm{font-size:16px;font-weight:700;display:flex;align-items:center;gap:7px}
+  .seller .role{font-size:12px;color:var(--muted);margin-top:2px}
+  .seller .meta{font-size:12px;color:var(--soft);margin-top:7px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .seller .rate{margin-left:auto;text-align:center}.seller .rate b{font-size:30px;font-weight:800;letter-spacing:-.02em;display:block}
+  /* live chat widget (desktop) */
+  .a14ctx{position:relative;height:100%;overflow:hidden}
+  .ctxbg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(3px) brightness(.45)}
+  .ctxnote{position:absolute;top:16px;left:20px;z-index:2;font-size:12px;color:var(--soft);background:color-mix(in srgb,var(--surface) 80%,transparent);backdrop-filter:blur(6px);border:1px solid var(--hair);border-radius:10px;padding:8px 12px}
+  .livewidget{position:absolute;right:20px;bottom:20px;width:344px;max-height:calc(100% - 40px);background:var(--surface);border:1px solid var(--hair);border-radius:18px;box-shadow:0 30px 70px rgba(0,0,0,.55);display:flex;flex-direction:column;overflow:hidden;z-index:3}
+  .lw-h{display:flex;align-items:center;gap:10px;padding:13px 15px;border-bottom:1px solid var(--hair)}
+  .lw-h .av{width:34px;height:34px;border-radius:50%;background-size:cover;background-position:center;flex:none}
+  .lw-h .nm{font-size:13.5px;font-weight:700}.lw-h .st{font-size:10.5px;color:var(--em);display:flex;align-items:center;gap:5px}.lw-h .st i{width:5px;height:5px;border-radius:50%;background:var(--em)}
+  .lw-h .mn{margin-left:auto;width:30px;height:30px;border-radius:9px;background:rgba(127,127,140,.14);display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer}
+  .lw-body{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+  .lw-comp{padding:10px 12px;border-top:1px solid var(--hair);display:flex;gap:8px;align-items:center}
+  .lw-comp input{flex:1;background:var(--surface2);border:1px solid var(--hair);border-radius:11px;padding:9px 11px;font-size:12.5px;color:var(--ink);font-family:inherit;outline:none}
+  .lw-comp .send{width:36px;height:36px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center}
+  /* mobile op sheet (swipe like Homy) */
+  .a14m{position:relative;height:600px;overflow:hidden}
+  .opsheet{position:absolute;left:0;right:0;bottom:0;height:86%;background:var(--surface);border-top-left-radius:22px;border-top-right-radius:22px;border:1px solid var(--hair);border-bottom:0;box-shadow:0 -18px 50px rgba(0,0,0,.55);display:flex;flex-direction:column;overflow:hidden}
+  .opsheet .grab{padding:10px 0 4px;display:flex;justify-content:center;flex:none;cursor:grab}.opsheet .grab i{width:40px;height:5px;border-radius:999px;background:var(--hair)}
+  .swipehint{position:absolute;left:0;right:0;bottom:calc(86% + 8px);text-align:center;font-size:11px;color:var(--soft);z-index:2}
+
+  /* ===== Pack4 auth/onboarding ===== */
+  .authwrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:38px 20px;background:radial-gradient(120% 90% at 50% -10%,color-mix(in srgb,var(--em) 15%,transparent),transparent 55%)}
+  .acard{width:100%;max-width:392px;background:var(--surface);border:1px solid var(--hair);border-radius:20px;box-shadow:var(--card-shadow);padding:30px 30px 26px}
+  .acard .lg{font-size:22px;font-weight:800;letter-spacing:-.02em;text-align:center}.acard .lg .m{color:var(--em)}
+  .acard h1{font-size:19px;font-weight:700;text-align:center;margin-top:16px}
+  .acard .sub{font-size:12.5px;color:var(--muted);text-align:center;margin-top:7px;line-height:1.5}
+  .field{margin-top:15px}.field>label{font-size:11.5px;font-weight:600;color:var(--soft);display:block;margin-bottom:6px}
+  .inp{display:flex;align-items:center;gap:9px;background:var(--surface2);border:1px solid var(--hair);border-radius:12px;padding:11px 13px}
+  .inp.focus{border-color:var(--em);box-shadow:0 0 0 3px color-mix(in srgb,var(--em) 18%,transparent)}
+  .inp svg{color:var(--muted);flex:none}
+  .inp input{flex:1;background:none;border:0;outline:none;font-family:inherit;font-size:13.5px;color:var(--ink);min-width:0}
+  .inp .eye{color:var(--muted);cursor:pointer}
+  .abtn{width:100%;padding:13px;font-size:14px;font-weight:700;border-radius:12px;margin-top:20px;border:0;font-family:inherit;cursor:pointer}
+  .arow{display:flex;align-items:center;justify-content:space-between;margin-top:13px;font-size:12px}
+  .alink{color:var(--em);font-weight:600;cursor:pointer;text-decoration:none}
+  .adiv{display:flex;align-items:center;gap:12px;margin:19px 0;color:var(--muted);font-size:11px}.adiv::before,.adiv::after{content:'';flex:1;height:1px;background:var(--hair)}
+  .altbtn{width:100%;padding:12px;border:1px solid var(--hair);border-radius:12px;background:var(--surface2);color:var(--ink);font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;font-family:inherit}
+  .altbtn svg{color:var(--em)}
+  .afoot{text-align:center;font-size:12.5px;color:var(--muted);margin-top:20px}
+  .otp{display:flex;gap:9px;justify-content:center;margin-top:22px}
+  .otp .d{width:44px;height:54px;border-radius:12px;background:var(--surface2);border:1px solid var(--hair);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--ink)}
+  .otp .d.f{border-color:var(--em);box-shadow:0 0 0 3px color-mix(in srgb,var(--em) 22%,transparent)}
+  .otp .d.e{color:var(--muted)}
+  .resend{text-align:center;font-size:12px;color:var(--muted);margin-top:18px}.resend b{color:var(--soft)}
+  .check{display:flex;align-items:flex-start;gap:9px;margin-top:16px;font-size:11.5px;color:var(--soft);line-height:1.5;cursor:pointer}
+  .check .bx{width:18px;height:18px;border-radius:5px;border:1px solid var(--hair);flex:none;margin-top:1px;display:flex;align-items:center;justify-content:center}
+  .check .bx.on{background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em));border-color:transparent;color:#fff}
+  .pwmeter{display:flex;gap:5px;margin-top:9px}.pwmeter i{flex:1;height:4px;border-radius:2px;background:var(--surface2)}.pwmeter i.on{background:var(--em-hi)}.pwmeter i.mid{background:var(--amber)}
+  .pwhint{font-size:11px;color:var(--muted);margin-top:7px}
+  .trustline{display:flex;align-items:center;gap:7px;justify-content:center;font-size:11px;color:var(--muted);margin-top:18px}.trustline svg{color:var(--em)}
+  /* onboarding */
+  .onbwrap{padding:28px 26px 34px;max-width:560px;margin:0 auto}
+  .prog{display:flex;gap:6px;margin-bottom:22px}.prog i{flex:1;height:5px;border-radius:3px;background:var(--surface2)}.prog i.on{background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em))}
+  .onb-q{font-size:22px;font-weight:700;letter-spacing:-.01em}.onb-s{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.5}
+  .opts{display:flex;flex-direction:column;gap:11px;margin-top:22px}
+  .opt{display:flex;align-items:center;gap:14px;padding:15px;border:1px solid var(--hair);border-radius:14px;background:var(--surface);cursor:pointer}
+  .opt.on{border-color:var(--em);box-shadow:0 0 0 3px color-mix(in srgb,var(--em) 16%,transparent)}
+  .opt .ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--em) 14%,transparent);color:var(--em);flex:none}
+  .opt b{font-size:14.5px;font-weight:600}.opt p{font-size:12px;color:var(--muted);margin-top:2px}
+  .opt .rd{margin-left:auto;width:20px;height:20px;border-radius:50%;border:2px solid var(--hair);flex:none}.opt.on .rd{border-color:var(--em);background:radial-gradient(circle at 50% 38%,var(--em-hi),var(--em))}
+  .chipset{display:flex;flex-wrap:wrap;gap:9px;margin-top:8px}
+  .oc{font-size:12.5px;font-weight:600;padding:9px 15px;border-radius:999px;border:1px solid var(--hair);background:var(--surface);color:var(--soft);cursor:pointer}
+  .oc.on{color:#fff;border-color:transparent;background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em))}
+  .onb-nav{display:flex;gap:12px;margin-top:26px}.onb-nav .abtn{margin-top:0}
+  .skip{background:none;border:0;color:var(--muted);font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+
+  /* ===== 20C — единый стиль кнопок (global rollout) ===== */
+  .btn.btn-primary,.btn-primary,.abtn,button.abtn,.cta,.call,.book,.up{
+    background:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;
+    color:var(--em)!important;width:fit-content!important;min-width:0!important;padding:9px 3px!important;
+    position:relative!important;overflow:visible!important;font-weight:700!important;
+    display:inline-flex!important;align-items:center;gap:8px;line-height:1.15;letter-spacing:0}
+  .abtn{margin-left:auto!important;margin-right:auto!important}
+  .btn.btn-primary::before,.abtn::before,.cta::before,.call::before,.book::before,.up::before{
+    content:''!important;position:absolute;left:3px;right:3px;bottom:1px;height:2px;border-radius:2px;background:var(--hair)}
+  .btn.btn-primary::after,.abtn::after,.cta::after,.call::after,.book::after,.up::after{
+    content:''!important;position:absolute;left:3px;bottom:1px;width:calc(100% - 6px);height:3px;border-radius:3px;
+    background:linear-gradient(90deg,var(--em),var(--em-hi));transition:transform .28s cubic-bezier(.22,1,.36,1);transform-origin:left}
+  .btn.btn-primary>span,.abtn>span,.cta>*{display:inline-block;transition:transform .28s cubic-bezier(.22,1,.36,1)}
+  .btn.btn-primary:hover>span,.abtn:hover>span{transform:translateY(-2px)}
+  .btn.btn-primary:hover,.abtn:hover,.cta:hover,.call:hover,.book:hover,.up:hover{color:var(--em-hi)!important}
+  /* secondary → растущая линия на ховере */
+  .btn-sec,.altbtn{background:none!important;border:0!important;box-shadow:none!important;border-radius:0!important;
+    color:var(--soft)!important;padding:9px 3px!important;width:fit-content!important;position:relative!important;overflow:visible!important;
+    font-weight:600!important;display:inline-flex!important;align-items:center;gap:7px}
+  .btn-sec::after,.altbtn::after{content:''!important;position:absolute;left:3px;bottom:1px;width:0;height:2px;border-radius:2px;background:var(--em);transition:width .28s cubic-bezier(.22,1,.36,1)}
+  .btn-sec:hover,.altbtn:hover{color:var(--em)!important}
+  .btn-sec:hover::after,.altbtn:hover::after{width:calc(100% - 6px)}
+  /* MARK20C */
+
+  /* ===== Broker cabinet ===== */
+  .bnav{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:14px;padding:11px 18px;background:color-mix(in srgb,var(--surface) 93%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+  .bnav .lg{font-weight:800;font-size:15px;letter-spacing:-.02em;color:var(--ink)}.bnav .lg .m{color:var(--em)}
+  .btabs{display:flex;gap:2px;margin-left:6px}
+  .btab{font-size:12.5px;font-weight:600;color:var(--muted);padding:7px 11px;border-radius:9px;cursor:pointer;white-space:nowrap}
+  .btab.on{color:var(--em);box-shadow:inset 0 -2.5px 0 0 var(--em);border-radius:0;font-weight:700}
+  .bnav .right{margin-left:auto;display:flex;align-items:center;gap:12px}
+  .bnav .bell{width:34px;height:34px;border-radius:10px;border:1px solid var(--hair);display:flex;align-items:center;justify-content:center;color:var(--muted);position:relative}
+  .bnav .bell::after{content:'';position:absolute;top:8px;right:9px;width:6px;height:6px;border-radius:50%;background:var(--danger)}
+  .bnav .me{display:flex;align-items:center;gap:8px;cursor:pointer}
+  .bnav .me .av{width:32px;height:32px;border-radius:50%;background-size:cover;background-position:center}
+  .bnav .me .nm{font-size:12.5px;font-weight:600}.bnav .me .rl{font-size:10px;color:var(--muted)}
+  .bwrap{padding:20px 24px 28px}
+  .bhd{display:flex;align-items:center;margin-bottom:16px}.bhd h1{font-size:20px;font-weight:700}.bhd .sub{font-size:12.5px;color:var(--muted);margin-top:3px}
+  /* metrics */
+  .mrow{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:22px}
+  .mtile{background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:15px 16px}
+  .mtile b{font-size:25px;font-weight:800;letter-spacing:-.02em;display:block}
+  .mtile .lbl{font-size:11.5px;color:var(--muted);margin-top:3px}
+  .mtile .delta{font-size:11px;font-weight:700;margin-top:7px;display:inline-flex;align-items:center;gap:3px}.delta.up{color:var(--em)}.delta.down{color:var(--danger)}
+  .bsec{margin-bottom:22px}.bsec .sh{display:flex;align-items:center;margin-bottom:11px}.bsec .sh h3{font-size:15px;font-weight:700}.bsec .sh .a{margin-left:auto;font-size:12px;font-weight:600;color:var(--em);cursor:pointer;position:relative}
+  /* listing rows */
+  .lrow{display:flex;align-items:center;gap:13px;padding:11px;border:1px solid var(--hair);border-radius:13px;background:var(--surface);margin-bottom:9px}
+  .lrow .th{width:66px;height:50px;border-radius:10px;background-size:cover;background-position:center;flex:none}
+  .lrow .ti{flex:1;min-width:0}.lrow .ti b{font-size:13.5px;font-weight:600}.lrow .ti .mt{font-size:11.5px;color:var(--muted);margin-top:3px}
+  .lrow .pr{font-size:14px;font-weight:700;white-space:nowrap}
+  .stat{font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:999px;white-space:nowrap}
+  .stat.ok{color:var(--em);background:color-mix(in srgb,var(--em) 15%,transparent)}
+  .stat.pend{color:var(--amber);background:color-mix(in srgb,var(--amber) 16%,transparent)}
+  .stat.rej{color:var(--danger);background:color-mix(in srgb,var(--danger) 15%,transparent)}
+  .lrow .kv{display:flex;gap:14px;font-size:11px;color:var(--muted);flex:none}
+  .lrow .kv b{color:var(--soft);font-size:12px}
+  .lact{display:flex;gap:10px;flex:none}
+  /* dropzone */
+  .drop{border:1.5px dashed var(--hair);border-radius:14px;padding:26px;text-align:center;color:var(--muted);font-size:12.5px;background:var(--surface2)}
+  .drop .ic{width:40px;height:40px;border-radius:12px;background:color-mix(in srgb,var(--em) 14%,transparent);color:var(--em);display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+  .thumbs{display:flex;gap:9px;margin-top:12px;flex-wrap:wrap}
+  .thumbs .t{width:76px;height:58px;border-radius:9px;background-size:cover;background-position:center;position:relative}
+  .thumbs .t .x{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px}
+  .thumbs .add{width:76px;height:58px;border-radius:9px;border:1.5px dashed var(--hair);display:flex;align-items:center;justify-content:center;color:var(--muted)}
+  .frm2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  /* leads */
+  .lead{display:flex;align-items:center;gap:13px;padding:12px;border:1px solid var(--hair);border-radius:13px;background:var(--surface);margin-bottom:9px}
+  .lead .av{width:40px;height:40px;border-radius:50%;background-size:cover;background-position:center;flex:none}
+  .lead .nm{font-size:13.5px;font-weight:600}.lead .mt{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .stage{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
+  .stage.new{color:var(--em);background:color-mix(in srgb,var(--em) 15%,transparent)}
+  .stage.warm{color:var(--amber);background:color-mix(in srgb,var(--amber) 16%,transparent)}
+  .stage.cold{color:var(--muted);background:color-mix(in srgb,var(--muted) 14%,transparent)}
+  .bwrap .field{max-width:none}
+  @media(max-width:1px){}
+
+  /* CHIP20C baked in */
+  .chip.active{background:none!important;background-image:none!important;color:var(--em)!important;border:0!important;border-radius:0!important;box-shadow:inset 0 -2.5px 0 0 var(--em)!important;font-weight:700!important;padding-left:4px!important;padding-right:4px!important}
+  /* deals */
+  .deal{display:flex;align-items:center;gap:14px;padding:13px;border:1px solid var(--hair);border-radius:13px;background:var(--surface);margin-bottom:9px}
+  .deal .th{width:60px;height:46px;border-radius:9px;background-size:cover;background-position:center;flex:none}
+  .deal .ti{flex:1;min-width:0}.deal .ti b{font-size:13.5px;font-weight:600}.deal .ti .mt{font-size:11.5px;color:var(--muted);margin-top:3px}
+  .deal .val{font-size:14px;font-weight:700;white-space:nowrap}.deal .val span{display:block;font-size:10.5px;color:var(--muted);font-weight:500}
+  .dstage{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
+  .dstage.neg{color:var(--amber);background:color-mix(in srgb,var(--amber) 16%,transparent)}
+  .dstage.doc{color:var(--em);background:color-mix(in srgb,var(--em) 15%,transparent)}
+  .dstage.won{color:#fff;background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em))}
+  .dstage.lost{color:var(--danger);background:color-mix(in srgb,var(--danger) 15%,transparent)}
+  /* inbox */
+  .inbox{display:flex;height:520px}
+  .conv-list{width:270px;border-right:1px solid var(--hair);overflow:auto;flex:none}
+  .conv{display:flex;gap:11px;padding:13px 15px;border-bottom:1px solid var(--hair);cursor:pointer;align-items:flex-start}
+  .conv.on{background:color-mix(in srgb,var(--em) 8%,transparent)}
+  .conv .av{width:38px;height:38px;border-radius:50%;background-size:cover;background-position:center;flex:none}
+  .conv .c{flex:1;min-width:0}.conv .nm{font-size:13px;font-weight:600;display:flex;align-items:center}.conv .tm{font-size:10px;color:var(--muted);margin-left:auto}
+  .conv .pv{font-size:11.5px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .conv .ud{width:7px;height:7px;border-radius:50%;background:var(--em);flex:none;margin-left:6px}
+  .chatpane{flex:1;display:flex;flex-direction:column;min-width:0}
+  .cp-h{display:flex;align-items:center;gap:11px;padding:13px 16px;border-bottom:1px solid var(--hair)}
+  .cp-h .av{width:36px;height:36px;border-radius:50%;background-size:cover;background-position:center}
+  .cp-h .nm{font-size:13.5px;font-weight:700}.cp-h .st{font-size:11px;color:var(--em)}
+  .assign{margin-left:auto;font-size:11.5px;font-weight:600;color:var(--soft);border:1px solid var(--hair);border-radius:9px;padding:7px 11px;display:flex;align-items:center;gap:7px}
+  .assign .a-av{width:20px;height:20px;border-radius:50%;background-size:cover}
+  .cp-body{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+  .cp-comp{padding:11px 14px;border-top:1px solid var(--hair);display:flex;gap:9px;align-items:center}
+  .cp-comp input{flex:1;background:var(--surface2);border:1px solid var(--hair);border-radius:11px;padding:10px 12px;font-size:12.5px;color:var(--ink);font-family:inherit;outline:none}
+  .cp-comp .send{width:38px;height:38px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center}
+  /* moderation */
+  .mod{display:flex;gap:14px;padding:14px;border:1px solid var(--hair);border-radius:14px;background:var(--surface);margin-bottom:11px}
+  .mod .ph{width:130px;height:96px;border-radius:11px;background-size:cover;background-position:center;flex:none}
+  .mod .mi{flex:1;min-width:0}.mod .mi b{font-size:14.5px;font-weight:600}.mod .mi .mt{font-size:12px;color:var(--muted);margin-top:3px}
+  .mod .flags{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
+  .flag{font-size:10.5px;font-weight:600;padding:4px 9px;border-radius:999px;display:inline-flex;align-items:center;gap:5px}
+  .flag.ok{color:var(--em);background:color-mix(in srgb,var(--em) 14%,transparent)}
+  .flag.warn{color:var(--amber);background:color-mix(in srgb,var(--amber) 15%,transparent)}
+  .mod .macts{display:flex;flex-direction:column;gap:9px;justify-content:center;flex:none}
+  .btn-danger{background:none;border:0;font-family:inherit;font-weight:700;font-size:13px;color:var(--danger);cursor:pointer;position:relative;padding:9px 3px;box-shadow:inset 0 -2.5px 0 0 transparent}
+  .btn-danger:hover{box-shadow:inset 0 -2.5px 0 0 var(--danger)}
+  /* users table */
+  .utable{width:100%;border:1px solid var(--hair);border-radius:14px;overflow:hidden;background:var(--surface)}
+  .urow{display:flex;align-items:center;gap:13px;padding:13px 16px;border-bottom:1px solid var(--hair)}
+  .urow:last-child{border-bottom:0}
+  .urow .av{width:36px;height:36px;border-radius:50%;background-size:cover;background-position:center;flex:none}
+  .urow .nm{font-size:13px;font-weight:600}.urow .em{font-size:11.5px;color:var(--muted)}
+  .role{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:999px;color:var(--soft);background:color-mix(in srgb,var(--muted) 16%,transparent)}
+  .role.broker{color:var(--em);background:color-mix(in srgb,var(--em) 14%,transparent)}
+  .role.admin{color:var(--amber);background:color-mix(in srgb,var(--amber) 15%,transparent)}
+  .ust{font-size:11px;font-weight:600}.ust.active{color:var(--em)}.ust.blocked{color:var(--danger)}
+</style>
+<body data-theme="dark">
+<div class="pagehead"><div class="brand">Ho<span class="m">m</span>y</div><div class="t">Пачка 6 · Сделки · Инбокс · Админ</div><div class="tgl"><span class="o on" id="tgD" onclick="setT('dark')">☾</span><span class="o" id="tgL" onclick="setT('light')">☀</span></div></div>
+<div class="screen"><div class="screen-h"><b>D6</b> · Сделки (пайплайн · стадии)</div><div class="frames"><div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview"><div class="bnav"><div class="lg">Ho<span class="m">m</span>y</div><div class="btabs"><span class="btab">Дашборд</span><span class="btab">Объявления</span><span class="btab">Клиенты</span><span class="btab">Просмотры</span><span class="btab on">Сделки</span></div><div class="right"><div class="bell"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div><div class="me"><span class="av" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop')"></span><div><div class="nm">Анна Акопян</div><div class="rl">Агент · онлайн</div></div></div></div></div><div class="bwrap"><div class="bhd"><div><h1>Сделки</h1><div class="sub">3 в работе · 1 закрыта в этом месяце</div></div></div><div class="mrow" style="grid-template-columns:repeat(3,1fr)"><div class="mtile"><b>3</b><div class="lbl">В работе</div></div><div class="mtile"><b>1</b><div class="lbl">Закрыто за месяц</div><div class="delta up"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg>350 000</div></div><div class="mtile"><b>2.1 млн</b><div class="lbl">Оборот за месяц</div></div></div><div style="display:flex;gap:9px;margin-bottom:14px"><span class="chip active">Все</span><span class="chip">Переговоры</span><span class="chip">Документы</span><span class="chip">Закрытые</span></div><div class="deal"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=150&fit=crop')"></div><div class="ti"><b>Современная 2-комнатная · Кентрон</b><div class="mt">Клиент: Арам Геворкян · аренда</div></div><span class="dstage doc">Документы</span><div class="val">350 000<span>комиссия 35 000</span></div></div><div class="deal"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=200&h=150&fit=crop')"></div><div class="ti"><b>3-комнатная семейная · Арабкир</b><div class="mt">Клиент: Лилит Мкртчян · покупка</div></div><span class="dstage neg">Переговоры</span><div class="val">48 млн<span>комиссия 480 000</span></div></div><div class="deal"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=200&h=150&fit=crop')"></div><div class="ti"><b>1-комнатная у метро · Арабкир</b><div class="mt">Клиент: Давид Абрамян · аренда</div></div><span class="dstage won">Закрыта</span><div class="val">220 000<span>комиссия 22 000</span></div></div><div class="deal"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&h=150&fit=crop')"></div><div class="ti"><b>Студия у Республики · Кентрон</b><div class="mt">Клиент: Нарек Саркисян · покупка</div></div><span class="dstage lost">Сорвана</span><div class="val">—<span>комиссия —</span></div></div></div></div></div><div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview"><div class="bnav" style="padding:11px 14px;gap:9px"><div class="lg" style="font-size:14px">Ho<span class="m">m</span>y</div><span style="font-size:11.5px;color:var(--muted);font-weight:600">· Сделки</span><div class="right"><div class="bell" style="width:30px;height:30px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div><span class="av" style="width:30px;height:30px;border-radius:50%;background-size:cover;background-position:center;background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop')"></span></div></div><div class="bwrap" style="padding:16px"><h1 style="font-size:18px;font-weight:700;margin-bottom:12px">Сделки</h1><div style="display:flex;gap:8px;margin-bottom:12px;overflow:auto"><span class="chip active">Все</span><span class="chip">Переговоры</span><span class="chip">Закрытые</span></div><div class="deal" style="padding:10px"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=150&fit=crop')"></div><div class="ti"><b style="font-size:12.5px">2-комн · Кентрон</b><div class="mt">Арам Г. · аренда</div></div><span class="dstage doc">Документы</span></div><div class="deal" style="padding:10px"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=200&h=150&fit=crop')"></div><div class="ti"><b style="font-size:12.5px">3-комн · Арабкир</b><div class="mt">Лилит М. · покупка</div></div><span class="dstage neg">Переговоры</span></div><div class="deal" style="padding:10px"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=200&h=150&fit=crop')"></div><div class="ti"><b style="font-size:12.5px">1-комн · Арабкир</b><div class="mt">Давид А. · аренда</div></div><span class="dstage won">Закрыта</span></div></div></div></div></div></div></div>
+<div class="screen"><div class="screen-h"><b>D7</b> · Инбокс консультанта (live-чат · назначение)</div><div class="frames"><div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview"><div class="bnav"><div class="lg">Ho<span class="m">m</span>y</div><div class="btabs"><span class="btab">Дашборд</span><span class="btab">Объявления</span><span class="btab on">Клиенты</span><span class="btab">Просмотры</span><span class="btab">Сделки</span></div><div class="right"><div class="bell"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div><div class="me"><span class="av" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop')"></span><div><div class="nm">Анна Акопян</div><div class="rl">Агент · онлайн</div></div></div></div></div><div class="bwrap" style="padding:0"><div class="bhd" style="padding:18px 20px 0"><div><h1>Инбокс консультанта</h1><div class="sub">2 непрочитанных · назначение обращений</div></div></div><div style="padding:14px 20px 20px"><div class="inbox"><div class="conv-list"><div class="conv on"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop')"></div><div class="c"><div class="nm">Арам Геворкян<span class="ud"></span><span class="tm">10:26</span></div><div class="pv">Можно уточнить по парковке?</div></div></div><div class="conv"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop')"></div><div class="c"><div class="nm">Лилит Мкртчян<span class="ud"></span><span class="tm">9:14</span></div><div class="pv">Спасибо, жду подтверждение</div></div></div><div class="conv"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop')"></div><div class="c"><div class="nm">Давид Абрамян<span class="tm">вчера</span></div><div class="pv">Отлично, до встречи в четверг</div></div></div><div class="conv"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop')"></div><div class="c"><div class="nm">Нарек Саркисян<span class="tm">вчера</span></div><div class="pv">А есть что-то дешевле?</div></div></div></div><div class="chatpane"><div class="cp-h"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop')"></div><div><div class="nm">Арам Геворкян</div><div class="st">онлайн · 2-комн Кентрон</div></div><div class="assign"><span class="a-av" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop')"></span>Назначено: Анна <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div></div><div class="cp-body"><div class="msg them">Здравствуйте! Помогу с объектом на Северном проспекте.<div class="tm">10:24</div></div><div class="msg me em3d"><span>Можно уточнить по парковке?</span><div class="tm">10:26</div></div><div class="msg them">Двор закрытый, фиксированного места нет. Уточню аренду места рядом.<div class="tm">10:27</div></div><div class="msg me em3d"><span>Спасибо! Запишите на просмотр в четверг.</span><div class="tm">10:29</div></div></div><div class="cp-comp"><input placeholder="Ответить…"><div class="send em3d"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></div></div></div></div></div></div></div></div><div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview"><div class="bnav" style="padding:11px 14px;gap:9px"><div class="lg" style="font-size:14px">Ho<span class="m">m</span>y</div><span style="font-size:11.5px;color:var(--muted);font-weight:600">· Инбокс</span><div class="right"><div class="bell" style="width:30px;height:30px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div><span class="av" style="width:30px;height:30px;border-radius:50%;background-size:cover;background-position:center;background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop')"></span></div></div><div style="height:100%;display:flex;flex-direction:column"><div class="cp-h"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop')"></div><div><div class="nm">Арам Геворкян</div><div class="st">2-комн Кентрон</div></div></div><div class="cp-body" style="flex:1"><div class="msg them">Здравствуйте! Помогу с объектом.<div class="tm">10:24</div></div><div class="msg me em3d"><span>Уточните по парковке?</span></div><div class="msg them">Двор закрытый, места нет. Уточню аренду рядом.<div class="tm">10:27</div></div></div><div class="cp-comp"><input placeholder="Ответить…"><div class="send em3d"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></div></div></div></div></div></div></div></div>
+<div class="screen"><div class="screen-h"><b>E1</b> · Админ-дашборд (метрики платформы)</div><div class="frames"><div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview"><div class="bnav"><div class="lg">Ho<span class="m">m</span>y</div><div class="btabs"><span class="btab on">Обзор</span><span class="btab">Модерация</span><span class="btab">Пользователи</span></div><div class="right"><div class="bell"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div><div class="me"><span class="av" style="background-image:url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&h=80&fit=crop')"></span><div><div class="nm">Давид Петросян</div><div class="rl">Администратор</div></div></div></div></div><div class="bwrap"><div class="bhd"><div><h1>Обзор платформы</h1><div class="sub">Ереван · последние 30 дней</div></div></div><div class="mrow"><div class="mtile"><b>4 820</b><div class="lbl">Пользователей</div><div class="delta up"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg>+312</div></div><div class="mtile"><b>1 540</b><div class="lbl">Объявлений</div><div class="delta up"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg>+96</div></div><div class="mtile"><b>18</b><div class="lbl">На модерации</div></div><div class="mtile"><b>37</b><div class="lbl">Сделок за месяц</div><div class="delta up"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg>+9</div></div></div><div class="bsec"><div class="sh"><h3>Требуют внимания</h3><span class="a">Вся модерация</span></div><div class="lrow"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=200&h=150&fit=crop')"></div><div class="ti"><b>1-комнатная у метро</b><div class="mt">Агент: Анна Акопян · подана 2 ч назад</div></div><span class="stat pend">На модерации</span></div><div class="lrow"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&h=150&fit=crop')"></div><div class="ti"><b>Студия у Республики</b><div class="mt">Агент: Гор Азарян · жалоба на фото</div></div><span class="stat rej">Жалоба</span></div></div><div class="bsec"><div class="sh"><h3>Новые пользователи</h3><span class="a">Все пользователи</span></div><div class="lead"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop')"></div><div class="ti" style="flex:1"><div class="nm">Мария Восканян</div><div class="mt">Покупатель · регистрация сегодня</div></div><span class="role">Покупатель</span></div></div></div></div></div><div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview"><div class="bnav" style="padding:11px 14px;gap:9px"><div class="lg" style="font-size:14px">Ho<span class="m">m</span>y</div><span style="font-size:11.5px;color:var(--muted);font-weight:600">· Обзор</span><div class="right"><div class="bell" style="width:30px;height:30px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div><span class="av" style="width:30px;height:30px;border-radius:50%;background-size:cover;background-position:center;background-image:url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&h=80&fit=crop')"></span></div></div><div class="bwrap" style="padding:16px"><h1 style="font-size:18px;font-weight:700;margin-bottom:12px">Обзор платформы</h1><div class="mrow" style="grid-template-columns:1fr 1fr;margin-bottom:16px"><div class="mtile"><b>4 820</b><div class="lbl">Пользователей</div><div class="delta up"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg>+312</div></div><div class="mtile"><b>18</b><div class="lbl">На модерации</div></div></div><div class="bsec"><div class="sh"><h3 style="font-size:14px">Требуют внимания</h3></div><div class="lrow" style="padding:9px"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=200&h=150&fit=crop')"></div><div class="ti"><b style="font-size:12.5px">1-комн у метро</b><div class="mt">на модерации · 2 ч</div></div><span class="stat pend">Модер.</span></div></div></div></div></div></div></div></div>
+<div class="screen"><div class="screen-h"><b>E2</b> · Модерация объявлений (approve / reject)</div><div class="frames"><div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview"><div class="bnav"><div class="lg">Ho<span class="m">m</span>y</div><div class="btabs"><span class="btab">Обзор</span><span class="btab on">Модерация</span><span class="btab">Пользователи</span></div><div class="right"><div class="bell"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div><div class="me"><span class="av" style="background-image:url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&h=80&fit=crop')"></span><div><div class="nm">Давид Петросян</div><div class="rl">Администратор</div></div></div></div></div><div class="bwrap"><div class="bhd"><div><h1>Модерация объявлений</h1><div class="sub">18 в очереди · проверьте факты и фото</div></div></div><div style="display:flex;gap:9px;margin-bottom:14px"><span class="chip active">В очереди</span><span class="chip">Одобренные</span><span class="chip">Отклонённые</span></div><div class="mod"><div class="ph" style="background-image:url('https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=200&h=150&fit=crop')"></div><div class="mi"><b>1-комнатная у метро</b><div class="mt">Комитас 55 · Арабкир · 55 м² · 220 000 AMD</div><div class="mt" style="margin-top:5px">Агент: Анна Акопян · подана 2 ч назад</div><div class="flags"><span class="flag ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Документы полные</span><span class="flag ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Застройщик проверен</span><span class="flag warn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>Фото без метаданных</span></div></div><div class="macts"><button class="btn btn-primary em3d"><span>Одобрить</span></button><button class="btn-danger">Отклонить</button></div></div><div class="mod"><div class="ph" style="background-image:url('https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&h=150&fit=crop')"></div><div class="mi"><b>Студия у Республики</b><div class="mt">Амирян · Кентрон · 38 м² · 180 000 AMD</div><div class="mt" style="margin-top:5px">Агент: Гор Азарян · жалоба пользователя</div><div class="flags"><span class="flag warn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>Цена ниже рынка на 30%</span><span class="flag warn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>Жалоба на фото</span></div></div><div class="macts"><button class="btn btn-primary em3d"><span>Одобрить</span></button><button class="btn-danger">Отклонить</button></div></div></div></div></div><div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview"><div class="bnav" style="padding:11px 14px;gap:9px"><div class="lg" style="font-size:14px">Ho<span class="m">m</span>y</div><span style="font-size:11.5px;color:var(--muted);font-weight:600">· Модерация</span><div class="right"><div class="bell" style="width:30px;height:30px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div><span class="av" style="width:30px;height:30px;border-radius:50%;background-size:cover;background-position:center;background-image:url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&h=80&fit=crop')"></span></div></div><div class="bwrap" style="padding:16px"><h1 style="font-size:18px;font-weight:700;margin-bottom:12px">Модерация</h1><div style="display:flex;gap:8px;margin-bottom:12px"><span class="chip active">В очереди</span><span class="chip">Одобр.</span></div><div class="mod" style="flex-direction:column;gap:10px"><div class="ph" style="width:100%;height:120px" style="background-image:url('https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=200&h=150&fit=crop')"></div><div class="mi"><b>1-комнатная у метро</b><div class="mt">Арабкир · 55 м² · 220 000</div><div class="flags"><span class="flag ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Документы полные</span><span class="flag warn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>Фото без метаданных</span></div></div><div style="display:flex;gap:16px;align-items:center"><button class="btn btn-primary em3d"><span>Одобрить</span></button><button class="btn-danger">Отклонить</button></div></div></div></div></div></div></div></div>
+<div class="screen"><div class="screen-h"><b>E3</b> · Пользователи (роли · блокировка)</div><div class="frames"><div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview"><div class="bnav"><div class="lg">Ho<span class="m">m</span>y</div><div class="btabs"><span class="btab">Обзор</span><span class="btab">Модерация</span><span class="btab on">Пользователи</span></div><div class="right"><div class="bell"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div><div class="me"><span class="av" style="background-image:url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&h=80&fit=crop')"></span><div><div class="nm">Давид Петросян</div><div class="rl">Администратор</div></div></div></div></div><div class="bwrap"><div class="bhd"><div><h1>Пользователи</h1><div class="sub">4 820 всего · роли и доступ</div></div></div><div style="display:flex;gap:9px;margin-bottom:14px"><span class="chip active">Все</span><span class="chip">Покупатели</span><span class="chip">Брокеры</span><span class="chip">Заблокированные</span></div><div class="utable"><div class="urow"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop')"></div><div style="flex:1"><div class="nm">Анна Акопян</div><div class="em">anna@homy.am</div></div><span class="role broker">Брокер</span><span class="ust active" style="width:78px">● Активен</span><button class="btn btn-sec">Заблокировать</button></div><div class="urow"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop')"></div><div style="flex:1"><div class="nm">Мария Восканян</div><div class="em">maria@mail.am</div></div><span class="role ">Покупатель</span><span class="ust active" style="width:78px">● Активен</span><button class="btn btn-sec">Заблокировать</button></div><div class="urow"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop')"></div><div style="flex:1"><div class="nm">Гор Азарян</div><div class="em">gor@mail.am</div></div><span class="role broker">Брокер</span><span class="ust active" style="width:78px">● Активен</span><button class="btn btn-sec">Заблокировать</button></div><div class="urow"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop')"></div><div style="flex:1"><div class="nm">Нарек Саркисян</div><div class="em">narek@mail.am</div></div><span class="role ">Покупатель</span><span class="ust blocked" style="width:78px">● Заблокирован</span><button class="btn btn-sec">Разблокировать</button></div><div class="urow"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&h=80&fit=crop')"></div><div style="flex:1"><div class="nm">Давид Петросян</div><div class="em">admin@homy.am</div></div><span class="role admin">Админ</span><span class="ust active" style="width:78px">● Активен</span><button class="btn btn-sec">—</button></div></div></div></div></div><div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview"><div class="bnav" style="padding:11px 14px;gap:9px"><div class="lg" style="font-size:14px">Ho<span class="m">m</span>y</div><span style="font-size:11.5px;color:var(--muted);font-weight:600">· Пользователи</span><div class="right"><div class="bell" style="width:30px;height:30px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div><span class="av" style="width:30px;height:30px;border-radius:50%;background-size:cover;background-position:center;background-image:url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&h=80&fit=crop')"></span></div></div><div class="bwrap" style="padding:16px"><h1 style="font-size:18px;font-weight:700;margin-bottom:12px">Пользователи</h1><div style="display:flex;gap:8px;margin-bottom:12px;overflow:auto"><span class="chip active">Все</span><span class="chip">Брокеры</span><span class="chip">Заблок.</span></div><div class="utable"><div class="urow" style="padding:11px 13px"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop')"></div><div style="flex:1"><div class="nm" style="font-size:12.5px">Анна Акопян</div><div class="em">Брокер</div></div><span class="ust active">Активен</span></div><div class="urow" style="padding:11px 13px"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop')"></div><div style="flex:1"><div class="nm" style="font-size:12.5px">Нарек Саркисян</div><div class="em">Покупатель</div></div><span class="ust blocked">Заблок.</span></div></div></div></div></div></div></div></div>
+
+<script>function setT(t){document.body.dataset.theme=t;document.getElementById('tgD').classList.toggle('on',t==='dark');document.getElementById('tgL').classList.toggle('on',t==='light');}</script>
+<style>/*BNAVFIX*/
+.bnav .lm-btn{font-size:15px;background:none;border:0;font-family:inherit;font-weight:800;letter-spacing:-.02em;cursor:pointer;color:var(--ink);display:inline-flex;align-items:center;gap:0;padding:0}
+.bnav .lm-btn .m{color:var(--em)}.bnav .lm-btn>svg{opacity:.55;margin-left:5px}
+.bnav .lm-pop{position:absolute;top:calc(100% + 8px);left:0;right:auto;z-index:60;min-width:214px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.45);padding:8px}
+.bnav .lmw:not(.open) .lm-pop{display:none}
+.bnav .lm-sep{height:1px;background:var(--hair);margin:6px 4px}
+.bnav .bbk{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:var(--em);background:none;border:0;font-family:inherit;cursor:pointer;padding:0}
+</style>
+<script>/*BNAVINJECT*/(function(){
+  function it(t){return '<div class="lm-i">'+t+'</div>';}
+  var chev='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+  var back='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>';
+  document.querySelectorAll('.bnav').forEach(function(nav){
+    if(nav.querySelector('.lmw'))return;
+    var admin=/Администратор/.test(nav.textContent);
+    var mobile=!nav.querySelector('.btabs');
+    var lg=nav.querySelector('.lg'); if(!lg)return;
+    var items = admin
+      ? '<div class="lm-head">Админ-панель</div>'+it('Обзор')+it('Модерация')+it('Пользователи')+it('Настройки')+'<div class="lm-sep"></div>'+it('Выйти')
+      : '<div class="lm-head">Кабинет брокера</div>'+it('Дашборд')+it('Мои объявления')+it('Клиенты')+it('Просмотры')+it('Сделки')+it('Профиль')+it('Настройки')+'<div class="lm-sep"></div>'+it('Выйти');
+    var lmw=document.createElement('div'); lmw.className='lmw'; lmw.style.flex='none';
+    lmw.innerHTML='<button class="lm-btn">Ho<span class="m">m</span>y '+chev+'</button><div class="lm-pop">'+items+'</div>';
+    lg.replaceWith(lmw);
+    var bk=document.createElement('button'); bk.className='bbk';
+    bk.innerHTML=back+(mobile?'':'Назад');
+    if(mobile){ nav.insertBefore(bk,lmw); } else { lmw.after(bk); }
+  });
+  document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.lm-btn');var all=document.querySelectorAll('.lmw');if(b){var w=b.closest('.lmw');var o=w.classList.contains('open');all.forEach(function(x){x.classList.remove('open')});if(!o)w.classList.add('open');e.stopPropagation();return;}all.forEach(function(x){x.classList.remove('open')});});
+})();</script>
+</body>
+</html>

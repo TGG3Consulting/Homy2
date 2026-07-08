@@ -1,0 +1,167 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Homy — ещё 30 вариантов кнопок</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root,[data-theme="dark"]{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#F2F4F7;--muted:#8B93A3;--soft:#C5CAD3;--hair:rgba(255,255,255,.10);--em-hi:#2BC091;--em:#0B6E4F;--em-lo:#052A1D;--amber:#E0A83B;--teal:#12A594;--cyan:#2BC0B0}
+[data-theme="light"]{--bg:#EEF0F3;--surface:#FFFFFF;--surface2:#F4F6F8;--ink:#14181F;--muted:#6A7382;--soft:#39414D;--hair:rgba(20,24,31,.10);--em-hi:#1EA574;--em:#0A6045;--em-lo:#04281C;--amber:#B9822A;--teal:#0E8C7D;--cyan:#159A8C}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;padding:40px 32px 80px;transition:background .3s}
+.top{max-width:1280px;margin:0 auto 30px;display:flex;align-items:center;gap:16px}
+.top .brand{font-size:22px;font-weight:800;letter-spacing:-.02em}.top .brand .m{color:var(--em)}
+.top .t{font-size:13px;font-weight:600;color:var(--muted)}
+.tgl{margin-left:auto;display:flex;gap:2px;background:var(--surface2);border:1px solid var(--hair);border-radius:999px;padding:3px}
+.tgl .o{width:36px;height:28px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;font-size:14px}
+.tgl .o.on{color:#fff;background:linear-gradient(180deg,var(--em-hi),var(--em))}
+.hint{max-width:1280px;margin:0 auto 26px;font-size:13px;color:var(--soft);line-height:1.6;background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:16px 18px}
+.grid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.cell{background:var(--surface);border:1px solid var(--hair);border-radius:18px;padding:26px 22px 20px;display:flex;flex-direction:column;align-items:center;min-height:196px;position:relative;overflow:hidden}
+.cell .num{position:absolute;top:12px;left:14px;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.05em}
+.cell .stage{flex:1;display:flex;align-items:center;justify-content:center;width:100%;padding:16px 0 18px}
+.cell .name{font-size:13.5px;font-weight:700;text-align:center}
+.cell .desc{font-size:11.5px;color:var(--muted);text-align:center;margin-top:5px;line-height:1.45}
+.b{font-family:inherit;cursor:pointer;font-weight:700;font-size:14px;border:0;display:inline-flex;align-items:center;justify-content:center;gap:9px;transition:.2s ease;background:none;color:inherit}
+.ico{width:16px;height:16px;flex:none}
+/* 16 Sweep Fill */
+.v16{position:relative;overflow:hidden;color:var(--em);border:1.5px solid var(--em);padding:12px 26px;border-radius:11px;z-index:0;font-weight:600}
+.v16::before{content:'';position:absolute;inset:0;background:var(--em);transform:scaleX(0);transform-origin:left;transition:transform .3s ease;z-index:-1}
+.v16:hover{color:#fff}.v16:hover::before{transform:scaleX(1)}
+/* 17 Arrow Slide */
+.v17{background:var(--em);color:#fff;padding:12px 24px;border-radius:11px}
+.v17 .ico{transition:transform .25s}.v17:hover .ico{transform:translateX(5px)}.v17:hover{background:#0d7d59}
+/* 18 Shimmer */
+.v18{position:relative;overflow:hidden;background:var(--em);color:#fff;padding:12px 26px;border-radius:11px}
+.v18::after{content:'';position:absolute;top:0;left:-60%;width:38%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg)}
+.v18:hover::after{animation:shim .8s ease}@keyframes shim{0%{left:-60%}100%{left:130%}}
+/* 19 Magnetic Lift */
+.v19{background:var(--em);color:#fff;padding:13px 28px;border-radius:16px;box-shadow:0 6px 16px rgba(0,0,0,.3)}
+.v19:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 18px 34px rgba(0,0,0,.42)}
+/* 20 Underline Grow */
+.v20{color:var(--ink);padding:12px 12px;position:relative;font-weight:600}
+.v20::after{content:'';position:absolute;left:50%;bottom:6px;width:0;height:2px;background:var(--em);transition:.25s ease;transform:translateX(-50%)}
+.v20:hover{color:var(--em)}.v20:hover::after{width:calc(100% - 24px)}
+/* 21 Split Action */
+.v21{padding:0;border-radius:11px;overflow:hidden;background:var(--em);color:#fff}
+.v21 .lbl{padding:12px 20px}.v21 .end{display:flex;align-items:center;padding:0 14px;background:rgba(0,0,0,.22);align-self:stretch}
+.v21:hover .end{background:rgba(0,0,0,.36)}
+/* 22 Pill + Circle */
+.v22{padding:5px 5px 5px 22px;border-radius:999px;background:var(--surface2);color:var(--ink);border:1px solid var(--hair);gap:14px;font-weight:600}
+.v22 .circ{width:34px;height:34px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;color:#fff}
+.v22:hover{border-color:var(--em)}.v22:hover .circ .ico{transform:translateX(3px)}.v22 .circ .ico{transition:.2s}
+/* 23 Squircle Soft */
+.v23{background:linear-gradient(160deg,var(--em-hi),var(--em));color:#fff;padding:13px 30px;border-radius:22px}
+.v23:hover{filter:brightness(1.05)}
+/* 24 Brutalist Offset */
+.v24{background:var(--em);color:#fff;padding:12px 24px;border-radius:8px;border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);transition:.12s}
+.v24:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+/* 25 Editorial Uppercase */
+.v25{color:var(--ink);padding:11px 4px;text-transform:uppercase;letter-spacing:.2em;font-size:11.5px;font-weight:700;border-bottom:1.5px solid var(--em);border-radius:0}
+.v25:hover{color:var(--em)}
+/* 26 Duotone Emerald->Teal */
+.v26{color:#fff;padding:12px 28px;border-radius:12px;background:linear-gradient(120deg,var(--em),var(--teal) 55%,var(--cyan))}
+.v26:hover{filter:brightness(1.07)}
+/* 27 Glass Frost */
+.v27{color:var(--em-hi);padding:12px 26px;border-radius:12px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px)}
+.v27:hover{background:rgba(255,255,255,.18);color:#fff}
+/* 28 Inset Press */
+.v28{background:var(--em);color:#fff;padding:12px 26px;border-radius:12px;box-shadow:inset 0 2px 6px rgba(0,0,0,.4),inset 0 -1px 0 rgba(255,255,255,.15)}
+.v28:hover{box-shadow:inset 0 3px 9px rgba(0,0,0,.5)}
+/* 29 Metallic Sheen */
+.v29{color:#fff;padding:12px 28px;border-radius:12px;background:linear-gradient(180deg,#1c6b52,#0a3d2c);border-top:1px solid rgba(255,255,255,.3);box-shadow:0 6px 14px rgba(0,0,0,.35)}
+.v29:hover{filter:brightness(1.1)}
+/* 30 Ring Focus */
+.v30{background:var(--em);color:#fff;padding:12px 26px;border-radius:11px;box-shadow:0 0 0 0 color-mix(in srgb,var(--em) 40%,transparent)}
+.v30:hover{box-shadow:0 0 0 4px color-mix(in srgb,var(--em) 34%,transparent)}
+/* 31 Gradient Text on Ink */
+.v31{background:var(--ink);padding:13px 28px;border-radius:12px;font-weight:800}
+.v31 span{background:linear-gradient(90deg,var(--em-hi),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.v31:hover{opacity:.9}
+/* 32 Soft Neumorph */
+.v32{background:var(--surface2);color:var(--em);padding:13px 28px;border-radius:16px;box-shadow:6px 6px 14px rgba(0,0,0,.35),-6px -6px 14px rgba(255,255,255,.05)}
+.v32:hover{box-shadow:3px 3px 8px rgba(0,0,0,.35),-3px -3px 8px rgba(255,255,255,.05)}
+/* 33 Ticket Notch */
+.v33{background:var(--em);color:#fff;padding:12px 24px;border-radius:10px;position:relative}
+.v33::before,.v33::after{content:'';position:absolute;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;background:var(--surface)}
+.v33::before{left:-6px}.v33::after{right:-6px}
+.v33:hover{background:#0d7d59}
+/* 34 Ghost + Dot */
+.v34{color:var(--ink);padding:12px 22px;border:1px solid var(--hair);border-radius:11px;gap:9px;font-weight:600}
+.v34 .dot{width:8px;height:8px;border-radius:50%;background:var(--em)}
+.v34:hover{border-color:var(--em);color:var(--em)}
+/* 35 Gradient Mesh */
+.v35{color:#fff;padding:13px 28px;border-radius:14px;background:radial-gradient(80% 120% at 0% 0%,var(--em-hi),transparent 60%),radial-gradient(90% 120% at 100% 100%,var(--teal),transparent 55%),var(--em)}
+.v35:hover{filter:brightness(1.06)}
+/* 36 Compact Mini */
+.v36{background:var(--em);color:#fff;padding:8px 16px;border-radius:9px;font-size:12.5px}
+.v36:hover{background:#0d7d59}
+/* 37 Icon FAB */
+.v37{width:54px;height:54px;border-radius:50%;background:var(--em);color:#fff;box-shadow:0 10px 24px color-mix(in srgb,var(--em) 45%,transparent)}
+.v37 .ico{width:20px;height:20px}.v37:hover{transform:scale(1.07)}
+/* 38 Wide CTA Bar */
+.v38{width:230px;background:var(--em);color:#fff;padding:15px;border-radius:14px;font-size:15px}
+.v38:hover{background:#0d7d59}
+/* 39 Segmented CTA */
+.v39{padding:4px;border-radius:12px;background:var(--surface2);border:1px solid var(--hair);gap:4px}
+.v39 .seg{padding:8px 15px;border-radius:9px;font-size:13px;font-weight:600;color:var(--muted)}
+.v39 .seg.on{background:var(--em);color:#fff}
+/* 40 Amber Accent */
+.v40{background:var(--amber);color:#1a1206;padding:12px 26px;border-radius:11px;font-weight:700}
+.v40:hover{filter:brightness(1.06)}
+/* 41 Outline Amber */
+.v41{color:var(--amber);border:1.5px solid var(--amber);padding:12px 26px;border-radius:11px;font-weight:600}
+.v41:hover{background:var(--amber);color:#1a1206}
+/* 42 Glow Pulse */
+.v42{background:var(--em);color:#fff;padding:12px 26px;border-radius:12px;animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--em) 50%,transparent)}55%{box-shadow:0 0 0 9px color-mix(in srgb,var(--em) 0%,transparent)}}
+/* 43 Roll Reveal */
+.v43{position:relative;overflow:hidden;background:var(--em);color:#fff;padding:0 26px;border-radius:12px;height:44px}
+.v43 .roll{display:inline-flex;flex-direction:column;height:20px;line-height:20px;overflow:hidden}
+.v43 .roll b{font-weight:700;transition:transform .28s ease}
+.v43:hover .roll b{transform:translateY(-20px)}
+/* 44 Card-btn */
+.v44{background:var(--surface2);border:1px solid var(--hair);color:var(--ink);padding:11px 20px;border-radius:13px;box-shadow:0 8px 20px rgba(0,0,0,.28);gap:11px}
+.v44 .k{width:28px;height:28px;border-radius:8px;background:var(--em);display:flex;align-items:center;justify-content:center;color:#fff}
+.v44:hover{transform:translateY(-2px)}
+/* 45 Minimal Link */
+.v45{color:var(--em);padding:10px 6px;font-weight:600;gap:6px}
+.v45 .ico{transition:transform .2s}.v45:hover .ico{transform:translateX(3px)}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+</style></head>
+<body data-theme="dark">
+<div class="top"><div class="brand">Ho<span class="m">m</span>y</div><div class="t">Ещё 30 вариантов кнопки · №16–45 · выбери номер</div>
+<div class="tgl"><span class="o on" id="tgD" onclick="document.body.dataset.theme='dark';this.classList.add('on');document.getElementById('tgL').classList.remove('on')">☾</span><span class="o" id="tgL" onclick="document.body.dataset.theme='light';this.classList.add('on');document.getElementById('tgD').classList.remove('on')">☀</span></div></div>
+<div class="hint">Свободный поиск без «кошачьего глаза»: разные материалы, формы и поведение на ховере, плюс пара альтернативных акцентов (тил, амбер). Наведи курсор — многие анимируются. Можешь назвать номера отсюда и из первой подборки (1–15). Скажешь primary + secondary — раскатаю по всему продукту.</div>
+<div class="grid">
+<div class="cell"><span class="num">16</span><div class="stage"><button class="b v16">Начать поиск</button></div><div class="name">Sweep Fill</div><div class="desc">Контур, изумруд заливает слева направо на ховере.</div></div>
+<div class="cell"><span class="num">17</span><div class="stage"><button class="b v17">Начать поиск<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button></div><div class="name">Arrow Slide</div><div class="desc">Стрелка уезжает вправо при наведении.</div></div>
+<div class="cell"><span class="num">18</span><div class="stage"><button class="b v18">Начать поиск</button></div><div class="name">Shimmer</div><div class="desc">Блик-«отсвет» пробегает по кнопке на ховере.</div></div>
+<div class="cell"><span class="num">19</span><div class="stage"><button class="b v19">Начать поиск</button></div><div class="name">Magnetic Lift</div><div class="desc">Приподнимается и слегка увеличивается.</div></div>
+<div class="cell"><span class="num">20</span><div class="stage"><button class="b v20">Начать поиск</button></div><div class="name">Underline Grow</div><div class="desc">Текст + линия, растущая из центра.</div></div>
+<div class="cell"><span class="num">21</span><div class="stage"><button class="b v21"><span class="lbl">Начать поиск</span><span class="end"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></button></div><div class="name">Split Action</div><div class="desc">Ярлык + отдельная иконка-сегмент. Составной CTA.</div></div>
+<div class="cell"><span class="num">22</span><div class="stage"><button class="b v22">Начать поиск<span class="circ"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></button></div><div class="name">Pill + Circle</div><div class="desc">Капсула с круглым чипом-стрелкой справа.</div></div>
+<div class="cell"><span class="num">23</span><div class="stage"><button class="b v23">Начать поиск</button></div><div class="name">Squircle Soft</div><div class="desc">Мягкий сквиркл, диагональный градиент.</div></div>
+<div class="cell"><span class="num">24</span><div class="stage"><button class="b v24">Начать поиск</button></div><div class="name">Brutalist Offset</div><div class="desc">Жёсткая офсет-тень, «продавливается» на клик.</div></div>
+<div class="cell"><span class="num">25</span><div class="stage"><button class="b v25">Начать поиск</button></div><div class="name">Editorial Caps</div><div class="desc">Капс, широкий трекинг, тонкая линия. Журнальный минимализм.</div></div>
+<div class="cell"><span class="num">26</span><div class="stage"><button class="b v26">Начать поиск</button></div><div class="name">Duotone → Teal</div><div class="desc">Диагональ изумруд→тил→циан. Современно.</div></div>
+<div class="cell"><span class="num">27</span><div class="stage"><button class="b v27">Начать поиск</button></div><div class="name">Glass Frost</div><div class="desc">Матовое светлое стекло, изумрудный текст.</div></div>
+<div class="cell"><span class="num">28</span><div class="stage"><button class="b v28">Начать поиск</button></div><div class="name">Inset Press</div><div class="desc">Вдавленная, тактильная.</div></div>
+<div class="cell"><span class="num">29</span><div class="stage"><button class="b v29">Начать поиск</button></div><div class="name">Metallic Sheen</div><div class="desc">Тёмный металл + светлая верхняя кромка. Премиально.</div></div>
+<div class="cell"><span class="num">30</span><div class="stage"><button class="b v30">Начать поиск</button></div><div class="name">Ring Focus</div><div class="desc">Мягкое кольцо-обводка появляется на ховере.</div></div>
+<div class="cell"><span class="num">31</span><div class="stage"><button class="b v31"><span>Начать поиск</span></button></div><div class="name">Gradient Text</div><div class="desc">Чернильная кнопка, градиентный текст.</div></div>
+<div class="cell"><span class="num">32</span><div class="stage"><button class="b v32">Начать поиск</button></div><div class="name">Soft Neumorph</div><div class="desc">Неоморфизм — двойная мягкая тень.</div></div>
+<div class="cell"><span class="num">33</span><div class="stage"><button class="b v33">Начать поиск</button></div><div class="name">Ticket Notch</div><div class="desc">Вырезы-«билет» по бокам. Тема недвижимости.</div></div>
+<div class="cell"><span class="num">34</span><div class="stage"><button class="b v34"><span class="dot"></span>Начать поиск</button></div><div class="name">Ghost + Dot</div><div class="desc">Контур со статус-точкой. Спокойно.</div></div>
+<div class="cell"><span class="num">35</span><div class="stage"><button class="b v35">Начать поиск</button></div><div class="name">Gradient Mesh</div><div class="desc">Многоточечный меш-градиент. Насыщенно.</div></div>
+<div class="cell"><span class="num">36</span><div class="stage"><button class="b v36">Начать поиск</button></div><div class="name">Compact Mini</div><div class="desc">Плотная малая кнопка для второстепенных строк.</div></div>
+<div class="cell"><span class="num">37</span><div class="stage"><button class="b v37"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button></div><div class="name">Icon FAB</div><div class="desc">Круглая плавающая кнопка (для карты).</div></div>
+<div class="cell"><span class="num">38</span><div class="stage"><button class="b v38">Начать поиск</button></div><div class="name">Wide CTA Bar</div><div class="desc">Широкая полоса — primary в нижних шторках моб.</div></div>
+<div class="cell"><span class="num">39</span><div class="stage"><div class="b v39"><span class="seg on">Купить</span><span class="seg">Аренда</span></div></div><div class="name">Segmented CTA</div><div class="desc">Сегмент-переключатель как действие выбора.</div></div>
+<div class="cell"><span class="num">40</span><div class="stage"><button class="b v40">Начать поиск</button></div><div class="name">Amber Accent</div><div class="desc">Тёплый амбер — альтернативный акцент.</div></div>
+<div class="cell"><span class="num">41</span><div class="stage"><button class="b v41">Начать поиск</button></div><div class="name">Outline Amber</div><div class="desc">Амбер-контур, ghost.</div></div>
+<div class="cell"><span class="num">42</span><div class="stage"><button class="b v42">Начать поиск</button></div><div class="name">Glow Pulse</div><div class="desc">Мягкое пульсирующее свечение.</div></div>
+<div class="cell"><span class="num">43</span><div class="stage"><button class="b v43"><span class="roll"><b>Начать поиск</b><b>Поехали →</b></span></button></div><div class="name">Roll Reveal</div><div class="desc">Подпись прокручивается вверх на ховере.</div></div>
+<div class="cell"><span class="num">44</span><div class="stage"><button class="b v44"><span class="k"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>Начать поиск</button></div><div class="name">Card-btn</div><div class="desc">Оформлена как мини-карточка с иконкой.</div></div>
+<div class="cell"><span class="num">45</span><div class="stage"><button class="b v45">Начать поиск<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button></div><div class="name">Minimal Link</div><div class="desc">Текст + стрелка. Третичный уровень.</div></div>
+</div>
+</body></html>

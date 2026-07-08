@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homy — UI-макеты направлений (карточка объекта + AI-строка)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Lora:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Montserrat',sans-serif;background:#e9e7ee;color:#1a1a2e;padding:40px 24px 90px;-webkit-font-smoothing:antialiased}
+  .head{max-width:1280px;margin:0 auto 30px}
+  .head h1{font-size:28px;font-weight:800;letter-spacing:-0.02em}
+  .head p{color:#5b5b70;margin-top:8px;max-width:760px;font-size:14.5px;font-weight:500}
+  .head .meta{margin-top:12px;font-size:12.5px;color:#7a7a90;font-weight:600;letter-spacing:.02em}
+  .grid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  @media(max-width:1080px){.grid{grid-template-columns:1fr;max-width:440px}}
+
+  .col{border-radius:22px;overflow:hidden;background:var(--bg);color:var(--ink);box-shadow:0 10px 34px rgba(0,0,0,.12);display:flex;flex-direction:column}
+  .col-h{padding:22px 22px 6px}
+  .kick{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;opacity:.6}
+  .col-name{font-size:22px;font-weight:800;margin-top:6px;letter-spacing:-0.01em}
+  .col-name.serif{font-family:'Source Serif 4',serif;font-weight:700}
+  .col-name.lora{font-family:'Lora',serif;font-weight:700}
+  .col-sub{font-size:12.5px;font-weight:500;opacity:.7;margin-top:6px;line-height:1.45}
+  .block-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;opacity:.5;margin:20px 22px 10px}
+
+  /* PROPERTY CARD */
+  .card{margin:0 22px;border-radius:var(--cardR);overflow:hidden;background:var(--card);box-shadow:0 4px 16px rgba(0,0,0,.14)}
+  .card .ph{height:172px;position:relative;background-size:cover;background-position:center}
+  .card .ph::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.55),rgba(0,0,0,0) 55%)}
+  .card .ph .row{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;z-index:2}
+  .bdg{font-size:10.5px;font-weight:700;padding:5px 10px;border-radius:999px;backdrop-filter:blur(4px)}
+  .bdg.top{background:var(--topbg);color:var(--topfg)}
+  .bdg.match{background:rgba(255,255,255,.92);color:#111;font-family:var(--num);font-weight:700}
+  .card .price-on{position:absolute;left:14px;bottom:12px;z-index:2;color:#fff}
+  .card .price-on b{font-family:var(--num);font-size:21px;font-weight:700;letter-spacing:-.01em}
+  .card .price-on span{font-size:11px;font-weight:600;opacity:.85}
+  .card .b{padding:14px 16px 16px}
+  .card .ttl{font-size:15px;font-weight:700;line-height:1.25}
+  .card .loc{font-size:12px;font-weight:500;opacity:.62;margin-top:4px}
+  .card .specs{display:flex;gap:14px;margin-top:11px;font-size:12px;font-weight:600;opacity:.85}
+  .card .specs span{font-family:var(--num)}
+  .sig{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+  .chip{font-size:11px;font-weight:600;padding:5px 10px;border-radius:8px;display:inline-flex;align-items:center;gap:5px}
+  .chip.ok{background:var(--okbg);color:var(--okfg)}
+  .chip.warn{background:var(--warnbg);color:var(--warnfg)}
+  .ico{width:13px;height:13px;flex:none}
+  .why{margin-top:12px;font-size:11.5px;font-weight:500;line-height:1.5;opacity:.72;border-left:2px solid var(--accent);padding-left:10px}
+  .why b{font-weight:700;opacity:.9}
+
+  /* AI SEARCH BAR */
+  .ai{margin:0 22px 24px;display:flex;align-items:center;gap:11px;background:var(--aibg);color:var(--aifg);border:var(--aibd);border-radius:var(--aiR);padding:14px 15px;box-shadow:var(--aish)}
+  .ai .sp{width:22px;height:22px;border-radius:6px;background:var(--accent);flex:none;display:flex;align-items:center;justify-content:center}
+  .ai .txt{flex:1;font-size:13px;font-weight:500;opacity:.62}
+  .ai .txt.mono{font-family:var(--num)}
+  .ai .kbd{font-size:10px;font-weight:600;opacity:.55;border:1px solid currentColor;border-radius:5px;padding:2px 6px;font-family:var(--num)}
+  .ai .send{font-size:13px;opacity:.55;font-weight:700}
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>Homy — три направления: карточка объекта + AI-строка</h1>
+    <p>Реальный листинг из базы, настоящий Montserrat, бренд Homy. Каждое направление применяет выводы аудита: честный бейдж, осмысленный match-score, сбалансированные сигналы (зелёный + янтарный), меньше «продажного» давления.</p>
+    <div class="meta">Данные: «Современная 2-комнатная квартира в Кентроне» · Северный проспект · 350 000 AMD/мес · 85 м² · этаж 7/12 · match 98%</div>
+  </div>
+
+  <div class="grid">
+
+    <!-- A -->
+    <div class="col" style="
+      --bg:#F4F1E9;--ink:#14203A;--card:#FFFDF8;--cardR:14px;--accent:#4E7A5B;--num:'Source Serif 4',serif;
+      --topbg:rgba(20,32,58,.9);--topfg:#F4F1E9;
+      --okbg:rgba(78,122,91,.15);--okfg:#3C5E48;--warnbg:rgba(176,132,58,.16);--warnfg:#7a5b1e;
+      --aibg:#FFFDF8;--aifg:#14203A;--aibd:1px solid rgba(20,32,58,.2);--aiR:12px;--aish:none;">
+      <div class="col-h">
+        <div class="kick">Направление A</div>
+        <div class="col-name serif">Тихий авторитет</div>
+        <div class="col-sub">Издательская серьёзность. Сериф в цифрах, чернильный синий, бумага. Доверие через сдержанность.</div>
+      </div>
+      <div class="block-label">Карточка объекта</div>
+      <div class="card">
+        <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800')">
+          <div class="row"><span class="bdg top">✓ Проверено Homy</span><span class="bdg match">98%</span></div>
+          <div class="price-on"><b>350 000 AMD</b> <span>/мес</span></div>
+        </div>
+        <div class="b">
+          <div class="ttl">Современная 2-комнатная в Кентроне</div>
+          <div class="loc">Кентрон · Северный проспект</div>
+          <div class="specs"><span>2 спальни</span><span>85 м²</span><span>этаж 7/12</span></div>
+          <div class="sig">
+            <span class="chip ok"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>Застройщик проверен</span>
+            <span class="chip warn"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3L2 20h20L12 3z"/><path d="M12 10v4"/></svg>Парковки нет</span>
+          </div>
+          <div class="why"><b>Мнение Homy.</b> Центр, отличный свет, свежий ремонт. Учтите: цена выше средней по улице.</div>
+        </div>
+      </div>
+      <div class="block-label">AI-строка поиска</div>
+      <div class="ai">
+        <span class="sp"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg></span>
+        <span class="txt">Опишите, какой дом ищете…</span>
+        <span class="send">→</span>
+      </div>
+    </div>
+
+    <!-- B -->
+    <div class="col" style="
+      --bg:#FBF5EC;--ink:#3A2E28;--card:#FFFFFF;--cardR:18px;--accent:#C56A4B;--num:'Lora',serif;
+      --topbg:rgba(58,46,40,.88);--topfg:#FBF5EC;
+      --okbg:rgba(110,122,79,.18);--okfg:#556039;--warnbg:rgba(201,138,46,.18);--warnfg:#8a5a1e;
+      --aibg:#FFFFFF;--aifg:#3A2E28;--aibd:none;--aiR:16px;--aish:0 4px 16px rgba(197,106,75,.16);">
+      <div class="col-h">
+        <div class="kick">Направление B</div>
+        <div class="col-name lora">Тёплый локальный дом</div>
+        <div class="col-sub">Человеческое тепло Армении, но взрослое. Терракота, крем, олива. Доверенный местный.</div>
+      </div>
+      <div class="block-label">Карточка объекта</div>
+      <div class="card">
+        <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800')">
+          <div class="row"><span class="bdg top">✓ Проверено Homy</span><span class="bdg match">98%</span></div>
+          <div class="price-on"><b>350 000 AMD</b> <span>/мес</span></div>
+        </div>
+        <div class="b">
+          <div class="ttl">Современная 2-комнатная в Кентроне</div>
+          <div class="loc">Кентрон · Северный проспект · рядом метро</div>
+          <div class="specs"><span>2 спальни</span><span>85 м²</span><span>этаж 7/12</span></div>
+          <div class="sig">
+            <span class="chip ok"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>Застройщик проверен</span>
+            <span class="chip warn"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3L2 20h20L12 3z"/><path d="M12 10v4"/></svg>Уточните парковку</span>
+          </div>
+          <div class="why"><b>Мнение Homy.</b> Тёплая, светлая квартира в живом районе. Хорошо для пары или небольшой семьи.</div>
+        </div>
+      </div>
+      <div class="block-label">AI-строка поиска</div>
+      <div class="ai">
+        <span class="sp"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg></span>
+        <span class="txt">Расскажите, какой дом вам нужен…</span>
+        <span class="send">→</span>
+      </div>
+    </div>
+
+    <!-- C -->
+    <div class="col" style="
+      --bg:#0E1116;--ink:#E7EAF0;--card:#171C25;--cardR:12px;--accent:#3B6EF6;--num:'JetBrains Mono',monospace;
+      --topbg:rgba(41,165,108,.9);--topfg:#fff;
+      --okbg:rgba(41,165,108,.18);--okfg:#4fd191;--warnbg:rgba(224,168,59,.16);--warnfg:#e0a83b;
+      --aibg:#171C25;--aifg:#E7EAF0;--aibd:1px solid rgba(255,255,255,.13);--aiR:10px;--aish:0 0 0 1px rgba(59,110,246,.18);">
+      <div class="col-h">
+        <div class="kick">Направление C</div>
+        <div class="col-name">Интеллект и ясность</div>
+        <div class="col-sub">Тёмная приборная панель данных. Графит, кобальт, табличные цифры. Данные — герой.</div>
+      </div>
+      <div class="block-label">Карточка объекта</div>
+      <div class="card">
+        <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800')">
+          <div class="row"><span class="bdg top">● verified</span><span class="bdg match">98</span></div>
+          <div class="price-on"><b>350 000 AMD</b> <span>/мес</span></div>
+        </div>
+        <div class="b">
+          <div class="ttl">Современная 2-комнатная в Кентроне</div>
+          <div class="loc">Кентрон · Северный проспект</div>
+          <div class="specs"><span>2 спальни</span><span>85 м²</span><span>7/12</span></div>
+          <div class="sig">
+            <span class="chip ok"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>Застройщик ✓</span>
+            <span class="chip warn"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3L2 20h20L12 3z"/><path d="M12 10v4"/></svg>Парковки нет</span>
+          </div>
+          <div class="why"><b>Мнение Homy.</b> Сильный match по локации и свету. Флаг: цена +8% к медиане улицы.</div>
+        </div>
+      </div>
+      <div class="block-label">AI-строка поиска</div>
+      <div class="ai">
+        <span class="sp"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg></span>
+        <span class="txt mono">спросите Homy…</span>
+        <span class="kbd">⌘K</span>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

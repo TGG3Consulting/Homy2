@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+  <title>Homy Icon 40px</title>
+  <polygon points="20,2 38,18 2,18" fill="#8B7CF8"/>
+  <rect x="4" y="17" width="32" height="21" rx="3" fill="#6B5CE7"/>
+  <rect x="14" y="24" width="9" height="14" rx="2" fill="#FFFFFF"/>
+  <circle cx="29" cy="8" r="4" fill="#FF6B6B"/>
+</svg>

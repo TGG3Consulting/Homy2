@@ -1,0 +1,487 @@
+// HomLy Prisma Schema
+// PostgreSQL database schema for HomLy real estate platform
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USERS MODEL
+// ============================================
+model User {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email         String   @unique @db.VarChar(255)
+  passwordHash  String?  @map("password_hash") @db.VarChar(255)
+  emailVerified Boolean  @default(false) @map("email_verified")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
+
+  // Role for admin functionality
+  role                  String   @default("user") // user, moderator, admin
+
+  // New fields for HomLy features
+  user_type             String?  @default("buyer") // buyer, renter, owner, agent, consultant
+  language_preference   String?  @default("en")
+  phone                 String?
+  notifications_enabled Boolean  @default(true) @map("notifications_enabled")
+  search_preferences    Json?    @map("search_preferences")
+  name                  String?  @db.VarChar(100)
+  first_name            String   @map("first_name") @db.VarChar(100)
+  last_name             String   @map("last_name") @db.VarChar(100)
+  patronymic            String?  @map("patronymic") @db.VarChar(100)
+  avatar_url            String?  @map("avatar_url") @db.VarChar(500)
+
+  // Admin/Moderation fields
+  is_blocked    Boolean   @default(false) @map("is_blocked")
+  blocked_at    DateTime? @map("blocked_at")
+  blocked_by    String?   @db.Uuid @map("blocked_by")
+  block_reason  String?   @map("block_reason")
+
+  // Self-relation for blocked_by tracking
+  blocker       User?     @relation("UserBlocker", fields: [blocked_by], references: [id])
+  blocked_users User[]    @relation("UserBlocker")
+
+  // Consultant status (for live chat)
+  is_online           Boolean  @default(false) @map("is_online")
+
+  // Relations
+  otpCodes            OtpCode[]
+  passwordResetTokens PasswordResetToken[]
+  oauthAccounts       OauthAccount[]
+  favorites           Favorite[]
+  owned_properties    Property[]        @relation("PropertyOwner")
+  property_listings   PropertyListing[]
+  viewing_slots       ViewingSlot[]
+  admin_actions       AdminActionLog[] @relation("AdminActor")
+  notifications       Notification[]
+  reviews             Review[]
+  savedSearches       SavedSearch[]
+
+  // Viewing relations (two-party negotiation system)
+  viewingsAsClient    Viewing[] @relation("ViewingClient")
+  viewingsAsAgent     Viewing[] @relation("ViewingAgent")
+  viewingsCreated     Viewing[] @relation("ViewingCreator")
+  viewingsProposed    Viewing[] @relation("ViewingProposer")
+  viewingsCancelled   Viewing[] @relation("ViewingCanceller")
+
+  // Live chat relations
+  conversationsAsClient     Conversation[]    @relation("ConversationClient")
+  conversationsAsConsultant Conversation[]    @relation("ConversationConsultant")
+  liveChatMessagesSent      LiveChatMessage[] @relation("LiveChatMessageSender")
+
+  @@index([email], name: "idx_users_email")
+  @@index([role], name: "idx_users_role")
+  @@index([is_blocked], name: "idx_users_blocked")
+  @@map("users")
+}
+
+// ============================================
+// OTP CODES MODEL
+// ============================================
+model OtpCode {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String?  @map("user_id") @db.Uuid
+  email     String   @db.VarChar(255)
+  code      String   @db.VarChar(6)
+  type      String   @default("registration") @db.VarChar(20)
+  expiresAt DateTime @map("expires_at")
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([email, code], name: "idx_otp_email_code")
+  @@index([userId], name: "idx_otp_user_id")
+  @@index([expiresAt], name: "idx_otp_expires_at")
+  @@map("otp_codes")
+}
+
+// ============================================
+// PASSWORD RESET TOKENS MODEL
+// ============================================
+model PasswordResetToken {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String?  @map("user_id") @db.Uuid
+  token     String   @unique @db.VarChar(255)
+  expiresAt DateTime @map("expires_at")
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token], name: "idx_password_reset_token")
+  @@index([userId], name: "idx_password_reset_user_id")
+  @@map("password_reset_tokens")
+}
+
+// ============================================
+// OAUTH ACCOUNTS MODEL
+// ============================================
+model OauthAccount {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String?  @map("user_id") @db.Uuid
+  provider       String   @db.VarChar(50)
+  providerUserId String   @map("provider_user_id") @db.VarChar(255)
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])
+  @@index([userId], name: "idx_oauth_user_id")
+  @@index([provider, providerUserId], name: "idx_oauth_provider")
+  @@map("oauth_accounts")
+}
+
+// ============================================
+// PROPERTIES MODEL
+// ============================================
+model Property {
+  id                    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  owner_id              String?  @db.Uuid
+  title                 String   @db.VarChar(500)
+  address               String?  @db.VarChar(500)
+  district              String?  @db.VarChar(100)
+  neighborhood          String?  @db.VarChar(100)
+  price                 Decimal? @db.Decimal(12, 2)
+  currency              String   @default("AMD") @db.VarChar(10)
+  rooms                 Int?
+  bedrooms              Int?
+  bathrooms             Int?
+  area                  Decimal? @db.Decimal(10, 2)
+  sizeSqm               Decimal? @map("size_sqm") @db.Decimal(10, 2)
+  floor                 Int?
+  totalFloors           Int?     @map("total_floors")
+  yearBuilt             Int?     @map("year_built")
+  buildingType          String?  @map("building_type") @db.VarChar(50)
+  condition             String?  @db.VarChar(50)
+  description           String?  @db.Text
+  features              String[] @db.Text
+  images                String[] @db.Text
+  imageUrl              String?  @map("image_url") @db.VarChar(500)
+  latitude              Decimal? @db.Decimal(10, 7)
+  longitude             Decimal? @db.Decimal(10, 7)
+  matchScore            Int      @default(0) @map("match_score")
+  isTopChoice           Boolean  @default(false) @map("is_top_choice")
+  recommendationReasons String[] @map("recommendation_reasons") @db.Text
+  warning               String?  @db.Text
+  utilitiesEstimate     Decimal? @map("utilities_estimate") @db.Decimal(10, 2)
+  depositMonths         Int?     @map("deposit_months")
+  minimumLeaseMonths    Int?     @map("minimum_lease_months")
+  petsAllowed           Boolean  @default(false) @map("pets_allowed")
+  hasParking            Boolean  @default(false) @map("has_parking")
+  hasBalcony            Boolean  @default(false) @map("has_balcony")
+  propertyType          String?  @map("property_type") @db.VarChar(50)
+  dealType              String?  @map("deal_type") @db.VarChar(50)
+  contact               Json?    @db.JsonB
+  nearbyPois            Json?    @map("nearby_pois") @db.JsonB
+  available             Boolean  @default(true)
+  verified              Boolean  @default(false)
+  listingDate           DateTime @default(now()) @map("listing_date")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @default(now()) @updatedAt @map("updated_at")
+
+  // New analysis and virtual tour fields
+  legal_analysis          Json?
+  location_analysis       Json?
+  infrastructure_analysis Json?
+  investment_analysis     Json?
+  virtual_tour_enabled    Boolean @default(false)
+
+  // Relations
+  owner              User?      @relation("PropertyOwner", fields: [owner_id], references: [id], onDelete: SetNull)
+  favorites          Favorite[]
+  viewings           Viewing[]
+  virtual_tour_rooms VirtualTourRoom[]
+  viewing_slots      ViewingSlot[]
+  reviews            Review[]
+  conversations      Conversation[]
+
+  @@index([owner_id], name: "idx_properties_owner_id")
+  @@index([district], name: "idx_properties_district")
+  @@index([neighborhood], name: "idx_properties_neighborhood")
+  @@index([price], name: "idx_properties_price")
+  @@index([available], name: "idx_properties_available")
+  @@index([propertyType], name: "idx_properties_property_type")
+  @@index([dealType], name: "idx_properties_deal_type")
+  @@index([rooms], name: "idx_properties_rooms")
+  @@index([bedrooms], name: "idx_properties_bedrooms")
+  @@index([area], name: "idx_properties_area")
+  @@index([listingDate], name: "idx_properties_listing_date")
+  @@index([latitude, longitude], name: "idx_properties_location")
+  @@map("properties")
+}
+
+// ============================================
+// FAVORITES MODEL
+// ============================================
+model Favorite {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  propertyId String   @map("property_id") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, propertyId])
+  @@index([userId], name: "idx_favorites_user_id")
+  @@index([propertyId], name: "idx_favorites_property_id")
+  @@map("favorites")
+}
+
+// ============================================
+// VIEWINGS MODEL
+// ============================================
+model Viewing {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  propertyId       String    @map("property_id") @db.Uuid
+
+  // Two parties
+  clientId         String    @map("client_id") @db.Uuid      // The client (buyer/renter)
+  agentId          String    @map("agent_id") @db.Uuid       // The agent/owner
+
+  // Tracking who did what
+  createdById      String    @map("created_by_id") @db.Uuid  // Who created this viewing
+  lastProposedById String    @map("last_proposed_by_id") @db.Uuid // Who last proposed the time
+  cancelledById    String?   @map("cancelled_by_id") @db.Uuid // Who cancelled (if cancelled)
+
+  // Viewing details
+  scheduledAt      DateTime  @map("scheduled_at")
+  status           String    @default("pending_client") // pending_client, pending_agent, confirmed, completed, cancelled
+  comment          String?   @db.Text  // Last negotiation comment
+  message          String?   @db.Text  // Original message from creator
+
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  // Relations
+  property         Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  client           User      @relation("ViewingClient", fields: [clientId], references: [id])
+  agent            User      @relation("ViewingAgent", fields: [agentId], references: [id])
+  createdBy        User      @relation("ViewingCreator", fields: [createdById], references: [id])
+  lastProposedBy   User      @relation("ViewingProposer", fields: [lastProposedById], references: [id])
+  cancelledBy      User?     @relation("ViewingCanceller", fields: [cancelledById], references: [id])
+
+  @@index([propertyId])
+  @@index([clientId])
+  @@index([agentId])
+  @@index([status])
+  @@map("viewings")
+}
+
+// ============================================
+// PLATFORM METRICS MODEL
+// ============================================
+model PlatformMetric {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  propertiesCount Int      @default(0) @map("properties_count")
+  citiesCount     Int      @default(0) @map("cities_count")
+  dealsCount      Int      @default(0) @map("deals_count")
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("platform_metrics")
+}
+
+// ============================================
+// VIEWING SLOTS MODEL
+// ============================================
+model ViewingSlot {
+  id          String   @id @default(cuid())
+  property_id String   @db.Uuid
+  property    Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+  date        DateTime
+  time        String   // "10:00", "14:30", etc.
+  available   Boolean  @default(true)
+  booked_by   String?  @db.Uuid
+  user        User?    @relation(fields: [booked_by], references: [id])
+  created_at  DateTime @default(now())
+
+  @@index([property_id])
+  @@index([date])
+}
+
+// ============================================
+// PROPERTY LISTINGS MODEL
+// ============================================
+model PropertyListing {
+  id            String   @id @default(cuid())
+  owner_id      String   @db.Uuid
+  owner         User     @relation(fields: [owner_id], references: [id])
+  property_type String   // apartment, house, studio
+  location      String
+  price         Float
+  currency      String   @default("USD")
+  area          Float
+  rooms         Int
+  description   String?
+  photos        Json?    // Array of photo URLs
+  contact       String
+  status        String   @default("pending") // pending, approved, rejected
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  // Moderation fields
+  moderated_at     DateTime? @map("moderated_at")
+  moderated_by     String?   @db.Uuid @map("moderated_by")
+  rejection_reason String?   @map("rejection_reason")
+
+  @@index([owner_id])
+  @@index([status])
+  @@index([status, created_at], name: "idx_listings_moderation")
+}
+
+// ============================================
+// ADMIN ACTION LOGS MODEL
+// ============================================
+model AdminActionLog {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  admin_id    String   @db.Uuid @map("admin_id")
+  action_type String   @db.VarChar(50)  // user_block, user_unblock, listing_approve, listing_reject
+  target_type String   @db.VarChar(50)  // user, listing
+  target_id   String   @map("target_id")
+  details     Json?    @db.JsonB
+  created_at  DateTime @default(now()) @map("created_at")
+
+  admin       User     @relation("AdminActor", fields: [admin_id], references: [id])
+
+  @@index([admin_id], name: "idx_admin_log_admin")
+  @@index([target_type, target_id], name: "idx_admin_log_target")
+  @@index([created_at], name: "idx_admin_log_date")
+  @@map("admin_action_logs")
+}
+
+// ============================================
+// VIRTUAL TOUR ROOMS MODEL
+// ============================================
+model VirtualTourRoom {
+  id           String   @id @default(cuid())
+  property_id  String   @db.Uuid
+  property     Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+  name_en      String
+  name_ru      String
+  name_hy      String
+  panorama_url String
+  hotspots     Json?    // [{target_room_id: string, x: number, y: number}]
+  order_index  Int      @default(0)
+
+  @@index([property_id])
+}
+
+// ============================================
+// NOTIFICATIONS MODEL
+// ============================================
+model Notification {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   @db.VarChar(50) // viewing_request, viewing_approved, listing_approved, message, system
+  title     String   @db.VarChar(255)
+  body      String   @db.Text
+  data      Json?    @db.JsonB // Additional payload: { propertyId, viewingId, listingId, etc. }
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId, read], name: "idx_notifications_user_read")
+  @@index([userId, createdAt], name: "idx_notifications_user_created")
+  @@map("notifications")
+}
+
+// ============================================
+// REVIEWS MODEL
+// ============================================
+model Review {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  property_id String   @db.Uuid
+  property    Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+  user_id     String   @db.Uuid
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  rating      Int      // 1-5 stars
+  comment     String?  @db.Text
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
+
+  @@unique([property_id, user_id])  // One review per user per property
+  @@index([property_id])
+  @@index([user_id])
+  @@index([rating])
+  @@map("reviews")
+}
+
+// ============================================
+// SAVED SEARCHES MODEL
+// ============================================
+model SavedSearch {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  name          String?  @db.VarChar(255)
+  comment       String?  @db.Text
+  query         String   @db.Text
+  chatMessages  Json     @db.JsonB
+  properties    Json     @db.JsonB
+  criteriaChips String[]
+  insights      Json?    @db.JsonB
+  topChoiceId   String?  @map("top_choice_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("saved_searches")
+}
+
+// ============================================
+// LIVE CHAT: CONVERSATIONS MODEL
+// ============================================
+model Conversation {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type          String    @db.VarChar(20) // 'property' | 'support'
+  status        String    @default("open") @db.VarChar(20) // 'open' | 'assigned' | 'resolved' | 'closed'
+  property_id   String?   @db.Uuid
+  client_id     String    @db.Uuid
+  consultant_id String?   @db.Uuid
+  subject       String?   @db.VarChar(255)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  property    Property?         @relation(fields: [property_id], references: [id], onDelete: SetNull)
+  client      User              @relation("ConversationClient", fields: [client_id], references: [id], onDelete: Cascade)
+  consultant  User?             @relation("ConversationConsultant", fields: [consultant_id], references: [id], onDelete: SetNull)
+  messages    LiveChatMessage[]
+
+  @@index([client_id])
+  @@index([consultant_id])
+  @@index([status])
+  @@index([type])
+  @@index([updated_at])
+  @@map("conversations")
+}
+
+// ============================================
+// LIVE CHAT: MESSAGES MODEL
+// ============================================
+model LiveChatMessage {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  conversation_id String   @db.Uuid
+  sender_id       String   @db.Uuid
+  content         String   @db.Text
+  read            Boolean  @default(false)
+  created_at      DateTime @default(now())
+
+  conversation Conversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+  sender       User         @relation("LiveChatMessageSender", fields: [sender_id], references: [id], onDelete: Cascade)
+
+  @@index([conversation_id])
+  @@index([sender_id])
+  @@index([conversation_id, created_at])
+  @@map("live_chat_messages")
+}

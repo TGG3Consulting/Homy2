@@ -1,0 +1,3376 @@
+{
+  "users": [
+    {
+      "id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "email": "admin@homy.am",
+      "passwordHash": "$2b$10$F6TlWEvHIJ0CQAU9LF/uFeCVJvQWHryWbGgrJ7pUp6A1dlh.GHuB6",
+      "emailVerified": true,
+      "createdAt": "2026-06-21T19:01:07.266Z",
+      "updatedAt": "2026-06-21T19:13:06.126Z",
+      "role": "admin",
+      "user_type": "admin",
+      "language_preference": "en",
+      "phone": null,
+      "notifications_enabled": true,
+      "search_preferences": null,
+      "name": null,
+      "first_name": "Admin",
+      "last_name": "Homy",
+      "patronymic": null,
+      "avatar_url": null,
+      "is_blocked": false,
+      "blocked_at": null,
+      "blocked_by": null,
+      "block_reason": null
+    },
+    {
+      "id": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "email": "user@homy.am",
+      "passwordHash": "$2b$10$EacdKKLgsmxLUec9J7X7KemV32TkuMqlkHbZ8snRRwSFDm9Gb7d/y",
+      "emailVerified": true,
+      "createdAt": "2026-06-21T19:16:51.972Z",
+      "updatedAt": "2026-06-21T19:16:51.972Z",
+      "role": "user",
+      "user_type": "buyer",
+      "language_preference": "en",
+      "phone": null,
+      "notifications_enabled": true,
+      "search_preferences": null,
+      "name": null,
+      "first_name": "Test",
+      "last_name": "User",
+      "patronymic": null,
+      "avatar_url": null,
+      "is_blocked": false,
+      "blocked_at": null,
+      "blocked_by": null,
+      "block_reason": null
+    }
+  ],
+  "properties": [
+    {
+      "id": "99999999-9999-9999-9999-999999999999",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"Charming 3-Bedroom in Nork-Marash\",\"ru\":\"Очаровательная 3-комнатная в Норк-Мараше\",\"hy\":\"Delay 3-delay delay Delay-delay\"}",
+      "address": "12 Nork 7th Street",
+      "district": "Nork-Marash",
+      "neighborhood": "{\"en\":\"Nork Gardens\",\"ru\":\"Сады Норка\",\"hy\":\"Delay delaydelay\"}",
+      "price": "250000",
+      "currency": "AMD",
+      "rooms": 4,
+      "bedrooms": 3,
+      "bathrooms": 1,
+      "area": "100",
+      "sizeSqm": "100",
+      "floor": 3,
+      "totalFloors": 4,
+      "yearBuilt": 2008,
+      "buildingType": "stone",
+      "condition": "good",
+      "description": "Charming 3-Bedroom in Nork-Marash. Located in Nork Gardens, Nork-Marash. 4 rooms, 100 sqm.",
+      "features": [
+        "Garden",
+        "Parking",
+        "Gas Heating",
+        "Storage Room",
+        "Furnished"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800",
+        "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800",
+        "https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=800",
+        "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800",
+      "latitude": "40.1765",
+      "longitude": "44.5485",
+      "matchScore": 86,
+      "isTopChoice": false,
+      "recommendationReasons": [
+        "{\"en\":\"Private garden access\",\"ru\":\"Доступ к частному саду\"}",
+        "{\"en\":\"Peaceful area\",\"ru\":\"Спокойный район\"}",
+        "{\"en\":\"Great for families\",\"ru\":\"Отлично для семей\"}",
+        "{\"en\":\"Mountain views\",\"ru\":\"Вид на горы\"}"
+      ],
+      "warning": null,
+      "utilitiesEstimate": "38952",
+      "depositMonths": 1,
+      "minimumLeaseMonths": 8,
+      "petsAllowed": true,
+      "hasParking": true,
+      "hasBalcony": false,
+      "propertyType": "apartment",
+      "dealType": "long_term_rental",
+      "contact": {
+        "name": "Tigran Avetisyan",
+        "type": "agent",
+        "phone": "+374 94 666 777",
+        "verified": true
+      },
+      "nearbyPois": {
+        "metro": [],
+        "parks": [
+          {
+            "name": "Nork-Marash Park",
+            "distance_m": 636,
+            "walk_time_min": 7
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1070,
+            "walk_time_min": 12
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #190",
+            "distance_m": 368,
+            "walk_time_min": 6
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1102,
+            "walk_time_min": 12
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 184,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 380,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": true,
+      "listingDate": "2026-06-21T19:01:07.353Z",
+      "createdAt": "2026-06-21T19:01:07.353Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "complete",
+        "developer_name": "Elite Construction LLC",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "single_owner",
+        "registration_date": "2008-06-15",
+        "developer_verified": true,
+        "construction_permit": "not_required"
+      },
+      "location_analysis": {
+        "commute_am": 25,
+        "commute_pm": 32,
+        "crime_index": "very_low",
+        "noise_level": "low",
+        "parks_nearby": "Nork-Marash Park (400m)",
+        "ecology_index": "good",
+        "sunlight_hours": 7.574799067132452,
+        "highway_distance": 743,
+        "air_quality_index": 75,
+        "parking_available": "yes",
+        "walkability_score": 73,
+        "playgrounds_nearby": "3 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 4,
+        "banks": 2,
+        "schools": "School #15 (489m)",
+        "hospitals": [
+          {
+            "name": "District Hospital",
+            "distance": 816,
+            "emergency": true
+          }
+        ],
+        "transport": "Bus 202m, Marshrutka 150m",
+        "pharmacies": 2,
+        "supermarkets": 3,
+        "kindergartens": "2 within 500m"
+      },
+      "investment_analysis": {
+        "score": 88,
+        "market_trend": "stable",
+        "rental_yield": 8.853472358562161,
+        "roi_estimate": 76,
+        "demand_signals": 74,
+        "liquidity_score": 70,
+        "price_vs_market": 79,
+        "appreciation_forecast": 79,
+        "comparable_properties": 5
+      },
+      "virtual_tour_enabled": false
+    },
+    {
+      "id": "11111111-1111-1111-1111-111111111111",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"Modern 2-Bedroom Apartment in Kentron\",\"ru\":\"Современная 2-комнатная квартира в Кентроне\",\"hy\":\" Delays 2-սdelays delays delays Կdelays\"}",
+      "address": "15 Northern Avenue",
+      "district": "Kentron",
+      "neighborhood": "{\"en\":\"Northern Avenue\",\"ru\":\"Северный проспект\",\"hy\":\"Delays delays\"}",
+      "price": "350000",
+      "currency": "AMD",
+      "rooms": 3,
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "area": "85",
+      "sizeSqm": "85",
+      "floor": 7,
+      "totalFloors": 12,
+      "yearBuilt": 2018,
+      "buildingType": "monolith",
+      "condition": "new",
+      "description": "Modern 2-Bedroom Apartment in Kentron. Located in Northern Avenue, Kentron. 3 rooms, 85 sqm.",
+      "features": [
+        "Balcony",
+        "Air Conditioning",
+        "Central Heating",
+        "Elevator",
+        "Security",
+        "Parking"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800",
+        "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800",
+        "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800",
+        "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800",
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800",
+      "latitude": "40.1812",
+      "longitude": "44.5165",
+      "matchScore": 98,
+      "isTopChoice": true,
+      "recommendationReasons": [
+        "{\"en\":\"Perfect location in city center\",\"ru\":\"Идеальное расположение в центре города\"}",
+        "{\"en\":\"Excellent natural lighting\",\"ru\":\"Отличное естественное освещение\"}",
+        "{\"en\":\"Modern renovation\",\"ru\":\"Современный ремонт\"}",
+        "{\"en\":\"Walking distance to Opera\",\"ru\":\"Пешая доступность до Оперы\"}"
+      ],
+      "warning": "{\"en\":\"Higher utility costs due to central location\",\"ru\":\"Более высокие коммунальные расходы из-за центрального расположения\"}",
+      "utilitiesEstimate": "36678",
+      "depositMonths": 1,
+      "minimumLeaseMonths": 7,
+      "petsAllowed": true,
+      "hasParking": true,
+      "hasBalcony": true,
+      "propertyType": "apartment",
+      "dealType": "long_term_rental",
+      "contact": {
+        "name": "Anna Hakobyan",
+        "type": "agent",
+        "phone": "+374 77 201 086",
+        "verified": true
+      },
+      "nearbyPois": {
+        "metro": [
+          {
+            "name": "Republic Square",
+            "distance_m": 574,
+            "walk_time_min": 4
+          }
+        ],
+        "parks": [
+          {
+            "name": "Lovers Park",
+            "distance_m": 441,
+            "walk_time_min": 6
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1119,
+            "walk_time_min": 13
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #110",
+            "distance_m": 385,
+            "walk_time_min": 6
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1394,
+            "walk_time_min": 11
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 149,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 374,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": true,
+      "listingDate": "2026-06-21T19:01:07.289Z",
+      "createdAt": "2026-06-21T19:01:07.289Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "complete",
+        "developer_name": "Elite Construction LLC",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "single_owner",
+        "registration_date": "2018-06-15",
+        "developer_verified": true,
+        "construction_permit": "verified"
+      },
+      "location_analysis": {
+        "commute_am": 8,
+        "commute_pm": 12,
+        "crime_index": "low",
+        "noise_level": "medium",
+        "parks_nearby": "Lovers Park (350m), Cascade (500m)",
+        "ecology_index": "moderate",
+        "sunlight_hours": 7.799168700852808,
+        "highway_distance": 1500,
+        "air_quality_index": 85,
+        "parking_available": "yes",
+        "walkability_score": 92,
+        "playgrounds_nearby": "3 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 4,
+        "banks": 2,
+        "schools": "School #36 (556m)",
+        "hospitals": [
+          {
+            "name": "Nairi Medical Center",
+            "distance": 981,
+            "emergency": true
+          }
+        ],
+        "transport": "Metro 441m, Bus 100m",
+        "pharmacies": 2,
+        "supermarkets": 4,
+        "kindergartens": "2 within 500m"
+      },
+      "investment_analysis": {
+        "score": 95,
+        "market_trend": "growing",
+        "rental_yield": 8.785928067878803,
+        "roi_estimate": 82,
+        "demand_signals": 94,
+        "liquidity_score": 85,
+        "price_vs_market": 80,
+        "appreciation_forecast": 88,
+        "comparable_properties": 7
+      },
+      "virtual_tour_enabled": true
+    },
+    {
+      "id": "22222222-2222-2222-2222-222222222222",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"Spacious 3-Bedroom Family Apartment\",\"ru\":\"Просторная 3-комнатная семейная квартира\",\"hy\":\"Ընdelays 3-սdelay delaydelays delays\"}",
+      "address": "42 Baghramyan Avenue",
+      "district": "Arabkir",
+      "neighborhood": "{\"en\":\"Baghramyan Avenue\",\"ru\":\"Проспект Баграмяна\",\"hy\":\"Delays Բdelay\"}",
+      "price": "280000",
+      "currency": "AMD",
+      "rooms": 4,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "area": "120",
+      "sizeSqm": "120",
+      "floor": 5,
+      "totalFloors": 9,
+      "yearBuilt": 2015,
+      "buildingType": "brick",
+      "condition": "new",
+      "description": "Spacious 3-Bedroom Family Apartment. Located in Baghramyan Avenue, Arabkir. 4 rooms, 120 sqm.",
+      "features": [
+        "Balcony",
+        "Central Heating",
+        "Gas Heating",
+        "Elevator",
+        "Furnished",
+        "Storage Room"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800",
+        "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800",
+        "https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800",
+      "latitude": "40.1985",
+      "longitude": "44.5058",
+      "matchScore": 95,
+      "isTopChoice": true,
+      "recommendationReasons": [
+        "{\"en\":\"Near American University of Armenia\",\"ru\":\"Рядом с Американским университетом Армении\"}",
+        "{\"en\":\"Quiet residential area\",\"ru\":\"Тихий жилой район\"}",
+        "{\"en\":\"Family-friendly neighborhood\",\"ru\":\"Район подходит для семей\"}",
+        "{\"en\":\"Good public transport access\",\"ru\":\"Хороший доступ к общественному транспорту\"}"
+      ],
+      "warning": null,
+      "utilitiesEstimate": "28129",
+      "depositMonths": 1,
+      "minimumLeaseMonths": 10,
+      "petsAllowed": false,
+      "hasParking": false,
+      "hasBalcony": true,
+      "propertyType": "apartment",
+      "dealType": "long_term_rental",
+      "contact": {
+        "name": "Armen Petrosyan",
+        "type": "owner",
+        "phone": "+374 91 456 789",
+        "verified": true
+      },
+      "nearbyPois": {
+        "metro": [
+          {
+            "name": "Barekamutyun",
+            "distance_m": 530,
+            "walk_time_min": 4
+          }
+        ],
+        "parks": [
+          {
+            "name": "Arabkir Park",
+            "distance_m": 512,
+            "walk_time_min": 4
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1021,
+            "walk_time_min": 13
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #94",
+            "distance_m": 489,
+            "walk_time_min": 4
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1116,
+            "walk_time_min": 11
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 101,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 436,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": true,
+      "listingDate": "2026-06-21T19:01:07.299Z",
+      "createdAt": "2026-06-21T19:01:07.299Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "complete",
+        "developer_name": "Yerevan Development Group",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "single_owner",
+        "registration_date": "2015-06-15",
+        "developer_verified": true,
+        "construction_permit": "verified"
+      },
+      "location_analysis": {
+        "commute_am": 17,
+        "commute_pm": 21,
+        "crime_index": "low",
+        "noise_level": "medium",
+        "parks_nearby": "Arabkir Park (400m)",
+        "ecology_index": "good",
+        "sunlight_hours": 7.7315399246695,
+        "highway_distance": 524,
+        "air_quality_index": 85,
+        "parking_available": "limited",
+        "walkability_score": 71,
+        "playgrounds_nearby": "1 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 3,
+        "banks": 2,
+        "schools": "School #88 (496m)",
+        "hospitals": [
+          {
+            "name": "District Hospital",
+            "distance": 1130,
+            "emergency": true
+          }
+        ],
+        "transport": "Metro 465m, Bus 100m",
+        "pharmacies": 3,
+        "supermarkets": 4,
+        "kindergartens": "2 within 500m"
+      },
+      "investment_analysis": {
+        "score": 95,
+        "market_trend": "growing",
+        "rental_yield": 7.97709930129055,
+        "roi_estimate": 88,
+        "demand_signals": 94,
+        "liquidity_score": 85,
+        "price_vs_market": 78,
+        "appreciation_forecast": 84,
+        "comparable_properties": 5
+      },
+      "virtual_tour_enabled": true
+    },
+    {
+      "id": "33333333-3333-3333-3333-333333333333",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"Cozy Studio near Republic Square\",\"ru\":\"Уютная студия рядом с площadью Республики\",\"hy\":\"Delaysны студdelay Հdelay delays delays\"}",
+      "address": "8 Amiryan Street",
+      "district": "Kentron",
+      "neighborhood": "{\"en\":\"Republic Square\",\"ru\":\"Площадь Республики\",\"hy\":\"Delays Հdelay\"}",
+      "price": "180000",
+      "currency": "AMD",
+      "rooms": 1,
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "area": "45",
+      "sizeSqm": "45",
+      "floor": 3,
+      "totalFloors": 5,
+      "yearBuilt": 2010,
+      "buildingType": "brick",
+      "condition": "good",
+      "description": "Cozy Studio near Republic Square. Located in Republic Square, Kentron. 1 rooms, 45 sqm.",
+      "features": [
+        "Air Conditioning",
+        "Internet",
+        "Furnished",
+        "Cable TV"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=800",
+        "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800",
+        "https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=800",
+        "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=800",
+      "latitude": "40.1778",
+      "longitude": "44.5125",
+      "matchScore": 88,
+      "isTopChoice": false,
+      "recommendationReasons": [
+        "{\"en\":\"Walking distance to Republic Square\",\"ru\":\"Пешая доступность до площади Республики\"}",
+        "{\"en\":\"Perfect for young professionals\",\"ru\":\"Идеально для молодых специалистов\"}",
+        "{\"en\":\"Affordable price for location\",\"ru\":\"Доступная цена для такого расположения\"}"
+      ],
+      "warning": "{\"en\":\"Street noise during peak hours\",\"ru\":\"Шум улицы в часы пик\"}",
+      "utilitiesEstimate": "25517",
+      "depositMonths": 1,
+      "minimumLeaseMonths": 11,
+      "petsAllowed": false,
+      "hasParking": false,
+      "hasBalcony": false,
+      "propertyType": "apartment",
+      "dealType": "long_term_rental",
+      "contact": {
+        "name": "Lilit Sargsyan",
+        "type": "agent",
+        "phone": "+374 93 112 233",
+        "verified": true
+      },
+      "nearbyPois": {
+        "metro": [
+          {
+            "name": "Republic Square",
+            "distance_m": 423,
+            "walk_time_min": 4
+          }
+        ],
+        "parks": [
+          {
+            "name": "Lovers Park",
+            "distance_m": 484,
+            "walk_time_min": 5
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1476,
+            "walk_time_min": 14
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #98",
+            "distance_m": 222,
+            "walk_time_min": 3
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1703,
+            "walk_time_min": 12
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 286,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 437,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": true,
+      "listingDate": "2026-06-21T19:01:07.306Z",
+      "createdAt": "2026-06-21T19:01:07.306Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "complete",
+        "developer_name": "Cascade Builders",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "single_owner",
+        "registration_date": "2010-06-15",
+        "developer_verified": true,
+        "construction_permit": "not_required"
+      },
+      "location_analysis": {
+        "commute_am": 8,
+        "commute_pm": 12,
+        "crime_index": "low",
+        "noise_level": "medium",
+        "parks_nearby": "Lovers Park (350m), Cascade (500m)",
+        "ecology_index": "moderate",
+        "sunlight_hours": 6.396887538659743,
+        "highway_distance": 1500,
+        "air_quality_index": 85,
+        "parking_available": "limited",
+        "walkability_score": 92,
+        "playgrounds_nearby": "2 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 4,
+        "banks": 3,
+        "schools": "School #67 (252m)",
+        "hospitals": [
+          {
+            "name": "Nairi Medical Center",
+            "distance": 1126,
+            "emergency": true
+          }
+        ],
+        "transport": "Metro 451m, Bus 100m",
+        "pharmacies": 2,
+        "supermarkets": 4,
+        "kindergartens": "1 within 500m"
+      },
+      "investment_analysis": {
+        "score": 95,
+        "market_trend": "growing",
+        "rental_yield": 9.46481338228071,
+        "roi_estimate": 73,
+        "demand_signals": 92,
+        "liquidity_score": 85,
+        "price_vs_market": 75,
+        "appreciation_forecast": 91,
+        "comparable_properties": 6
+      },
+      "virtual_tour_enabled": true
+    },
+    {
+      "id": "44444444-4444-4444-4444-444444444444",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"Renovated 2-Bedroom in Ajapnyak\",\"ru\":\"Отремонтированная 2-комнатная в Аджапняке\",\"hy\":\"Delays 2-delayС delays Delaysdelays\"}",
+      "address": "25 Halabyan Street",
+      "district": "Ajapnyak",
+      "neighborhood": "{\"en\":\"Ajapnyak 3rd District\",\"ru\":\"Аджапняк 3-й микрорайон\",\"hy\":\"Delaysdel 3-delay delay\"}",
+      "price": "150000",
+      "currency": "AMD",
+      "rooms": 3,
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "area": "70",
+      "sizeSqm": "70",
+      "floor": 8,
+      "totalFloors": 9,
+      "yearBuilt": 1985,
+      "buildingType": "panel",
+      "condition": "renovation",
+      "description": "Renovated 2-Bedroom in Ajapnyak. Located in Ajapnyak 3rd District, Ajapnyak. 3 rooms, 70 sqm.",
+      "features": [
+        "Balcony",
+        "Gas Heating",
+        "Elevator",
+        "Internet"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800",
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800",
+        "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800",
+        "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800",
+      "latitude": "40.2085",
+      "longitude": "44.4695",
+      "matchScore": 82,
+      "isTopChoice": false,
+      "recommendationReasons": [
+        "{\"en\":\"Recently renovated\",\"ru\":\"Недавно отремонтировано\"}",
+        "{\"en\":\"Good value for money\",\"ru\":\"Хорошее соотношение цены и качества\"}",
+        "{\"en\":\"Near supermarkets\",\"ru\":\"Рядом с супермаркетами\"}"
+      ],
+      "warning": "{\"en\":\"Older building construction\",\"ru\":\"Старая постройка здания\"}",
+      "utilitiesEstimate": "27233",
+      "depositMonths": 1,
+      "minimumLeaseMonths": 8,
+      "petsAllowed": true,
+      "hasParking": false,
+      "hasBalcony": true,
+      "propertyType": "apartment",
+      "dealType": "long_term_rental",
+      "contact": {
+        "name": "Davit Grigoryan",
+        "type": "owner",
+        "phone": "+374 94 998 877",
+        "verified": false
+      },
+      "nearbyPois": {
+        "metro": [],
+        "parks": [
+          {
+            "name": "Ajapnyak Park",
+            "distance_m": 589,
+            "walk_time_min": 5
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1468,
+            "walk_time_min": 15
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #94",
+            "distance_m": 450,
+            "walk_time_min": 4
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1399,
+            "walk_time_min": 10
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 191,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 492,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": false,
+      "listingDate": "2026-06-21T19:01:07.314Z",
+      "createdAt": "2026-06-21T19:01:07.314Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "under_review",
+        "developer_name": "Ararat Construction Co.",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "pending_verification",
+        "registration_date": "1985-06-15",
+        "developer_verified": false,
+        "construction_permit": "not_required"
+      },
+      "location_analysis": {
+        "commute_am": 16,
+        "commute_pm": 43,
+        "crime_index": "low",
+        "noise_level": "medium",
+        "parks_nearby": "Ajapnyak Park (400m)",
+        "ecology_index": "good",
+        "sunlight_hours": 7.7279387220887,
+        "highway_distance": 560,
+        "air_quality_index": 85,
+        "parking_available": "limited",
+        "walkability_score": 78,
+        "playgrounds_nearby": "2 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 3,
+        "banks": 2,
+        "schools": "School #53 (576m)",
+        "hospitals": [
+          {
+            "name": "District Hospital",
+            "distance": 2278,
+            "emergency": true
+          }
+        ],
+        "transport": "Bus 142m, Marshrutka 150m",
+        "pharmacies": 2,
+        "supermarkets": 4,
+        "kindergartens": "1 within 500m"
+      },
+      "investment_analysis": {
+        "score": 84,
+        "market_trend": "stable",
+        "rental_yield": 7.925695559931383,
+        "roi_estimate": 88,
+        "demand_signals": 71,
+        "liquidity_score": 70,
+        "price_vs_market": 68,
+        "appreciation_forecast": 81,
+        "comparable_properties": 6
+      },
+      "virtual_tour_enabled": false
+    },
+    {
+      "id": "55555555-5555-5555-5555-555555555555",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"Luxury 4-Bedroom Penthouse\",\"ru\":\"Роскошный 4-комнатный пентхаус\",\"hy\":\"Delaysшикарdelays 4-delay delaysdelays\"}",
+      "address": "1 Cascade Street",
+      "district": "Kentron",
+      "neighborhood": "{\"en\":\"Cascade Area\",\"ru\":\"Район Каскада\",\"hy\":\"Delays Delaydelay\"}",
+      "price": "400000",
+      "currency": "AMD",
+      "rooms": 5,
+      "bedrooms": 4,
+      "bathrooms": 2,
+      "area": "180",
+      "sizeSqm": "180",
+      "floor": 15,
+      "totalFloors": 15,
+      "yearBuilt": 2022,
+      "buildingType": "monolith",
+      "condition": "new",
+      "description": "Luxury 4-Bedroom Penthouse. Located in Cascade Area, Kentron. 5 rooms, 180 sqm.",
+      "features": [
+        "Terrace",
+        "Air Conditioning",
+        "Central Heating",
+        "Elevator",
+        "Security",
+        "Parking",
+        "Gym Access",
+        "Pool Access",
+        "Concierge"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800",
+        "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800",
+        "https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?w=800",
+        "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800",
+      "latitude": "40.192",
+      "longitude": "44.5075",
+      "matchScore": 92,
+      "isTopChoice": true,
+      "recommendationReasons": [
+        "{\"en\":\"Panoramic city views\",\"ru\":\"Панорамный вид на город\"}",
+        "{\"en\":\"Premium building amenities\",\"ru\":\"Премиальные удобства здания\"}",
+        "{\"en\":\"Walking distance to Cascade\",\"ru\":\"Пешая доступность до Каскада\"}",
+        "{\"en\":\"High-end finishes\",\"ru\":\"Отделка высокого класса\"}"
+      ],
+      "warning": null,
+      "utilitiesEstimate": "27627",
+      "depositMonths": 1,
+      "minimumLeaseMonths": 9,
+      "petsAllowed": false,
+      "hasParking": true,
+      "hasBalcony": true,
+      "propertyType": "apartment",
+      "dealType": "long_term_rental",
+      "contact": {
+        "name": "Marine Vardanyan",
+        "type": "agent",
+        "phone": "+374 77 555 666",
+        "verified": true
+      },
+      "nearbyPois": {
+        "metro": [
+          {
+            "name": "Republic Square",
+            "distance_m": 525,
+            "walk_time_min": 5
+          }
+        ],
+        "parks": [
+          {
+            "name": "Lovers Park",
+            "distance_m": 514,
+            "walk_time_min": 5
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1279,
+            "walk_time_min": 13
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #126",
+            "distance_m": 326,
+            "walk_time_min": 7
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1401,
+            "walk_time_min": 11
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 136,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 457,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": true,
+      "listingDate": "2026-06-21T19:01:07.320Z",
+      "createdAt": "2026-06-21T19:01:07.320Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "complete",
+        "developer_name": "Modern Living Armenia",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "single_owner",
+        "registration_date": "2022-06-15",
+        "developer_verified": true,
+        "construction_permit": "verified"
+      },
+      "location_analysis": {
+        "commute_am": 8,
+        "commute_pm": 12,
+        "crime_index": "low",
+        "noise_level": "medium",
+        "parks_nearby": "Lovers Park (350m), Cascade (500m)",
+        "ecology_index": "moderate",
+        "sunlight_hours": 7.698060105269981,
+        "highway_distance": 1500,
+        "air_quality_index": 85,
+        "parking_available": "yes",
+        "walkability_score": 92,
+        "playgrounds_nearby": "2 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 3,
+        "banks": 2,
+        "schools": "School #83 (473m)",
+        "hospitals": [
+          {
+            "name": "Nairi Medical Center",
+            "distance": 1361,
+            "emergency": true
+          }
+        ],
+        "transport": "Metro 370m, Bus 100m",
+        "pharmacies": 3,
+        "supermarkets": 4,
+        "kindergartens": "2 within 500m"
+      },
+      "investment_analysis": {
+        "score": 95,
+        "market_trend": "growing",
+        "rental_yield": 6.128742233034329,
+        "roi_estimate": 73,
+        "demand_signals": 88,
+        "liquidity_score": 85,
+        "price_vs_market": 80,
+        "appreciation_forecast": 82,
+        "comparable_properties": 5
+      },
+      "virtual_tour_enabled": false
+    },
+    {
+      "id": "66666666-6666-6666-6666-666666666666",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"Bright 2-Bedroom in Davtashen\",\"ru\":\"Светлая 2-комнатная в Давташене\",\"hy\":\"Delays 2-delays delays Delaysdelay\"}",
+      "address": "18 Davtashen 3rd Street",
+      "district": "Davtashen",
+      "neighborhood": "{\"en\":\"Davtashen 3rd Block\",\"ru\":\"Давташен 3-й массив\",\"hy\":\"Delaysdelay 3-delay delaydelay\"}",
+      "price": "200000",
+      "currency": "AMD",
+      "rooms": 3,
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "area": "75",
+      "sizeSqm": "75",
+      "floor": 6,
+      "totalFloors": 9,
+      "yearBuilt": 2000,
+      "buildingType": "stone",
+      "condition": "renovation",
+      "description": "Bright 2-Bedroom in Davtashen. Located in Davtashen 3rd Block, Davtashen. 3 rooms, 75 sqm.",
+      "features": [
+        "Balcony",
+        "Gas Heating",
+        "Elevator",
+        "Parking",
+        "Storage Room"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800",
+        "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800",
+        "https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800",
+      "latitude": "40.218",
+      "longitude": "44.482",
+      "matchScore": 85,
+      "isTopChoice": false,
+      "recommendationReasons": [
+        "{\"en\":\"Quiet neighborhood\",\"ru\":\"Тихий район\"}",
+        "{\"en\":\"Good for families\",\"ru\":\"Подходит для семей\"}",
+        "{\"en\":\"Near schools\",\"ru\":\"Рядом со школами\"}",
+        "{\"en\":\"Easy parking\",\"ru\":\"Удобная парковка\"}"
+      ],
+      "warning": null,
+      "utilitiesEstimate": "28800",
+      "depositMonths": 1,
+      "minimumLeaseMonths": 9,
+      "petsAllowed": false,
+      "hasParking": true,
+      "hasBalcony": true,
+      "propertyType": "apartment",
+      "dealType": "long_term_rental",
+      "contact": {
+        "name": "Hayk Hovhannisyan",
+        "type": "owner",
+        "phone": "+374 99 321 654",
+        "verified": true
+      },
+      "nearbyPois": {
+        "metro": [],
+        "parks": [
+          {
+            "name": "Davtashen Park",
+            "distance_m": 463,
+            "walk_time_min": 7
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1062,
+            "walk_time_min": 12
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #67",
+            "distance_m": 493,
+            "walk_time_min": 6
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1257,
+            "walk_time_min": 10
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 214,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 336,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": true,
+      "listingDate": "2026-06-21T19:01:07.329Z",
+      "createdAt": "2026-06-21T19:01:07.329Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "complete",
+        "developer_name": "Premium Estates AM",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "single_owner",
+        "registration_date": "2000-06-15",
+        "developer_verified": true,
+        "construction_permit": "not_required"
+      },
+      "location_analysis": {
+        "commute_am": 26,
+        "commute_pm": 35,
+        "crime_index": "very_low",
+        "noise_level": "low",
+        "parks_nearby": "Davtashen Park (400m)",
+        "ecology_index": "good",
+        "sunlight_hours": 6.991703769549051,
+        "highway_distance": 1490,
+        "air_quality_index": 75,
+        "parking_available": "yes",
+        "walkability_score": 84,
+        "playgrounds_nearby": "2 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 3,
+        "banks": 3,
+        "schools": "School #69 (244m)",
+        "hospitals": [
+          {
+            "name": "District Hospital",
+            "distance": 2101,
+            "emergency": true
+          }
+        ],
+        "transport": "Bus 231m, Marshrutka 150m",
+        "pharmacies": 2,
+        "supermarkets": 3,
+        "kindergartens": "2 within 500m"
+      },
+      "investment_analysis": {
+        "score": 90,
+        "market_trend": "stable",
+        "rental_yield": 6.030939157724779,
+        "roi_estimate": 87,
+        "demand_signals": 77,
+        "liquidity_score": 70,
+        "price_vs_market": 66,
+        "appreciation_forecast": 80,
+        "comparable_properties": 6
+      },
+      "virtual_tour_enabled": false
+    },
+    {
+      "id": "77777777-7777-7777-7777-777777777777",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"Modern 1-Bedroom near Metro\",\"ru\":\"Современная 1-комнатная рядом с метро\",\"hy\":\"Delays 1-delay delay delay delay\"}",
+      "address": "55 Komitas Avenue",
+      "district": "Arabkir",
+      "neighborhood": "{\"en\":\"Barekamutyun Metro\",\"ru\":\"Метро Барекамутюн\",\"hy\":\"Delays Delaydelay\"}",
+      "price": "220000",
+      "currency": "AMD",
+      "rooms": 2,
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "area": "55",
+      "sizeSqm": "55",
+      "floor": 4,
+      "totalFloors": 12,
+      "yearBuilt": 2019,
+      "buildingType": "monolith",
+      "condition": "new",
+      "description": "Modern 1-Bedroom near Metro. Located in Barekamutyun Metro, Arabkir. 2 rooms, 55 sqm.",
+      "features": [
+        "Balcony",
+        "Air Conditioning",
+        "Central Heating",
+        "Elevator",
+        "Security",
+        "Internet"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800",
+        "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800",
+        "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800",
+        "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800",
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800",
+      "latitude": "40.2025",
+      "longitude": "44.4985",
+      "matchScore": 90,
+      "isTopChoice": false,
+      "recommendationReasons": [
+        "{\"en\":\"2 minutes to metro\",\"ru\":\"2 минуты до метро\"}",
+        "{\"en\":\"New building\",\"ru\":\"Новое здание\"}",
+        "{\"en\":\"Great for commuters\",\"ru\":\"Отлично для тех, кто ездит на работу\"}"
+      ],
+      "warning": null,
+      "utilitiesEstimate": "26250",
+      "depositMonths": 1,
+      "minimumLeaseMonths": 10,
+      "petsAllowed": true,
+      "hasParking": false,
+      "hasBalcony": true,
+      "propertyType": "apartment",
+      "dealType": "long_term_rental",
+      "contact": {
+        "name": "Narek Karapetyan",
+        "type": "agent",
+        "phone": "+374 91 777 888",
+        "verified": true
+      },
+      "nearbyPois": {
+        "metro": [
+          {
+            "name": "Barekamutyun",
+            "distance_m": 588,
+            "walk_time_min": 6
+          }
+        ],
+        "parks": [
+          {
+            "name": "Arabkir Park",
+            "distance_m": 552,
+            "walk_time_min": 7
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1248,
+            "walk_time_min": 13
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #97",
+            "distance_m": 358,
+            "walk_time_min": 6
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1001,
+            "walk_time_min": 12
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 297,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 462,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": true,
+      "listingDate": "2026-06-21T19:01:07.337Z",
+      "createdAt": "2026-06-21T19:01:07.337Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "complete",
+        "developer_name": "City Build Yerevan",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "single_owner",
+        "registration_date": "2019-06-15",
+        "developer_verified": true,
+        "construction_permit": "verified"
+      },
+      "location_analysis": {
+        "commute_am": 26,
+        "commute_pm": 44,
+        "crime_index": "low",
+        "noise_level": "medium",
+        "parks_nearby": "Arabkir Park (400m)",
+        "ecology_index": "good",
+        "sunlight_hours": 7.784425720212356,
+        "highway_distance": 523,
+        "air_quality_index": 85,
+        "parking_available": "limited",
+        "walkability_score": 71,
+        "playgrounds_nearby": "1 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 3,
+        "banks": 2,
+        "schools": "School #35 (316m)",
+        "hospitals": [
+          {
+            "name": "District Hospital",
+            "distance": 1965,
+            "emergency": true
+          }
+        ],
+        "transport": "Metro 418m, Bus 100m",
+        "pharmacies": 2,
+        "supermarkets": 4,
+        "kindergartens": "2 within 500m"
+      },
+      "investment_analysis": {
+        "score": 95,
+        "market_trend": "growing",
+        "rental_yield": 9.21245910700855,
+        "roi_estimate": 82,
+        "demand_signals": 91,
+        "liquidity_score": 85,
+        "price_vs_market": 81,
+        "appreciation_forecast": 85,
+        "comparable_properties": 7
+      },
+      "virtual_tour_enabled": false
+    },
+    {
+      "id": "88888888-8888-8888-8888-888888888888",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"Affordable 2-Bedroom in Erebuni\",\"ru\":\"Доступная 2-комнатная в Эребуни\",\"hy\":\"Delays 2-delay delay Delaysdelay\"}",
+      "address": "30 Erebuni Avenue",
+      "district": "Erebuni",
+      "neighborhood": "{\"en\":\"Erebuni District\",\"ru\":\"Район Эребуни\",\"hy\":\"Delay delaydelay\"}",
+      "price": "160000",
+      "currency": "AMD",
+      "rooms": 3,
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "area": "65",
+      "sizeSqm": "65",
+      "floor": 2,
+      "totalFloors": 5,
+      "yearBuilt": 1990,
+      "buildingType": "panel",
+      "condition": "renovation",
+      "description": "Affordable 2-Bedroom in Erebuni. Located in Erebuni District, Erebuni. 3 rooms, 65 sqm.",
+      "features": [
+        "Balcony",
+        "Gas Heating",
+        "Internet",
+        "Furnished"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=800",
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800",
+        "https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=800",
+      "latitude": "40.1365",
+      "longitude": "44.528",
+      "matchScore": 78,
+      "isTopChoice": false,
+      "recommendationReasons": [
+        "{\"en\":\"Very affordable\",\"ru\":\"Очень доступно\"}",
+        "{\"en\":\"Close to Erebuni Museum\",\"ru\":\"Рядом с музеем Эребуни\"}",
+        "{\"en\":\"Good local amenities\",\"ru\":\"Хорошая местная инфраструктура\"}"
+      ],
+      "warning": "{\"en\":\"Further from city center\",\"ru\":\"Дальше от центра города\"}",
+      "utilitiesEstimate": "26917",
+      "depositMonths": 1,
+      "minimumLeaseMonths": 6,
+      "petsAllowed": false,
+      "hasParking": false,
+      "hasBalcony": true,
+      "propertyType": "apartment",
+      "dealType": "long_term_rental",
+      "contact": {
+        "name": "Anahit Mkrtchyan",
+        "type": "owner",
+        "phone": "+374 93 444 555",
+        "verified": false
+      },
+      "nearbyPois": {
+        "metro": [],
+        "parks": [
+          {
+            "name": "Erebuni Park",
+            "distance_m": 333,
+            "walk_time_min": 6
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1403,
+            "walk_time_min": 13
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #129",
+            "distance_m": 409,
+            "walk_time_min": 4
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 865,
+            "walk_time_min": 12
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 272,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 448,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": false,
+      "listingDate": "2026-06-21T19:01:07.345Z",
+      "createdAt": "2026-06-21T19:01:07.345Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 1,
+        "encumbrances": false,
+        "title_status": "under_review",
+        "developer_name": "Northern Avenue Developers",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "pending_verification",
+        "registration_date": "1990-06-15",
+        "developer_verified": false,
+        "construction_permit": "not_required"
+      },
+      "location_analysis": {
+        "commute_am": 25,
+        "commute_pm": 32,
+        "crime_index": "low",
+        "noise_level": "medium",
+        "parks_nearby": "Erebuni Park (400m)",
+        "ecology_index": "good",
+        "sunlight_hours": 6.551462917025311,
+        "highway_distance": 1353,
+        "air_quality_index": 85,
+        "parking_available": "limited",
+        "walkability_score": 88,
+        "playgrounds_nearby": "2 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 2,
+        "banks": 3,
+        "schools": "School #75 (588m)",
+        "hospitals": [
+          {
+            "name": "District Hospital",
+            "distance": 1405,
+            "emergency": true
+          }
+        ],
+        "transport": "Bus 189m, Marshrutka 150m",
+        "pharmacies": 2,
+        "supermarkets": 5,
+        "kindergartens": "1 within 500m"
+      },
+      "investment_analysis": {
+        "score": 81,
+        "market_trend": "stable",
+        "rental_yield": 8.316352936861044,
+        "roi_estimate": 84,
+        "demand_signals": 79,
+        "liquidity_score": 70,
+        "price_vs_market": 77,
+        "appreciation_forecast": 66,
+        "comparable_properties": 8
+      },
+      "virtual_tour_enabled": false
+    },
+    {
+      "id": "a1111111-1111-1111-1111-111111111111",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"3-Bedroom Apartment for Sale in Kentron\",\"ru\":\"3-комнатная квартира на продажу в Кентроне\",\"hy\":\"3-սdelays delays delays Կdelays\"}",
+      "address": "5 Abovyan Street",
+      "district": "Kentron",
+      "neighborhood": "{\"en\":\"Republic Square\",\"ru\":\"Площадь Республики\",\"hy\":\"Delays\"}",
+      "price": "185000000",
+      "currency": "AMD",
+      "rooms": 4,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "area": "140",
+      "sizeSqm": "140",
+      "floor": 8,
+      "totalFloors": 12,
+      "yearBuilt": 2020,
+      "buildingType": "monolith",
+      "condition": "new",
+      "description": "3-Bedroom Apartment for Sale in Kentron. Located in Republic Square, Kentron. 4 rooms, 140 sqm.",
+      "features": [
+        "Balcony",
+        "Air Conditioning",
+        "Central Heating",
+        "Elevator",
+        "Security",
+        "Parking",
+        "Storage Room"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800",
+        "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800",
+        "https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?w=800",
+        "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800",
+      "latitude": "40.1775",
+      "longitude": "44.5125",
+      "matchScore": 92,
+      "isTopChoice": false,
+      "recommendationReasons": [
+        "{\"en\":\"Prime location in city center\",\"ru\":\"Премиальная локация в центре города\"}",
+        "{\"en\":\"New building with modern amenities\",\"ru\":\"Новое здание с современными удобствами\"}",
+        "{\"en\":\"Investment potential\",\"ru\":\"Инвестиционный потенциал\"}"
+      ],
+      "warning": null,
+      "utilitiesEstimate": "26299",
+      "depositMonths": 2,
+      "minimumLeaseMonths": 11,
+      "petsAllowed": false,
+      "hasParking": true,
+      "hasBalcony": true,
+      "propertyType": "apartment",
+      "dealType": "sale",
+      "contact": {
+        "name": "Anna Hakobyan",
+        "type": "agent",
+        "phone": "+374 77 201 086",
+        "verified": true
+      },
+      "nearbyPois": {
+        "metro": [
+          {
+            "name": "Republic Square",
+            "distance_m": 324,
+            "walk_time_min": 4
+          }
+        ],
+        "parks": [
+          {
+            "name": "Lovers Park",
+            "distance_m": 543,
+            "walk_time_min": 7
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1201,
+            "walk_time_min": 16
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #182",
+            "distance_m": 437,
+            "walk_time_min": 4
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1653,
+            "walk_time_min": 11
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 221,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 474,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": true,
+      "listingDate": "2026-06-21T19:01:07.369Z",
+      "createdAt": "2026-06-21T19:01:07.369Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "complete",
+        "developer_name": "Cascade Builders",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "single_owner",
+        "registration_date": "2020-06-15",
+        "developer_verified": true,
+        "construction_permit": "verified"
+      },
+      "location_analysis": {
+        "commute_am": 8,
+        "commute_pm": 12,
+        "crime_index": "low",
+        "noise_level": "medium",
+        "parks_nearby": "Lovers Park (350m), Cascade (500m)",
+        "ecology_index": "moderate",
+        "sunlight_hours": 7.346104143235371,
+        "highway_distance": 1500,
+        "air_quality_index": 85,
+        "parking_available": "yes",
+        "walkability_score": 92,
+        "playgrounds_nearby": "2 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 2,
+        "banks": 2,
+        "schools": "School #19 (269m)",
+        "hospitals": [
+          {
+            "name": "Nairi Medical Center",
+            "distance": 1645,
+            "emergency": true
+          }
+        ],
+        "transport": "Metro 438m, Bus 100m",
+        "pharmacies": 2,
+        "supermarkets": 3,
+        "kindergartens": "2 within 500m"
+      },
+      "investment_analysis": {
+        "score": 95,
+        "market_trend": "growing",
+        "rental_yield": 8.926700408103192,
+        "roi_estimate": 81,
+        "demand_signals": 86,
+        "liquidity_score": 85,
+        "price_vs_market": 78,
+        "appreciation_forecast": 90,
+        "comparable_properties": 8
+      },
+      "virtual_tour_enabled": false
+    },
+    {
+      "id": "a2222222-2222-2222-2222-222222222222",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"Luxury 4-Bedroom Penthouse\",\"ru\":\"Люксовый 4-комнатный пентхаус\",\"hy\":\"4-սdelays delays\"}",
+      "address": "1 Northern Avenue",
+      "district": "Kentron",
+      "neighborhood": "{\"en\":\"Northern Avenue\",\"ru\":\"Северный проспект\",\"hy\":\"Delays\"}",
+      "price": "450000000",
+      "currency": "AMD",
+      "rooms": 6,
+      "bedrooms": 4,
+      "bathrooms": 3,
+      "area": "280",
+      "sizeSqm": "280",
+      "floor": 15,
+      "totalFloors": 15,
+      "yearBuilt": 2022,
+      "buildingType": "monolith",
+      "condition": "new",
+      "description": "Luxury 4-Bedroom Penthouse. Located in Northern Avenue, Kentron. 6 rooms, 280 sqm.",
+      "features": [
+        "Terrace",
+        "Air Conditioning",
+        "Central Heating",
+        "Elevator",
+        "Security",
+        "Parking",
+        "Concierge",
+        "Gym"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800",
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800",
+        "https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800",
+      "latitude": "40.1815",
+      "longitude": "44.516",
+      "matchScore": 88,
+      "isTopChoice": false,
+      "recommendationReasons": [
+        "{\"en\":\"Panoramic city views\",\"ru\":\"Панорамный вид на город\"}",
+        "{\"en\":\"Premium finishes\",\"ru\":\"Премиальная отделка\"}",
+        "{\"en\":\"Exclusive building amenities\",\"ru\":\"Эксклюзивные удобства дома\"}"
+      ],
+      "warning": "{\"en\":\"High maintenance fees\",\"ru\":\"Высокая плата за обслуживание\"}",
+      "utilitiesEstimate": "35654",
+      "depositMonths": 1,
+      "minimumLeaseMonths": 10,
+      "petsAllowed": true,
+      "hasParking": true,
+      "hasBalcony": true,
+      "propertyType": "apartment",
+      "dealType": "sale",
+      "contact": {
+        "name": "Armen Petrosyan",
+        "type": "owner",
+        "phone": "+374 91 456 789",
+        "verified": true
+      },
+      "nearbyPois": {
+        "metro": [
+          {
+            "name": "Republic Square",
+            "distance_m": 300,
+            "walk_time_min": 6
+          }
+        ],
+        "parks": [
+          {
+            "name": "Lovers Park",
+            "distance_m": 647,
+            "walk_time_min": 5
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1174,
+            "walk_time_min": 15
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #168",
+            "distance_m": 363,
+            "walk_time_min": 3
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1567,
+            "walk_time_min": 11
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 228,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 319,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": true,
+      "listingDate": "2026-06-21T19:01:07.376Z",
+      "createdAt": "2026-06-21T19:01:07.376Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "complete",
+        "developer_name": "Ararat Construction Co.",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "single_owner",
+        "registration_date": "2022-06-15",
+        "developer_verified": true,
+        "construction_permit": "verified"
+      },
+      "location_analysis": {
+        "commute_am": 8,
+        "commute_pm": 12,
+        "crime_index": "low",
+        "noise_level": "medium",
+        "parks_nearby": "Lovers Park (350m), Cascade (500m)",
+        "ecology_index": "moderate",
+        "sunlight_hours": 7.101083314558585,
+        "highway_distance": 1500,
+        "air_quality_index": 85,
+        "parking_available": "yes",
+        "walkability_score": 92,
+        "playgrounds_nearby": "3 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 4,
+        "banks": 3,
+        "schools": "School #8 (362m)",
+        "hospitals": [
+          {
+            "name": "Nairi Medical Center",
+            "distance": 1708,
+            "emergency": true
+          }
+        ],
+        "transport": "Metro 373m, Bus 100m",
+        "pharmacies": 2,
+        "supermarkets": 5,
+        "kindergartens": "2 within 500m"
+      },
+      "investment_analysis": {
+        "score": 95,
+        "market_trend": "growing",
+        "rental_yield": 7.964387676010787,
+        "roi_estimate": 79,
+        "demand_signals": 94,
+        "liquidity_score": 85,
+        "price_vs_market": 75,
+        "appreciation_forecast": 87,
+        "comparable_properties": 7
+      },
+      "virtual_tour_enabled": true
+    },
+    {
+      "id": "a3333333-3333-3333-3333-333333333333",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"2-Bedroom Apartment in Arabkir\",\"ru\":\"2-комнатная квартира в Арабкире\",\"hy\":\"2-սdelays delays\"}",
+      "address": "28 Komitas Avenue",
+      "district": "Arabkir",
+      "neighborhood": "{\"en\":\"Komitas Avenue\",\"ru\":\"Проспект Комитаса\",\"hy\":\"Delays\"}",
+      "price": "85000000",
+      "currency": "AMD",
+      "rooms": 3,
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "area": "75",
+      "sizeSqm": "75",
+      "floor": 6,
+      "totalFloors": 9,
+      "yearBuilt": 2018,
+      "buildingType": "brick",
+      "condition": "new",
+      "description": "2-Bedroom Apartment in Arabkir. Located in Komitas Avenue, Arabkir. 3 rooms, 75 sqm.",
+      "features": [
+        "Balcony",
+        "Central Heating",
+        "Elevator",
+        "Parking"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=800",
+        "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800",
+        "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800",
+        "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800",
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=800",
+      "latitude": "40.202",
+      "longitude": "44.501",
+      "matchScore": 90,
+      "isTopChoice": false,
+      "recommendationReasons": [
+        "{\"en\":\"Family-friendly neighborhood\",\"ru\":\"Район подходит для семей\"}",
+        "{\"en\":\"Near schools and parks\",\"ru\":\"Рядом школы и парки\"}",
+        "{\"en\":\"Good value for money\",\"ru\":\"Хорошее соотношение цена/качество\"}"
+      ],
+      "warning": null,
+      "utilitiesEstimate": "35043",
+      "depositMonths": 2,
+      "minimumLeaseMonths": 11,
+      "petsAllowed": false,
+      "hasParking": true,
+      "hasBalcony": true,
+      "propertyType": "apartment",
+      "dealType": "sale",
+      "contact": {
+        "name": "Lilit Sargsyan",
+        "type": "agent",
+        "phone": "+374 93 112 233",
+        "verified": true
+      },
+      "nearbyPois": {
+        "metro": [
+          {
+            "name": "Barekamutyun",
+            "distance_m": 318,
+            "walk_time_min": 5
+          }
+        ],
+        "parks": [
+          {
+            "name": "Arabkir Park",
+            "distance_m": 383,
+            "walk_time_min": 7
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1425,
+            "walk_time_min": 14
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #57",
+            "distance_m": 284,
+            "walk_time_min": 5
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1623,
+            "walk_time_min": 10
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 100,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 411,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": true,
+      "listingDate": "2026-06-21T19:01:07.384Z",
+      "createdAt": "2026-06-21T19:01:07.384Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "complete",
+        "developer_name": "Modern Living Armenia",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "single_owner",
+        "registration_date": "2018-06-15",
+        "developer_verified": true,
+        "construction_permit": "verified"
+      },
+      "location_analysis": {
+        "commute_am": 15,
+        "commute_pm": 20,
+        "crime_index": "low",
+        "noise_level": "medium",
+        "parks_nearby": "Arabkir Park (400m)",
+        "ecology_index": "good",
+        "sunlight_hours": 6.173986406275816,
+        "highway_distance": 1292,
+        "air_quality_index": 85,
+        "parking_available": "yes",
+        "walkability_score": 82,
+        "playgrounds_nearby": "1 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 2,
+        "banks": 2,
+        "schools": "School #71 (592m)",
+        "hospitals": [
+          {
+            "name": "District Hospital",
+            "distance": 1225,
+            "emergency": true
+          }
+        ],
+        "transport": "Metro 340m, Bus 100m",
+        "pharmacies": 3,
+        "supermarkets": 3,
+        "kindergartens": "1 within 500m"
+      },
+      "investment_analysis": {
+        "score": 95,
+        "market_trend": "growing",
+        "rental_yield": 6.574397493991973,
+        "roi_estimate": 87,
+        "demand_signals": 92,
+        "liquidity_score": 85,
+        "price_vs_market": 79,
+        "appreciation_forecast": 81,
+        "comparable_properties": 7
+      },
+      "virtual_tour_enabled": false
+    },
+    {
+      "id": "a4444444-4444-4444-4444-444444444444",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"Renovated 3-Bedroom in Davtashen\",\"ru\":\"Отремонтированная 3-комнатная в Давташене\",\"hy\":\"3-սdelays delays\"}",
+      "address": "15 Tigran Mets Street",
+      "district": "Davtashen",
+      "neighborhood": "{\"en\":\"Davtashen 1st District\",\"ru\":\"1-й массив Давташена\",\"hy\":\"Delays\"}",
+      "price": "72000000",
+      "currency": "AMD",
+      "rooms": 4,
+      "bedrooms": 3,
+      "bathrooms": 1,
+      "area": "90",
+      "sizeSqm": "90",
+      "floor": 4,
+      "totalFloors": 9,
+      "yearBuilt": 2005,
+      "buildingType": "panel",
+      "condition": "good",
+      "description": "Renovated 3-Bedroom in Davtashen. Located in Davtashen 1st District, Davtashen. 4 rooms, 90 sqm.",
+      "features": [
+        "Balcony",
+        "Gas Heating",
+        "Elevator",
+        "Parking"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800",
+        "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800",
+        "https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800",
+      "latitude": "40.218",
+      "longitude": "44.487",
+      "matchScore": 85,
+      "isTopChoice": false,
+      "recommendationReasons": [
+        "{\"en\":\"Fresh renovation\",\"ru\":\"Свежий ремонт\"}",
+        "{\"en\":\"Quiet residential area\",\"ru\":\"Тихий жилой район\"}",
+        "{\"en\":\"Affordable price\",\"ru\":\"Доступная цена\"}"
+      ],
+      "warning": null,
+      "utilitiesEstimate": "28403",
+      "depositMonths": 1,
+      "minimumLeaseMonths": 6,
+      "petsAllowed": false,
+      "hasParking": true,
+      "hasBalcony": true,
+      "propertyType": "apartment",
+      "dealType": "sale",
+      "contact": {
+        "name": "Davit Grigoryan",
+        "type": "owner",
+        "phone": "+374 94 998 877",
+        "verified": false
+      },
+      "nearbyPois": {
+        "metro": [],
+        "parks": [
+          {
+            "name": "Davtashen Park",
+            "distance_m": 646,
+            "walk_time_min": 6
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1205,
+            "walk_time_min": 12
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #10",
+            "distance_m": 268,
+            "walk_time_min": 3
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1097,
+            "walk_time_min": 13
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 121,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 437,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": false,
+      "listingDate": "2026-06-21T19:01:07.391Z",
+      "createdAt": "2026-06-21T19:01:07.391Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "complete",
+        "developer_name": "Premium Estates AM",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "single_owner",
+        "registration_date": "2005-06-15",
+        "developer_verified": true,
+        "construction_permit": "not_required"
+      },
+      "location_analysis": {
+        "commute_am": 23,
+        "commute_pm": 28,
+        "crime_index": "very_low",
+        "noise_level": "low",
+        "parks_nearby": "Davtashen Park (400m)",
+        "ecology_index": "good",
+        "sunlight_hours": 7.373731035743529,
+        "highway_distance": 1290,
+        "air_quality_index": 75,
+        "parking_available": "yes",
+        "walkability_score": 73,
+        "playgrounds_nearby": "3 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 2,
+        "banks": 2,
+        "schools": "School #12 (207m)",
+        "hospitals": [
+          {
+            "name": "District Hospital",
+            "distance": 2075,
+            "emergency": true
+          }
+        ],
+        "transport": "Bus 168m, Marshrutka 150m",
+        "pharmacies": 3,
+        "supermarkets": 4,
+        "kindergartens": "1 within 500m"
+      },
+      "investment_analysis": {
+        "score": 93,
+        "market_trend": "stable",
+        "rental_yield": 7.651939933300323,
+        "roi_estimate": 75,
+        "demand_signals": 76,
+        "liquidity_score": 70,
+        "price_vs_market": 80,
+        "appreciation_forecast": 69,
+        "comparable_properties": 9
+      },
+      "virtual_tour_enabled": false
+    },
+    {
+      "id": "a5555555-5555-5555-5555-555555555555",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"New Build 2-Bedroom with Parking\",\"ru\":\"Новостройка 2-комнатная с парковкой\",\"hy\":\"2-սdelays delays\"}",
+      "address": "50 Raffi Street",
+      "district": "Malatia-Sebastia",
+      "neighborhood": "{\"en\":\"Malatia-Sebastia\",\"ru\":\"Малатия-Себастия\",\"hy\":\"Delays\"}",
+      "price": "58000000",
+      "currency": "AMD",
+      "rooms": 3,
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "area": "68",
+      "sizeSqm": "68",
+      "floor": 10,
+      "totalFloors": 16,
+      "yearBuilt": 2023,
+      "buildingType": "monolith",
+      "condition": "new",
+      "description": "New Build 2-Bedroom with Parking. Located in Malatia-Sebastia, Malatia-Sebastia. 3 rooms, 68 sqm.",
+      "features": [
+        "Balcony",
+        "Central Heating",
+        "Elevator",
+        "Security",
+        "Parking"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800",
+        "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800",
+        "https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=800",
+        "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800",
+      "latitude": "40.155",
+      "longitude": "44.47",
+      "matchScore": 87,
+      "isTopChoice": false,
+      "recommendationReasons": [
+        "{\"en\":\"Brand new building\",\"ru\":\"Совершенно новое здание\"}",
+        "{\"en\":\"Near Dalma Garden Mall\",\"ru\":\"Рядом с Dalma Garden Mall\"}",
+        "{\"en\":\"Underground parking included\",\"ru\":\"Подземная парковка включена\"}"
+      ],
+      "warning": null,
+      "utilitiesEstimate": "29694",
+      "depositMonths": 2,
+      "minimumLeaseMonths": 10,
+      "petsAllowed": false,
+      "hasParking": true,
+      "hasBalcony": true,
+      "propertyType": "apartment",
+      "dealType": "sale",
+      "contact": {
+        "name": "Marine Vardanyan",
+        "type": "agent",
+        "phone": "+374 77 555 666",
+        "verified": true
+      },
+      "nearbyPois": {
+        "metro": [],
+        "parks": [
+          {
+            "name": "Malatia-Sebastia Park",
+            "distance_m": 331,
+            "walk_time_min": 5
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1435,
+            "walk_time_min": 14
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #141",
+            "distance_m": 483,
+            "walk_time_min": 6
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1561,
+            "walk_time_min": 10
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 140,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 338,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": true,
+      "listingDate": "2026-06-21T19:01:07.398Z",
+      "createdAt": "2026-06-21T19:01:07.398Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "complete",
+        "developer_name": "City Build Yerevan",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "single_owner",
+        "registration_date": "2023-06-15",
+        "developer_verified": true,
+        "construction_permit": "verified"
+      },
+      "location_analysis": {
+        "commute_am": 33,
+        "commute_pm": 20,
+        "crime_index": "low",
+        "noise_level": "medium",
+        "parks_nearby": "Malatia-Sebastia Park (400m)",
+        "ecology_index": "good",
+        "sunlight_hours": 6.93049232131137,
+        "highway_distance": 1064,
+        "air_quality_index": 85,
+        "parking_available": "yes",
+        "walkability_score": 82,
+        "playgrounds_nearby": "1 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 3,
+        "banks": 3,
+        "schools": "School #91 (289m)",
+        "hospitals": [
+          {
+            "name": "District Hospital",
+            "distance": 1838,
+            "emergency": true
+          }
+        ],
+        "transport": "Bus 185m, Marshrutka 150m",
+        "pharmacies": 3,
+        "supermarkets": 3,
+        "kindergartens": "2 within 500m"
+      },
+      "investment_analysis": {
+        "score": 95,
+        "market_trend": "stable",
+        "rental_yield": 8.155822129376638,
+        "roi_estimate": 74,
+        "demand_signals": 80,
+        "liquidity_score": 70,
+        "price_vs_market": 65,
+        "appreciation_forecast": 65,
+        "comparable_properties": 8
+      },
+      "virtual_tour_enabled": false
+    },
+    {
+      "id": "a6666666-6666-6666-6666-666666666666",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"Spacious 4-Bedroom Family Home\",\"ru\":\"Просторная 4-комнатная для семьи\",\"hy\":\"4-սdelays delays\"}",
+      "address": "8 Nork Gardens",
+      "district": "Nork-Marash",
+      "neighborhood": "{\"en\":\"Nork-Marash\",\"ru\":\"Норк-Мараш\",\"hy\":\"Delays\"}",
+      "price": "195000000",
+      "currency": "AMD",
+      "rooms": 5,
+      "bedrooms": 4,
+      "bathrooms": 2,
+      "area": "180",
+      "sizeSqm": "180",
+      "floor": 3,
+      "totalFloors": 5,
+      "yearBuilt": 2019,
+      "buildingType": "monolith",
+      "condition": "new",
+      "description": "Spacious 4-Bedroom Family Home. Located in Nork-Marash, Nork-Marash. 5 rooms, 180 sqm.",
+      "features": [
+        "Terrace",
+        "Air Conditioning",
+        "Central Heating",
+        "Elevator",
+        "Security",
+        "Parking",
+        "Garden View"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800",
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800",
+        "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800",
+        "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800",
+      "latitude": "40.178",
+      "longitude": "44.548",
+      "matchScore": 91,
+      "isTopChoice": false,
+      "recommendationReasons": [
+        "{\"en\":\"Prestigious residential complex\",\"ru\":\"Престижный жилой комплекс\"}",
+        "{\"en\":\"Mountain views\",\"ru\":\"Вид на горы\"}",
+        "{\"en\":\"Private garden access\",\"ru\":\"Доступ к частному саду\"}"
+      ],
+      "warning": null,
+      "utilitiesEstimate": "31609",
+      "depositMonths": 2,
+      "minimumLeaseMonths": 8,
+      "petsAllowed": true,
+      "hasParking": true,
+      "hasBalcony": true,
+      "propertyType": "apartment",
+      "dealType": "sale",
+      "contact": {
+        "name": "Hayk Hovhannisyan",
+        "type": "owner",
+        "phone": "+374 99 321 654",
+        "verified": true
+      },
+      "nearbyPois": {
+        "metro": [],
+        "parks": [
+          {
+            "name": "Nork-Marash Park",
+            "distance_m": 482,
+            "walk_time_min": 4
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1244,
+            "walk_time_min": 12
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #112",
+            "distance_m": 263,
+            "walk_time_min": 7
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1464,
+            "walk_time_min": 11
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 136,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 383,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": true,
+      "listingDate": "2026-06-21T19:01:07.405Z",
+      "createdAt": "2026-06-21T19:01:07.405Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "complete",
+        "developer_name": "Northern Avenue Developers",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "single_owner",
+        "registration_date": "2019-06-15",
+        "developer_verified": true,
+        "construction_permit": "verified"
+      },
+      "location_analysis": {
+        "commute_am": 20,
+        "commute_pm": 38,
+        "crime_index": "very_low",
+        "noise_level": "low",
+        "parks_nearby": "Nork-Marash Park (400m)",
+        "ecology_index": "good",
+        "sunlight_hours": 6.529158566806519,
+        "highway_distance": 763,
+        "air_quality_index": 75,
+        "parking_available": "yes",
+        "walkability_score": 76,
+        "playgrounds_nearby": "3 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 4,
+        "banks": 2,
+        "schools": "School #47 (451m)",
+        "hospitals": [
+          {
+            "name": "District Hospital",
+            "distance": 1924,
+            "emergency": true
+          }
+        ],
+        "transport": "Bus 213m, Marshrutka 150m",
+        "pharmacies": 2,
+        "supermarkets": 4,
+        "kindergartens": "1 within 500m"
+      },
+      "investment_analysis": {
+        "score": 95,
+        "market_trend": "stable",
+        "rental_yield": 8.03499455740651,
+        "roi_estimate": 76,
+        "demand_signals": 75,
+        "liquidity_score": 70,
+        "price_vs_market": 83,
+        "appreciation_forecast": 69,
+        "comparable_properties": 9
+      },
+      "virtual_tour_enabled": true
+    },
+    {
+      "id": "a7777777-7777-7777-7777-777777777777",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"Studio Apartment Investment\",\"ru\":\"Студия для инвестиций\",\"hy\":\"Սdelays delays\"}",
+      "address": "22 Tamanyan Street",
+      "district": "Kentron",
+      "neighborhood": "{\"en\":\"Cascade Area\",\"ru\":\"Район Каскада\",\"hy\":\"Delays\"}",
+      "price": "42000000",
+      "currency": "AMD",
+      "rooms": 1,
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "area": "38",
+      "sizeSqm": "38",
+      "floor": 5,
+      "totalFloors": 9,
+      "yearBuilt": 2017,
+      "buildingType": "monolith",
+      "condition": "new",
+      "description": "Studio Apartment Investment. Located in Cascade Area, Kentron. 1 rooms, 38 sqm.",
+      "features": [
+        "Air Conditioning",
+        "Central Heating",
+        "Elevator",
+        "Security"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800",
+        "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800",
+        "https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?w=800",
+        "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800",
+      "latitude": "40.185",
+      "longitude": "44.51",
+      "matchScore": 82,
+      "isTopChoice": false,
+      "recommendationReasons": [
+        "{\"en\":\"Perfect for Airbnb\",\"ru\":\"Идеально для Airbnb\"}",
+        "{\"en\":\"Tourist area location\",\"ru\":\"Расположение в туристическом районе\"}",
+        "{\"en\":\"High rental yield potential\",\"ru\":\"Высокий потенциал арендной доходности\"}"
+      ],
+      "warning": null,
+      "utilitiesEstimate": "36383",
+      "depositMonths": 2,
+      "minimumLeaseMonths": 8,
+      "petsAllowed": false,
+      "hasParking": false,
+      "hasBalcony": false,
+      "propertyType": "apartment",
+      "dealType": "sale",
+      "contact": {
+        "name": "Narek Karapetyan",
+        "type": "agent",
+        "phone": "+374 91 777 888",
+        "verified": true
+      },
+      "nearbyPois": {
+        "metro": [
+          {
+            "name": "Republic Square",
+            "distance_m": 348,
+            "walk_time_min": 5
+          }
+        ],
+        "parks": [
+          {
+            "name": "Lovers Park",
+            "distance_m": 528,
+            "walk_time_min": 5
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1206,
+            "walk_time_min": 16
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #23",
+            "distance_m": 209,
+            "walk_time_min": 6
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1642,
+            "walk_time_min": 14
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 281,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 486,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": true,
+      "listingDate": "2026-06-21T19:01:07.411Z",
+      "createdAt": "2026-06-21T19:01:07.411Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "under_review",
+        "developer_name": "Elite Construction LLC",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "pending_verification",
+        "registration_date": "2017-06-15",
+        "developer_verified": false,
+        "construction_permit": "verified"
+      },
+      "location_analysis": {
+        "commute_am": 8,
+        "commute_pm": 12,
+        "crime_index": "low",
+        "noise_level": "medium",
+        "parks_nearby": "Lovers Park (350m), Cascade (500m)",
+        "ecology_index": "moderate",
+        "sunlight_hours": 6.9714828962324,
+        "highway_distance": 1500,
+        "air_quality_index": 85,
+        "parking_available": "limited",
+        "walkability_score": 92,
+        "playgrounds_nearby": "1 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 3,
+        "banks": 2,
+        "schools": "School #13 (231m)",
+        "hospitals": [
+          {
+            "name": "Nairi Medical Center",
+            "distance": 1494,
+            "emergency": true
+          }
+        ],
+        "transport": "Metro 475m, Bus 100m",
+        "pharmacies": 3,
+        "supermarkets": 5,
+        "kindergartens": "2 within 500m"
+      },
+      "investment_analysis": {
+        "score": 90,
+        "market_trend": "growing",
+        "rental_yield": 9.47077638301588,
+        "roi_estimate": 83,
+        "demand_signals": 89,
+        "liquidity_score": 85,
+        "price_vs_market": 89,
+        "appreciation_forecast": 92,
+        "comparable_properties": 6
+      },
+      "virtual_tour_enabled": false
+    },
+    {
+      "id": "a8888888-8888-8888-8888-888888888888",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"3-Bedroom with City Views\",\"ru\":\"3-комнатная с видом на город\",\"hy\":\"3-սdelays delays\"}",
+      "address": "45 Acharyan Street",
+      "district": "Avan",
+      "neighborhood": "{\"en\":\"Avan\",\"ru\":\"Аван\",\"hy\":\"Delays\"}",
+      "price": "68000000",
+      "currency": "AMD",
+      "rooms": 4,
+      "bedrooms": 3,
+      "bathrooms": 1,
+      "area": "95",
+      "sizeSqm": "95",
+      "floor": 12,
+      "totalFloors": 14,
+      "yearBuilt": 2021,
+      "buildingType": "monolith",
+      "condition": "new",
+      "description": "3-Bedroom with City Views. Located in Avan, Avan. 4 rooms, 95 sqm.",
+      "features": [
+        "Balcony",
+        "Central Heating",
+        "Elevator",
+        "Parking"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=800",
+        "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800",
+        "https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=800",
+      "latitude": "40.198",
+      "longitude": "44.562",
+      "matchScore": 86,
+      "isTopChoice": false,
+      "recommendationReasons": [
+        "{\"en\":\"Panoramic city views\",\"ru\":\"Панорамный вид на город\"}",
+        "{\"en\":\"Modern building\",\"ru\":\"Современное здание\"}",
+        "{\"en\":\"Growing neighborhood\",\"ru\":\"Развивающийся район\"}"
+      ],
+      "warning": null,
+      "utilitiesEstimate": "27026",
+      "depositMonths": 1,
+      "minimumLeaseMonths": 8,
+      "petsAllowed": true,
+      "hasParking": true,
+      "hasBalcony": true,
+      "propertyType": "apartment",
+      "dealType": "sale",
+      "contact": {
+        "name": "Anahit Mkrtchyan",
+        "type": "owner",
+        "phone": "+374 93 444 555",
+        "verified": false
+      },
+      "nearbyPois": {
+        "metro": [],
+        "parks": [
+          {
+            "name": "Avan Park",
+            "distance_m": 621,
+            "walk_time_min": 5
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1198,
+            "walk_time_min": 14
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #117",
+            "distance_m": 562,
+            "walk_time_min": 4
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1529,
+            "walk_time_min": 11
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 106,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 336,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": false,
+      "listingDate": "2026-06-21T19:01:07.418Z",
+      "createdAt": "2026-06-21T19:01:07.418Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "complete",
+        "developer_name": "Yerevan Development Group",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "single_owner",
+        "registration_date": "2021-06-15",
+        "developer_verified": true,
+        "construction_permit": "verified"
+      },
+      "location_analysis": {
+        "commute_am": 30,
+        "commute_pm": 33,
+        "crime_index": "low",
+        "noise_level": "medium",
+        "parks_nearby": "Avan Park (400m)",
+        "ecology_index": "good",
+        "sunlight_hours": 7.64875283775496,
+        "highway_distance": 1430,
+        "air_quality_index": 85,
+        "parking_available": "yes",
+        "walkability_score": 76,
+        "playgrounds_nearby": "2 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 2,
+        "banks": 2,
+        "schools": "School #28 (262m)",
+        "hospitals": [
+          {
+            "name": "District Hospital",
+            "distance": 844,
+            "emergency": true
+          }
+        ],
+        "transport": "Bus 280m, Marshrutka 150m",
+        "pharmacies": 2,
+        "supermarkets": 4,
+        "kindergartens": "2 within 500m"
+      },
+      "investment_analysis": {
+        "score": 86,
+        "market_trend": "stable",
+        "rental_yield": 8.563870524202812,
+        "roi_estimate": 77,
+        "demand_signals": 79,
+        "liquidity_score": 70,
+        "price_vs_market": 65,
+        "appreciation_forecast": 81,
+        "comparable_properties": 7
+      },
+      "virtual_tour_enabled": false
+    },
+    {
+      "id": "a9999999-9999-9999-9999-999999999999",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"Cozy 1-Bedroom in Shengavit\",\"ru\":\"Уютная 1-комнатная в Шенгавите\",\"hy\":\"1-սdelays delays\"}",
+      "address": "12 Arshakunyats Avenue",
+      "district": "Shengavit",
+      "neighborhood": "{\"en\":\"Shengavit\",\"ru\":\"Шенгавит\",\"hy\":\"Delays\"}",
+      "price": "35000000",
+      "currency": "AMD",
+      "rooms": 2,
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "area": "45",
+      "sizeSqm": "45",
+      "floor": 3,
+      "totalFloors": 9,
+      "yearBuilt": 2010,
+      "buildingType": "brick",
+      "condition": "good",
+      "description": "Cozy 1-Bedroom in Shengavit. Located in Shengavit, Shengavit. 2 rooms, 45 sqm.",
+      "features": [
+        "Balcony",
+        "Gas Heating",
+        "Elevator"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800",
+        "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800",
+        "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800",
+        "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800",
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800",
+      "latitude": "40.16",
+      "longitude": "44.495",
+      "matchScore": 80,
+      "isTopChoice": false,
+      "recommendationReasons": [
+        "{\"en\":\"Affordable entry price\",\"ru\":\"Доступная стартовая цена\"}",
+        "{\"en\":\"Near metro station\",\"ru\":\"Рядом с метро\"}",
+        "{\"en\":\"Good for first-time buyers\",\"ru\":\"Подходит для первой покупки\"}"
+      ],
+      "warning": null,
+      "utilitiesEstimate": "28487",
+      "depositMonths": 2,
+      "minimumLeaseMonths": 7,
+      "petsAllowed": true,
+      "hasParking": false,
+      "hasBalcony": true,
+      "propertyType": "apartment",
+      "dealType": "sale",
+      "contact": {
+        "name": "Tigran Avetisyan",
+        "type": "agent",
+        "phone": "+374 94 666 777",
+        "verified": true
+      },
+      "nearbyPois": {
+        "metro": [],
+        "parks": [
+          {
+            "name": "Shengavit Park",
+            "distance_m": 448,
+            "walk_time_min": 7
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1218,
+            "walk_time_min": 15
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #35",
+            "distance_m": 239,
+            "walk_time_min": 5
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1328,
+            "walk_time_min": 11
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 176,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 426,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": true,
+      "listingDate": "2026-06-21T19:01:07.425Z",
+      "createdAt": "2026-06-21T19:01:07.425Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "under_review",
+        "developer_name": "Cascade Builders",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "pending_verification",
+        "registration_date": "2010-06-15",
+        "developer_verified": false,
+        "construction_permit": "not_required"
+      },
+      "location_analysis": {
+        "commute_am": 27,
+        "commute_pm": 26,
+        "crime_index": "low",
+        "noise_level": "medium",
+        "parks_nearby": "Shengavit Park (400m)",
+        "ecology_index": "good",
+        "sunlight_hours": 7.910624887261735,
+        "highway_distance": 548,
+        "air_quality_index": 85,
+        "parking_available": "limited",
+        "walkability_score": 87,
+        "playgrounds_nearby": "2 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 2,
+        "banks": 3,
+        "schools": "School #6 (334m)",
+        "hospitals": [
+          {
+            "name": "District Hospital",
+            "distance": 1455,
+            "emergency": true
+          }
+        ],
+        "transport": "Bus 103m, Marshrutka 150m",
+        "pharmacies": 3,
+        "supermarkets": 3,
+        "kindergartens": "2 within 500m"
+      },
+      "investment_analysis": {
+        "score": 86,
+        "market_trend": "stable",
+        "rental_yield": 7.459016297524718,
+        "roi_estimate": 79,
+        "demand_signals": 80,
+        "liquidity_score": 70,
+        "price_vs_market": 67,
+        "appreciation_forecast": 81,
+        "comparable_properties": 6
+      },
+      "virtual_tour_enabled": false
+    },
+    {
+      "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "owner_id": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "title": "{\"en\":\"Premium 5-Bedroom Duplex\",\"ru\":\"Премиум 5-комнатный дуплекс\",\"hy\":\"5-սdelays delays\"}",
+      "address": "3 Cascade Street",
+      "district": "Kentron",
+      "neighborhood": "{\"en\":\"Cascade\",\"ru\":\"Каскад\",\"hy\":\"Delays\"}",
+      "price": "580000000",
+      "currency": "AMD",
+      "rooms": 7,
+      "bedrooms": 5,
+      "bathrooms": 4,
+      "area": "350",
+      "sizeSqm": "350",
+      "floor": 9,
+      "totalFloors": 10,
+      "yearBuilt": 2023,
+      "buildingType": "monolith",
+      "condition": "new",
+      "description": "Premium 5-Bedroom Duplex. Located in Cascade, Kentron. 7 rooms, 350 sqm.",
+      "features": [
+        "Terrace",
+        "Air Conditioning",
+        "Central Heating",
+        "Elevator",
+        "Security",
+        "Parking",
+        "Concierge",
+        "Gym",
+        "Pool"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800",
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800",
+        "https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?w=800"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800",
+      "latitude": "40.187",
+      "longitude": "44.513",
+      "matchScore": 95,
+      "isTopChoice": true,
+      "recommendationReasons": [
+        "{\"en\":\"Ultra-luxury property\",\"ru\":\"Ультра-люксовая недвижимость\"}",
+        "{\"en\":\"Private rooftop terrace\",\"ru\":\"Частная терраса на крыше\"}",
+        "{\"en\":\"Smart home system\",\"ru\":\"Система умный дом\"}",
+        "{\"en\":\"Walking distance to Cascade\",\"ru\":\"Пешая доступность до Каскада\"}"
+      ],
+      "warning": null,
+      "utilitiesEstimate": "28983",
+      "depositMonths": 1,
+      "minimumLeaseMonths": 7,
+      "petsAllowed": false,
+      "hasParking": true,
+      "hasBalcony": true,
+      "propertyType": "apartment",
+      "dealType": "sale",
+      "contact": {
+        "name": "Karine Ghazaryan",
+        "type": "agent",
+        "phone": "+374 77 888 999",
+        "verified": true
+      },
+      "nearbyPois": {
+        "metro": [
+          {
+            "name": "Republic Square",
+            "distance_m": 480,
+            "walk_time_min": 5
+          }
+        ],
+        "parks": [
+          {
+            "name": "Lovers Park",
+            "distance_m": 481,
+            "walk_time_min": 7
+          },
+          {
+            "name": "Victory Park",
+            "distance_m": 1483,
+            "walk_time_min": 13
+          }
+        ],
+        "schools": [
+          {
+            "name": "School #57",
+            "distance_m": 265,
+            "walk_time_min": 5
+          },
+          {
+            "name": "QSI International School",
+            "distance_m": 1172,
+            "walk_time_min": 10
+          }
+        ],
+        "supermarkets": [
+          {
+            "name": "SAS Supermarket",
+            "rating": 4.2,
+            "distance_m": 172,
+            "walk_time_min": 2
+          },
+          {
+            "name": "Yerevan City",
+            "rating": 4.5,
+            "distance_m": 425,
+            "walk_time_min": 4
+          }
+        ]
+      },
+      "available": true,
+      "verified": true,
+      "listingDate": "2026-06-21T19:01:07.361Z",
+      "createdAt": "2026-06-21T19:01:07.361Z",
+      "updatedAt": "2026-06-21T19:19:58.107Z",
+      "legal_analysis": {
+        "claims_count": 0,
+        "encumbrances": false,
+        "title_status": "complete",
+        "developer_name": "Ararat Construction Co.",
+        "mortgage_status": "none",
+        "double_sale_risk": false,
+        "ownership_status": "single_owner",
+        "registration_date": "2023-06-15",
+        "developer_verified": true,
+        "construction_permit": "verified"
+      },
+      "location_analysis": {
+        "commute_am": 8,
+        "commute_pm": 12,
+        "crime_index": "low",
+        "noise_level": "medium",
+        "parks_nearby": "Lovers Park (350m), Cascade (500m)",
+        "ecology_index": "moderate",
+        "sunlight_hours": 7.282309222458204,
+        "highway_distance": 1500,
+        "air_quality_index": 85,
+        "parking_available": "yes",
+        "walkability_score": 92,
+        "playgrounds_nearby": "3 within 400m"
+      },
+      "infrastructure_analysis": {
+        "gyms": 2,
+        "banks": 3,
+        "schools": "School #82 (576m)",
+        "hospitals": [
+          {
+            "name": "Nairi Medical Center",
+            "distance": 1368,
+            "emergency": true
+          }
+        ],
+        "transport": "Metro 409m, Bus 100m",
+        "pharmacies": 2,
+        "supermarkets": 4,
+        "kindergartens": "2 within 500m"
+      },
+      "investment_analysis": {
+        "score": 95,
+        "market_trend": "growing",
+        "rental_yield": 7.165599612581989,
+        "roi_estimate": 72,
+        "demand_signals": 91,
+        "liquidity_score": 85,
+        "price_vs_market": 82,
+        "appreciation_forecast": 93,
+        "comparable_properties": 7
+      },
+      "virtual_tour_enabled": true
+    }
+  ],
+  "favorites": [
+    {
+      "id": "515f495c-0bd5-4fc9-ba97-06998a3429dd",
+      "userId": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "propertyId": "11111111-1111-1111-1111-111111111111",
+      "createdAt": "2026-06-22T13:46:40.447Z"
+    }
+  ],
+  "viewings": [
+    {
+      "id": "0da5e602-3aa7-447a-92de-08a44e5457b0",
+      "propertyId": "11111111-1111-1111-1111-111111111111",
+      "clientId": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "agentId": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "createdById": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "lastProposedById": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "cancelledById": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "scheduledAt": "2026-06-30T17:00:00.000Z",
+      "status": "cancelled",
+      "comment": null,
+      "message": "сссччсч",
+      "createdAt": "2026-06-21T19:20:27.112Z",
+      "updatedAt": "2026-06-22T09:42:45.346Z"
+    },
+    {
+      "id": "85cd434e-c667-4cc7-ad59-0ee59a5a9e5c",
+      "propertyId": "22222222-2222-2222-2222-222222222222",
+      "clientId": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "agentId": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "createdById": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "lastProposedById": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "cancelledById": null,
+      "scheduledAt": "2026-06-22T11:00:00.000Z",
+      "status": "confirmed",
+      "comment": null,
+      "message": null,
+      "createdAt": "2026-06-22T10:51:42.475Z",
+      "updatedAt": "2026-06-22T10:51:53.689Z"
+    },
+    {
+      "id": "3d668ae9-dac4-4075-a5d3-81f597b3bd47",
+      "propertyId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "clientId": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "agentId": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "createdById": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "lastProposedById": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "cancelledById": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "scheduledAt": "2026-06-22T14:30:00.000Z",
+      "status": "cancelled",
+      "comment": null,
+      "message": "123555",
+      "createdAt": "2026-06-22T10:51:11.930Z",
+      "updatedAt": "2026-06-22T10:52:07.014Z"
+    },
+    {
+      "id": "2322fe85-f3c6-488f-8fa9-6b66ed2f7c0c",
+      "propertyId": "11111111-1111-1111-1111-111111111111",
+      "clientId": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "agentId": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "createdById": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "lastProposedById": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "cancelledById": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "scheduledAt": "2026-06-28T11:00:00.000Z",
+      "status": "cancelled",
+      "comment": null,
+      "message": "rtdfgy",
+      "createdAt": "2026-06-22T09:43:01.919Z",
+      "updatedAt": "2026-06-22T10:52:08.279Z"
+    }
+  ],
+  "reviews": [],
+  "notifications": [
+    {
+      "id": "a35c61e1-533f-48d7-8207-f6a2136530da",
+      "userId": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "type": "viewing_request",
+      "title": "New Viewing Request",
+      "body": "A client has requested a viewing for \"{\"en\":\"Modern 2-Bedroom Apartment in Kentron\",\"ru\":\"Современная 2-комнатная квартира в Кентроне\",\"hy\":\" Delays 2-սdelays delays delays Կdelays\"}\" on Tuesday, June 30 at 08:00 PM",
+      "data": {
+        "viewingId": "0da5e602-3aa7-447a-92de-08a44e5457b0",
+        "propertyId": "11111111-1111-1111-1111-111111111111",
+        "scheduledAt": "2026-06-30T17:00:00.000Z"
+      },
+      "read": false,
+      "createdAt": "2026-06-21T19:20:27.151Z"
+    },
+    {
+      "id": "8def72a5-8426-45eb-bed2-f4cc6133d6f3",
+      "userId": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "type": "viewing_confirmed",
+      "title": "Viewing Confirmed",
+      "body": "The other party has confirmed the viewing for \"{\"en\":\"Modern 2-Bedroom Apartment in Kentron\",\"ru\":\"Современная 2-комнатная квартира в Кентроне\",\"hy\":\" Delays 2-սdelays delays delays Կdelays\"}\" on Tuesday, June 30 at 08:00 PM",
+      "data": {
+        "viewingId": "0da5e602-3aa7-447a-92de-08a44e5457b0",
+        "propertyId": "11111111-1111-1111-1111-111111111111",
+        "scheduledAt": "2026-06-30T17:00:00.000Z"
+      },
+      "read": false,
+      "createdAt": "2026-06-21T19:21:28.753Z"
+    },
+    {
+      "id": "b07e993f-9dcf-4053-b546-6f23fb508704",
+      "userId": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "type": "viewing_cancelled",
+      "title": "Viewing Cancelled",
+      "body": "The other party has cancelled the viewing for \"{\"en\":\"Modern 2-Bedroom Apartment in Kentron\",\"ru\":\"Современная 2-комнатная квартира в Кентроне\",\"hy\":\" Delays 2-սdelays delays delays Կdelays\"}\" that was scheduled for Tuesday, June 30 at 08:00 PM",
+      "data": {
+        "reason": null,
+        "viewingId": "0da5e602-3aa7-447a-92de-08a44e5457b0",
+        "propertyId": "11111111-1111-1111-1111-111111111111",
+        "cancelledById": "29237634-7068-4fdc-a722-7d2ebf6c2afd"
+      },
+      "read": false,
+      "createdAt": "2026-06-22T09:42:45.380Z"
+    },
+    {
+      "id": "a0cb8274-6196-4eff-ae08-8540b05bb964",
+      "userId": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "type": "viewing_request",
+      "title": "New Viewing Request",
+      "body": "A client has requested a viewing for \"{\"en\":\"Modern 2-Bedroom Apartment in Kentron\",\"ru\":\"Современная 2-комнатная квартира в Кентроне\",\"hy\":\" Delays 2-սdelays delays delays Կdelays\"}\" on Thursday, June 25 at 07:00 PM",
+      "data": {
+        "viewingId": "2322fe85-f3c6-488f-8fa9-6b66ed2f7c0c",
+        "propertyId": "11111111-1111-1111-1111-111111111111",
+        "scheduledAt": "2026-06-25T16:00:00.000Z"
+      },
+      "read": false,
+      "createdAt": "2026-06-22T09:43:01.938Z"
+    },
+    {
+      "id": "45b1b4db-39d0-415f-8f10-8ead0038e10d",
+      "userId": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "type": "viewing_proposed",
+      "title": "New Time Proposed",
+      "body": "The other party has proposed a new time for the viewing of \"{\"en\":\"Modern 2-Bedroom Apartment in Kentron\",\"ru\":\"Современная 2-комнатная квартира в Кентроне\",\"hy\":\" Delays 2-սdelays delays delays Կdelays\"}\": Sunday, June 28 at 02:00 PM",
+      "data": {
+        "comment": null,
+        "viewingId": "2322fe85-f3c6-488f-8fa9-6b66ed2f7c0c",
+        "propertyId": "11111111-1111-1111-1111-111111111111",
+        "scheduledAt": "2026-06-28T11:00:00.000Z"
+      },
+      "read": false,
+      "createdAt": "2026-06-22T09:43:30.926Z"
+    },
+    {
+      "id": "11627138-9cf5-4f98-a713-f327bc2551bf",
+      "userId": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "type": "viewing_confirmed",
+      "title": "Viewing Confirmed",
+      "body": "The other party has confirmed the viewing for \"{\"en\":\"Modern 2-Bedroom Apartment in Kentron\",\"ru\":\"Современная 2-комнатная квартира в Кентроне\",\"hy\":\" Delays 2-սdelays delays delays Կdelays\"}\" on Sunday, June 28 at 02:00 PM",
+      "data": {
+        "viewingId": "2322fe85-f3c6-488f-8fa9-6b66ed2f7c0c",
+        "propertyId": "11111111-1111-1111-1111-111111111111",
+        "scheduledAt": "2026-06-28T11:00:00.000Z"
+      },
+      "read": false,
+      "createdAt": "2026-06-22T09:43:45.250Z"
+    },
+    {
+      "id": "e0be325c-1c27-42ad-b558-45fed7ed0e5d",
+      "userId": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "type": "viewing_request",
+      "title": "New Viewing Request",
+      "body": "A client has requested a viewing for \"{\"en\":\"Premium 5-Bedroom Duplex\",\"ru\":\"Премиум 5-комнатный дуплекс\",\"hy\":\"5-սdelays delays\"}\" on Monday, June 22 at 05:30 PM",
+      "data": {
+        "viewingId": "3d668ae9-dac4-4075-a5d3-81f597b3bd47",
+        "propertyId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+        "scheduledAt": "2026-06-22T14:30:00.000Z"
+      },
+      "read": false,
+      "createdAt": "2026-06-22T10:51:11.966Z"
+    },
+    {
+      "id": "21289054-9414-4728-a35f-78ff893a020d",
+      "userId": "29237634-7068-4fdc-a722-7d2ebf6c2afd",
+      "type": "viewing_request",
+      "title": "New Viewing Request",
+      "body": "A client has requested a viewing for \"{\"en\":\"Spacious 3-Bedroom Family Apartment\",\"ru\":\"Просторная 3-комнатная семейная квартира\",\"hy\":\"Ընdelays 3-սdelay delaydelays delays\"}\" on Monday, June 22 at 02:00 PM",
+      "data": {
+        "viewingId": "85cd434e-c667-4cc7-ad59-0ee59a5a9e5c",
+        "propertyId": "22222222-2222-2222-2222-222222222222",
+        "scheduledAt": "2026-06-22T11:00:00.000Z"
+      },
+      "read": false,
+      "createdAt": "2026-06-22T10:51:42.616Z"
+    },
+    {
+      "id": "bd449ec0-144a-401f-a714-135be39a8329",
+      "userId": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "type": "viewing_confirmed",
+      "title": "Viewing Confirmed",
+      "body": "The other party has confirmed the viewing for \"{\"en\":\"Spacious 3-Bedroom Family Apartment\",\"ru\":\"Просторная 3-комнатная семейная квартира\",\"hy\":\"Ընdelays 3-սdelay delaydelays delays\"}\" on Monday, June 22 at 02:00 PM",
+      "data": {
+        "viewingId": "85cd434e-c667-4cc7-ad59-0ee59a5a9e5c",
+        "propertyId": "22222222-2222-2222-2222-222222222222",
+        "scheduledAt": "2026-06-22T11:00:00.000Z"
+      },
+      "read": false,
+      "createdAt": "2026-06-22T10:51:53.716Z"
+    },
+    {
+      "id": "3d21c2c1-5083-4b00-b593-752930e1c57b",
+      "userId": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "type": "viewing_cancelled",
+      "title": "Viewing Cancelled",
+      "body": "The other party has cancelled the viewing for \"{\"en\":\"Premium 5-Bedroom Duplex\",\"ru\":\"Премиум 5-комнатный дуплекс\",\"hy\":\"5-սdelays delays\"}\" that was scheduled for Monday, June 22 at 05:30 PM",
+      "data": {
+        "reason": null,
+        "viewingId": "3d668ae9-dac4-4075-a5d3-81f597b3bd47",
+        "propertyId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+        "cancelledById": "29237634-7068-4fdc-a722-7d2ebf6c2afd"
+      },
+      "read": false,
+      "createdAt": "2026-06-22T10:52:07.035Z"
+    },
+    {
+      "id": "f928a4e1-fee2-4206-b3ef-b1d94f7ec27e",
+      "userId": "943abfdf-1601-40f2-bd9e-f2ab75243c11",
+      "type": "viewing_cancelled",
+      "title": "Viewing Cancelled",
+      "body": "The other party has cancelled the viewing for \"{\"en\":\"Modern 2-Bedroom Apartment in Kentron\",\"ru\":\"Современная 2-комнатная квартира в Кентроне\",\"hy\":\" Delays 2-սdelays delays delays Կdelays\"}\" that was scheduled for Sunday, June 28 at 02:00 PM",
+      "data": {
+        "reason": null,
+        "viewingId": "2322fe85-f3c6-488f-8fa9-6b66ed2f7c0c",
+        "propertyId": "11111111-1111-1111-1111-111111111111",
+        "cancelledById": "29237634-7068-4fdc-a722-7d2ebf6c2afd"
+      },
+      "read": false,
+      "createdAt": "2026-06-22T10:52:08.312Z"
+    }
+  ]
+}

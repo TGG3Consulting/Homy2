@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homy — карточка в применении · сетка результатов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#FFFFFF;--paper:#FAFAF8;--ink:#14141A;--muted:#6B6B76;--soft:#3a3a42;
+    --hair:#E8E8E4;--accent:#9A7B45;
+    --shadow:0 4px 24px rgba(20,20,26,0.08);--shadow-hover:0 14px 40px rgba(20,20,26,0.14);
+  }
+  body{font-family:'Montserrat',sans-serif;background:#F3F2EE;color:var(--ink);-webkit-font-smoothing:antialiased}
+
+  /* top bar (context) */
+  .topbar{position:sticky;top:0;z-index:5;background:rgba(243,242,238,.86);backdrop-filter:blur(10px);
+          border-bottom:1px solid var(--hair);padding:16px 32px;display:flex;align-items:center;gap:24px}
+  .brand{font-size:20px;font-weight:700;letter-spacing:-.02em}
+  .brand .dot{color:var(--accent)}
+  .searchpill{flex:1;max-width:520px;background:#fff;border:1px solid var(--hair);border-radius:12px;
+              padding:10px 14px;font-size:13px;font-weight:500;color:var(--muted);display:flex;align-items:center;gap:10px}
+  .searchpill .sp{width:18px;height:18px;border-radius:5px;background:var(--accent);display:flex;align-items:center;justify-content:center}
+  .chips{display:flex;gap:8px}
+  .fchip{font-size:12px;font-weight:600;color:var(--soft);background:#fff;border:1px solid var(--hair);border-radius:999px;padding:7px 14px}
+
+  .stage{max-width:1240px;margin:0 auto;padding:32px}
+  .result-h{display:flex;align-items:baseline;gap:12px;margin-bottom:4px}
+  .result-h h1{font-size:22px;font-weight:700;letter-spacing:-.01em}
+  .result-h .n{font-size:13px;font-weight:500;color:var(--muted)}
+  .result-sub{font-size:13px;font-weight:500;color:var(--muted);margin-bottom:24px}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  @media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:680px){.grid{grid-template-columns:1fr}.topbar{padding:14px 16px;gap:12px}.stage{padding:20px 16px}.chips{display:none}}
+
+  /* ---- CARD A / LIGHT (as finalized) ---- */
+  .card{background:var(--bg);border-radius:20px;overflow:hidden;box-shadow:var(--shadow);cursor:pointer;
+        transition:box-shadow .28s cubic-bezier(.2,.7,.2,1),transform .28s cubic-bezier(.2,.7,.2,1)}
+  .card:hover{box-shadow:var(--shadow-hover);transform:translateY(-3px)}
+  .photo{position:relative;aspect-ratio:4/5;overflow:hidden}
+  .photo .img{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+  .card:hover .img{transform:scale(1.04)}
+  .ring{position:absolute;top:20px;right:20px;width:44px;height:44px}
+  .ring svg{transform:rotate(-90deg)}
+  .ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;color:#fff}
+  .topchoice{position:absolute;top:20px;left:20px;font-size:11px;font-weight:700;letter-spacing:.04em;
+             text-transform:uppercase;color:#fff;background:rgba(20,20,26,.55);backdrop-filter:blur(4px);padding:5px 10px;border-radius:999px}
+  .body{padding:24px}
+  .kick{font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+  .price{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1;margin-top:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .price .u{font-size:13px;font-weight:500;color:var(--muted);margin-left:8px}
+  .ttl{font-size:18px;font-weight:600;line-height:1.25;margin-top:12px}
+  .loc{font-size:13px;font-weight:500;color:var(--muted);margin-top:8px}
+  .specs{font-size:14px;font-weight:500;color:var(--soft);margin-top:16px}
+  .park{font-size:12.5px;font-weight:500;color:var(--muted);margin-top:8px}
+  .hair{height:1px;background:var(--hair);border:0;margin:16px 0}
+  .foot{display:flex;align-items:center;justify-content:space-between}
+  .verify{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;color:var(--muted)}
+  .cta{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--accent);background:none;border:0;cursor:pointer;font-family:inherit}
+  .cta svg{transition:transform .25s}
+  .card:hover .cta svg{transform:translateX(4px)}
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">Ho<span class="dot">m</span>y</div>
+    <div class="searchpill"><span class="sp"><svg width="10" height="10" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg></span>2-комнатная в Ереване, аренда до 350 000 драм…</div>
+    <div class="chips"><span class="fchip">Аренда</span><span class="fchip">Кентрон · Арабкир</span><span class="fchip">до 350 000</span></div>
+  </div>
+
+  <div class="stage">
+    <div class="result-h"><h1>Подобрано для вас</h1><span class="n">6 из 19 объектов</span></div>
+    <div class="result-sub">Ереван · Кентрон, Арабкир, Давташен, Норк-Мараш · проверено Homy</div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+<script>
+  const L = [
+    {t:'Современная 2-комнатная в Кентроне', loc:'Северный проспект · Ереван', price:'350 000', beds:2, area:85, floor:'7 / 12', match:98, img:'1586023492125-27b2c045efd7', park:'уточняется', top:true},
+    {t:'Просторная 3-комнатная семейная', loc:'Проспект Баграмяна · Арабкир', price:'280 000', beds:3, area:120, floor:'5 / 9', match:95, img:'1600210492486-724fe5c67fb0', park:'есть'},
+    {t:'Современная 1-комнатная рядом с метро', loc:'Комитас 55 · Арабкир', price:'220 000', beds:1, area:55, floor:'4 / 12', match:90, img:'1540518614846-7eded433c457', park:'уточняется'},
+    {t:'Уютная студия у площади Республики', loc:'Амирян · Кентрон', price:'180 000', beds:'студия', area:45, floor:'3 / 5', match:88, img:'1618219908412-a29a1bb7b86e', park:'нет'},
+    {t:'Очаровательная 3-комнатная в Норк-Мараше', loc:'Норк 7-я улица · Норк-Мараш', price:'250 000', beds:3, area:100, floor:'3 / 4', match:86, img:'1616486338812-3dadae4b4ace', park:'есть'},
+    {t:'Светлая 2-комнатная в Давташене', loc:'Давташен 3-й массив', price:'200 000', beds:2, area:75, floor:'6 / 9', match:85, img:'1522771739844-6a9f6d5f14af', park:'есть'}
+  ];
+  const C = 2*Math.PI*20;
+  const bedsTxt = b => b==='студия' ? 'студия' : (b===1?'1 спальня':b+' спальни');
+  const grid = document.getElementById('grid');
+  grid.innerHTML = L.map(p=>{
+    const off = (C*(1 - p.match/100)).toFixed(1);
+    const img = `https://images.unsplash.com/photo-${p.img}?w=900&h=1125&fit=crop&q=80`;
+    return `<div class="card">
+      <div class="photo">
+        <div class="img" style="background-image:url('${img}')"></div>
+        ${p.top?'<span class="topchoice">Топ-выбор Homy</span>':''}
+        <div class="ring"><svg width="44" height="44"><circle cx="22" cy="22" r="20" fill="rgba(0,0,0,.32)" stroke="rgba(255,255,255,.25)" stroke-width="2"/><circle cx="22" cy="22" r="20" fill="none" stroke="#C6A56B" stroke-width="2" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${off}"/></svg><b>${p.match}</b></div>
+      </div>
+      <div class="body">
+        <div class="kick">Аренда · долгосрочно</div>
+        <div class="price">${p.price}<span class="u">AMD / мес</span></div>
+        <div class="ttl">${p.t}</div>
+        <div class="loc">${p.loc}</div>
+        <div class="specs">${bedsTxt(p.beds)}&nbsp;&nbsp;·&nbsp;&nbsp;${p.area} м²&nbsp;&nbsp;·&nbsp;&nbsp;этаж ${p.floor}</div>
+        <div class="park">Парковка: ${p.park}</div>
+        <hr class="hair">
+        <div class="foot">
+          <span class="verify"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-11"/></svg>Проверено Homy</span>
+          <button class="cta">Смотреть <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+</script>
+</body>
+</html>

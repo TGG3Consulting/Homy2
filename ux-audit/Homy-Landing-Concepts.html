@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homy — Концепты главного экрана</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root,[data-theme="dark"]{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#F2F4F7;--muted:#8B93A3;--soft:#C5CAD3;
+    --hair:rgba(255,255,255,.10);--em-hi:#2BC091;--em:#0B6E4F;--em-lo:#052A1D;--amber:#E0A83B;
+    --card-shadow:inset 0 0 0 1px rgba(255,255,255,.06),0 24px 60px rgba(0,0,0,.45)}
+  [data-theme="light"]{--bg:#EEF0F3;--surface:#FFFFFF;--surface2:#FAFAF8;--ink:#14181F;--muted:#6A7382;--soft:#39414D;
+    --hair:rgba(20,24,31,.10);--em-hi:#26B083;--em:#0A6045;--em-lo:#04281C;--amber:#B9822A;--card-shadow:0 4px 24px rgba(20,20,26,.08)}
+  body{font-family:'Montserrat',sans-serif;background:#c9ccd2;color:#14181F;-webkit-font-smoothing:antialiased;padding:32px 24px 90px}
+  .ph{max-width:1280px;margin:0 auto 24px;display:flex;align-items:center;gap:14px}
+  .ph .brand{font-size:20px;font-weight:800;letter-spacing:-.02em}.ph .brand .m{color:#0A6045}
+  .ph .t{font-size:13px;font-weight:600;color:#4b5563}
+  .tgl{margin-left:auto;display:flex;gap:2px;background:#fff;border:1px solid #d5d8de;border-radius:999px;padding:3px}
+  .tgl .o{width:34px;height:28px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#6a7382;cursor:pointer}
+  .tgl .o.on{color:#fff;background:radial-gradient(120% 160% at 50% 18%,#2BC091,#04281C)}
+
+  .concept{max-width:1280px;margin:0 auto 40px}
+  .clab{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#3a4150;margin-bottom:6px}
+  .clab b{color:#0A6045}
+  .cdesc{font-size:12.5px;color:#5b6472;margin-bottom:14px;max-width:760px;line-height:1.5}
+  .web{border-radius:16px;overflow:hidden;background:var(--bg);box-shadow:0 20px 50px rgba(0,0,0,.2);border:1px solid rgba(0,0,0,.15)}
+  .webbar{height:34px;background:var(--surface);display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid var(--hair)}
+  .webbar i{width:10px;height:10px;border-radius:50%;background:var(--muted);opacity:.5}
+  .view{height:560px;position:relative;overflow:hidden;color:var(--ink)}
+
+  .em3d{position:relative;overflow:hidden;color:#fff;border:0;background:radial-gradient(135% 175% at 50% 14%,var(--em-hi),var(--em));
+    box-shadow:0 2px 6px rgba(4,40,28,.20),inset 0 1px 0 rgba(255,255,255,.10),inset 0 -2px 5px rgba(3,28,20,.16)}
+  .em3d::after{content:none}
+  .em3d>*{position:relative;z-index:2}
+  .chip{font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:999px;border:1px solid var(--hair);background:var(--surface);color:var(--soft);cursor:pointer}
+  .nav{display:flex;align-items:center;gap:20px;padding:15px 26px;border-bottom:1px solid var(--hair)}
+  .nav .brand{font-size:17px;font-weight:800}.nav .brand .m{color:var(--em)}
+  .nav a{font-size:13px;color:var(--muted);text-decoration:none}
+  .btn-sec{background:transparent;border:1px solid var(--hair);color:var(--ink);font-size:13px;padding:8px 15px;border-radius:11px;cursor:pointer}
+
+  /* ---- Concept A: conversation ---- */
+  .cA .body{padding:40px 40px;max-width:760px;margin:0 auto}
+  .cA .greet{display:flex;gap:14px;align-items:flex-start}
+  .cA .ava{width:44px;height:44px;border-radius:13px;flex:none;display:flex;align-items:center;justify-content:center}
+  .cA .bub{background:var(--surface);border:1px solid var(--hair);border-radius:4px 16px 16px 16px;padding:16px 18px;font-size:16px;line-height:1.5}
+  .cA .bub b{color:var(--em)}
+  .cA .input{margin-top:22px;display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--hair);border-radius:16px;padding:14px 16px;box-shadow:var(--card-shadow)}
+  .cA .input .txt{flex:1;font-size:15px;color:var(--muted)}
+  .cA .input .go{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center}
+  .cA .caps{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+  .cA .doing{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap}
+  .cA .doing .d{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);background:var(--surface2);border:1px solid var(--hair);border-radius:10px;padding:8px 12px}
+  .cA .doing .d svg{color:var(--em)}
+
+  /* ---- Concept B: map intelligence ---- */
+  .cB .map{position:absolute;inset:0;background:radial-gradient(700px 460px at 60% 40%,rgba(11,110,79,.16),transparent 62%),linear-gradient(180deg,#0A0D12,#070A0E)}
+  [data-theme="light"] .cB .map{background:radial-gradient(700px 460px at 60% 40%,rgba(16,180,134,.12),transparent 62%),linear-gradient(180deg,#E8EAED,#DDE1E6)}
+  .cB .map svg{position:absolute;inset:0;width:100%;height:100%}
+  .cB .cmd{position:absolute;top:26px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--surface) 80%,transparent);backdrop-filter:blur(14px);border:1px solid var(--hair);border-radius:14px;padding:12px 15px;width:520px;box-shadow:var(--card-shadow)}
+  .cB .cmd .sp{width:26px;height:26px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center}
+  .cB .cmd .txt{flex:1;font-size:14px;color:var(--muted)}
+  .cB .cmd .kbd{font-size:11px;color:var(--muted);border:1px solid var(--hair);border-radius:6px;padding:3px 7px}
+  .cB .dchip{position:absolute;font-size:11px;font-weight:700;padding:6px 10px;border-radius:999px;background:color-mix(in srgb,var(--surface) 85%,transparent);border:1px solid var(--hair);color:var(--ink);backdrop-filter:blur(6px)}
+  .cB .dchip.top{color:#fff;border:0;background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em))}
+  .cB .cap{position:absolute;left:26px;bottom:22px;font-size:12px;color:var(--muted);max-width:280px;line-height:1.5}
+  .cB .cap b{color:var(--ink);font-weight:700;font-size:15px;display:block;margin-bottom:4px}
+
+  /* ---- Concept C: trust split ---- */
+  .cC .split{display:grid;grid-template-columns:1fr 1fr;height:100%}
+  .cC .left{padding:44px 40px;display:flex;flex-direction:column;justify-content:center}
+  .cC .kick{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .cC .left h1{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-top:12px}
+  .cC .left p{font-size:14px;color:var(--muted);margin-top:14px;line-height:1.6;max-width:380px}
+  .cC .left .input{margin-top:22px;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:12px 14px;max-width:400px}
+  .cC .left .input .txt{flex:1;font-size:14px;color:var(--muted)}
+  .cC .left .input .go{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+  .cC .right{position:relative;background:var(--surface2);border-left:1px solid var(--hair);overflow:hidden}
+  .cC .right .photo{position:absolute;inset:0;background-size:cover;background-position:center;background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=760&fit=crop&q=80');opacity:.32}
+  .cC .stack{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:36px}
+  .cC .ev{background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(8px);border:1px solid var(--hair);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:var(--card-shadow)}
+  .cC .ev .ic{width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--em) 16%,transparent);color:var(--em)}
+  .cC .ev .tx{flex:1}.cC .ev .tx b{font-size:13px;font-weight:600;display:block}.cC .ev .tx span{font-size:11px;color:var(--muted)}
+  .cC .ev .val{font-size:12px;font-weight:700;color:var(--em)}
+  .cC .ev.amber .ic{background:color-mix(in srgb,var(--amber) 18%,transparent);color:var(--amber)}.cC .ev.amber .val{color:var(--amber)}
+  .cC .ev.match .ic{background:transparent}
+</style>
+</head>
+<body data-theme="dark">
+<div class="ph">
+  <div class="brand">Ho<span class="m">m</span>y</div>
+  <div class="t">Главный экран — 3 концепта (выбрать)</div>
+  <div class="tgl"><span class="o on" id="tgD" onclick="setT('dark')">☾</span><span class="o" id="tgL" onclick="setT('light')">☀</span></div>
+</div>
+
+<!-- CONCEPT A -->
+<div class="concept cA">
+  <div class="clab"><b>A</b> · «Разговор с Homy» — главная = начало диалога, а не витрина</div>
+  <div class="cdesc">Никакого «hero + доска». Экран сразу ставит Homy как советника: он здоровается и спрашивает, ты отвечаешь текстом/голосом. Внизу — что он делает под капотом (проверяет застройщика, считает маршрут). Ощущение продукта-ассистента.</div>
+  <div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="view">
+    <div class="nav"><div class="brand">Ho<span class="m">m</span>y</div><a>Купить</a><a>Снять</a><a>Владельцам</a><span style="margin-left:auto"></span><button class="btn-sec">Войти</button></div>
+    <div class="body">
+      <div class="greet">
+        <div class="ava em3d"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg></div>
+        <div class="bub">Здравствуйте! Я <b>Homy</b> — ваш ИИ-эксперт по недвижимости Армении. Расскажите, какой дом ищете, а я разберу каждый вариант по фактам: застройщик, юр. чистота, район, маршрут, инвестиция.</div>
+      </div>
+      <div class="input"><span class="txt">Например: семья из 4, до 350 000 драм, тихий район рядом со школой…</span><span class="go em3d"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></span></div>
+      <div class="caps"><span class="chip">Купить</span><span class="chip">Снять</span><span class="chip">Инвестировать</span><span class="chip">Помочь выбрать район</span></div>
+      <div class="doing">
+        <div class="d"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg>Проверяет застройщика</div>
+        <div class="d"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Юр. чистоту</div>
+        <div class="d"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V7l7-4 7 4v14"/></svg>Район и маршрут</div>
+        <div class="d"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-8M22 20h-20"/></svg>Инвест-потенциал</div>
+      </div>
+    </div>
+  </div></div>
+</div>
+
+<!-- CONCEPT B -->
+<div class="concept cB">
+  <div class="clab"><b>B</b> · «Карта-интеллект» — главная = живая карта города</div>
+  <div class="cdesc">Гео и данные сразу: карта Еревана, командная строка сверху, районы подсвечены средней ценой/безопасностью. Начинаешь с вопроса или тапа по району. Отличает «интеллектом местности», а не списком.</div>
+  <div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="view">
+    <div class="cB"><div class="map">
+      <svg viewBox="0 0 1200 560" preserveAspectRatio="xMidYMid slice"><g stroke="rgba(255,255,255,0.06)" stroke-width="1" fill="none"><path d="M0 180 H1200 M0 300 H1200 M0 420 H1200 M200 0 V560 M440 0 V560 M680 0 V560 M920 0 V560"/><path d="M100 0 L520 560 M760 0 L1200 360"/></g></svg>
+    </div>
+    <div class="cmd"><span class="sp em3d"><svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg></span><span class="txt">Спросите Homy или выберите район…</span><span class="kbd">⌘K</span></div>
+    <div class="dchip top" style="left:54%;top:44%">Кентрон · от 300к</div>
+    <div class="dchip" style="left:32%;top:30%">Арабкир · от 220к</div>
+    <div class="dchip" style="left:68%;top:64%">Норк-Мараш · от 250к</div>
+    <div class="dchip" style="left:22%;top:60%">Ачапняк · от 150к</div>
+    <div class="dchip" style="left:74%;top:32%">Давташен · от 200к</div>
+    <div class="cap"><b>Ереван, как на ладони</b>Homy знает районы: цены, безопасность, школы, маршруты. Спросите — и объекты появятся прямо на карте.</div>
+    </div>
+  </div></div>
+</div>
+
+<!-- CONCEPT C -->
+<div class="concept cC">
+  <div class="clab"><b>C</b> · «Слой доверия» — сразу видно, что Homy проверяет</div>
+  <div class="cdesc">Сплит: слева — вопрос и позиционирование, справа — живая стопка «доказательств» по реальному объекту (застройщик, юр., маршрут, парковка, match). С первого экрана: «мы проверяем, а не впариваем».</div>
+  <div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="view">
+    <div class="cC"><div class="split">
+      <div class="left">
+        <div class="kick">AI real estate · Armenia</div>
+        <h1>Не доска объявлений.<br>Слой доверия.</h1>
+        <p>Homy разбирает каждый объект по фактам — застройщик, юридическая чистота, район, маршрут, инвестиция — и честно показывает и плюсы, и риски.</p>
+        <div class="input"><span class="txt">Опишите, какой дом ищете…</span><span class="go em3d"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+      </div>
+      <div class="right"><div class="photo"></div><div class="stack">
+        <div class="ev match"><div class="ic"><svg width="30" height="30"><circle cx="15" cy="15" r="12" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="3"/><circle cx="15" cy="15" r="12" fill="none" stroke="var(--em)" stroke-width="3" stroke-linecap="round" stroke-dasharray="75.4" stroke-dashoffset="1.5" transform="rotate(-90 15 15)"/></svg></div><div class="tx"><b>Совпадение с запросом</b><span>Северный проспект, 2-комн</span></div><div class="val">98%</div></div>
+        <div class="ev"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg></div><div class="tx"><b>Застройщик</b><span>репутация, юр. споры</span></div><div class="val">проверен</div></div>
+        <div class="ev"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V7l7-4 7 4v14"/></svg></div><div class="tx"><b>Инфраструктура</b><span>школа 6 мин · метро 10</span></div><div class="val">рядом</div></div>
+        <div class="ev amber"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3L2 20h20L12 3z"/></svg></div><div class="tx"><b>Парковка</b><span>честно о минусах</span></div><div class="val">уточняется</div></div>
+      </div></div>
+    </div></div>
+  </div></div>
+</div>
+
+<script>function setT(t){document.body.dataset.theme=t;document.getElementById('tgD').classList.toggle('on',t==='dark');document.getElementById('tgL').classList.toggle('on',t==='light');}</script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/db/prisma';
+import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+
+const MAX_SAVED_SEARCHES = 20;
+
+/**
+ * GET /api/users/me/saved-searches
+ * Fetch all saved searches for the authenticated user
+ * - Max 20 records
+ * - Sorted by updatedAt desc
+ */
+export const GET = withAuth(async (req: AuthenticatedRequest) => {
+  try {
+    const userId = req.user!.id;
+
+    const searches = await prisma.savedSearch.findMany({
+      where: { userId },
+      orderBy: { updatedAt: 'desc' },
+      take: MAX_SAVED_SEARCHES,
+    });
+
+    return NextResponse.json({
+      success: true,
+      searches,
+      count: searches.length,
+    });
+  } catch (error) {
+    console.error('[GET /api/users/me/saved-searches] Error:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch saved searches', success: false },
+      { status: 500 }
+    );
+  }
+});
+
+/**
+ * POST /api/users/me/saved-searches
+ * Save a new search
+ * - Body: { name?, comment?, query, chatMessages, properties, criteriaChips, insights, topChoiceId }
+ * - Check limit of 20 - if exceeded return 400 with { error: 'limit_exceeded', count: N }
+ */
+export const POST = withAuth(async (req: AuthenticatedRequest) => {
+  try {
+    const userId = req.user!.id;
+    const body = await req.json();
+    const {
+      name,
+      comment,
+      query,
+      chatMessages,
+      properties,
+      criteriaChips,
+      insights,
+      topChoiceId,
+    } = body;
+
+    // Validate required fields
+    if (!query) {
+      return NextResponse.json(
+        { error: 'Query is required', success: false },
+        { status: 400 }
+      );
+    }
+
+    if (!chatMessages) {
+      return NextResponse.json(
+        { error: 'Chat messages are required', success: false },
+        { status: 400 }
+      );
+    }
+
+    if (!properties) {
+      return NextResponse.json(
+        { error: 'Properties are required', success: false },
+        { status: 400 }
+      );
+    }
+
+    if (!criteriaChips) {
+      return NextResponse.json(
+        { error: 'Criteria chips are required', success: false },
+        { status: 400 }
+      );
+    }
+
+    // Check limit
+    const currentCount = await prisma.savedSearch.count({
+      where: { userId },
+    });
+
+    if (currentCount >= MAX_SAVED_SEARCHES) {
+      return NextResponse.json(
+        { error: 'limit_exceeded', count: currentCount, success: false },
+        { status: 400 }
+      );
+    }
+
+    // Create saved search
+    const search = await prisma.savedSearch.create({
+      data: {
+        userId,
+        name: name || null,
+        comment: comment || null,
+        query,
+        chatMessages,
+        properties,
+        criteriaChips,
+        insights: insights || null,
+        topChoiceId: topChoiceId || null,
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      search,
+    });
+  } catch (error) {
+    console.error('[POST /api/users/me/saved-searches] Error:', error);
+    return NextResponse.json(
+      { error: 'Failed to save search', success: false },
+      { status: 500 }
+    );
+  }
+});

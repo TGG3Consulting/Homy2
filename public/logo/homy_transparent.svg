@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="380" height="100" viewBox="0 0 380 100" xmlns="http://www.w3.org/2000/svg">
+  <title>Homy — Transparent</title>
+  <defs>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&amp;display=swap');</style>
+  </defs>
+  <g transform="translate(0,10)">
+    <polygon points="30,0 64,30 -4,30" fill="#8B7CF8"/>
+    <rect x="4" y="28" width="52" height="40" rx="5" fill="#6B5CE7"/>
+    <rect x="19" y="42" width="14" height="24" rx="3" fill="#FFFFFF"/>
+    <circle cx="48" cy="10" r="5" fill="#FF6B6B"/>
+  </g>
+  <text x="80" y="52" font-family="Montserrat,sans-serif" font-weight="700" font-size="52" fill="#12112A" letter-spacing="-1">Homy</text>
+  <text x="82" y="76" font-family="Montserrat,sans-serif" font-weight="400" font-size="11" fill="#888" letter-spacing="3">AI REAL ESTATE · ARMENIA</text>
+</svg>

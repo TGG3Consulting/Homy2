@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homy — Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root, [data-theme="dark"]{
+    --bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#F2F4F7;--muted:#8B93A3;--soft:#C5CAD3;
+    --hair:rgba(255,255,255,.10);--em-hi:#2BC091;--em:#0B6E4F;--em-lo:#052A1D;--amber:#E0A83B;--danger:#F0616A;
+    --shadow:0 -18px 54px rgba(0,0,0,.5);--card-shadow:inset 0 0 0 1px rgba(255,255,255,.06),0 24px 60px rgba(0,0,0,.45);
+  }
+  [data-theme="light"]{
+    --bg:#EEF0F3;--surface:#FFFFFF;--surface2:#FAFAF8;--ink:#14181F;--muted:#6A7382;--soft:#39414D;
+    --hair:rgba(20,24,31,.10);--em-hi:#26B083;--em:#0A6045;--em-lo:#04281C;--amber:#B9822A;--danger:#D8434B;
+    --card-shadow:0 4px 24px rgba(20,20,26,.08);
+  }
+  body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;padding-bottom:80px}
+
+  /* header */
+  header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--hair);padding:16px 40px;display:flex;align-items:center;gap:16px}
+  .brand{font-size:20px;font-weight:800;letter-spacing:-.02em}.brand .m{color:var(--em)}
+  header .sub{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .tgl{margin-left:auto;display:flex;gap:2px;background:color-mix(in srgb,var(--muted) 18%,transparent);border-radius:999px;padding:3px}
+  .tgl .o{width:34px;height:28px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer}
+  .tgl .o.on{color:#fff;background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em))}
+
+  main{max-width:1160px;margin:0 auto;padding:40px}
+  .sec{margin-bottom:56px}
+  .sec>h2{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;border-bottom:1px solid var(--hair);padding-bottom:12px}
+  .grp{margin-bottom:28px}
+  .grp>h3{font-size:13px;font-weight:700;margin-bottom:14px}
+  .row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+
+  /* ---- tokens ---- */
+  .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px}
+  .sw{border-radius:12px;overflow:hidden;border:1px solid var(--hair)}
+  .sw .c{height:66px}.sw .t{padding:8px 10px;font-size:11px}.sw .t b{display:block;font-weight:700}.sw .t span{color:var(--muted);font-family:monospace}
+  .type-row{display:flex;align-items:baseline;gap:16px;padding:10px 0;border-bottom:1px solid var(--hair)}
+  .type-row .lab{width:150px;flex:none;font-size:11px;color:var(--muted);font-weight:600}
+  .scale{display:flex;gap:10px;flex-wrap:wrap}
+  .scale .u{background:var(--surface2);border:1px solid var(--hair);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--muted)}
+  .scale .u b{color:var(--ink);font-weight:700}
+  .box{background:var(--em);border-radius:8px;height:40px}
+  .radii{display:flex;gap:16px;align-items:flex-end}
+  .radii div{background:var(--surface2);border:1px solid var(--hair);width:76px;height:56px;display:flex;align-items:flex-end;justify-content:center;font-size:10px;color:var(--muted);padding-bottom:6px}
+  .elev{width:150px;height:80px;border-radius:16px;background:var(--surface);box-shadow:var(--card-shadow);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted)}
+
+  /* ===== cat's-eye emerald mixin ===== */
+  .em3d{position:relative;overflow:hidden;color:#fff;border:0;
+    background:radial-gradient(135% 175% at 50% 14%,var(--em-hi),var(--em));
+    box-shadow:0 2px 6px rgba(4,40,28,.20),inset 0 1px 0 rgba(255,255,255,.10),inset 0 -2px 5px rgba(3,28,20,.16)}
+  .em3d::after{content:none}
+  .em3d>*{position:relative;z-index:2}
+
+  /* buttons */
+  .btn{font-family:inherit;font-size:14px;font-weight:600;padding:12px 22px;border-radius:12px;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:8px;transition:.2s}
+  .btn-primary{}
+  .btn-primary:hover{filter:brightness(1.05)}.btn-primary:active{transform:translateY(1px)}
+  .btn-secondary{background:transparent;border-color:var(--hair);color:var(--ink)}
+  .btn-secondary:hover{border-color:var(--em)}
+  .btn-ghost{background:transparent;border:0;color:var(--em);font-weight:700}
+  .btn-disabled{background:color-mix(in srgb,var(--muted) 20%,transparent);color:var(--muted);cursor:not-allowed;box-shadow:none}
+  .btn-icon{width:44px;height:44px;padding:0;justify-content:center;border-radius:12px}
+
+  /* inputs */
+  .inp{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:12px 14px;min-width:280px}
+  .inp input{flex:1;background:none;border:0;outline:none;font-family:inherit;font-size:14px;color:var(--ink)}
+  .inp input::placeholder{color:var(--muted)}
+  .inp.focus{border-color:var(--em);box-shadow:0 0 0 3px color-mix(in srgb,var(--em) 22%,transparent)}
+  .ai-bar{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:12px 14px;min-width:420px}
+  .ai-bar .sp{width:26px;height:26px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center}
+  .ai-bar .txt{flex:1;font-size:14px;color:var(--muted)}
+  .ai-bar .mic{width:40px;height:40px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center}
+
+  /* chips */
+  .chip{font-size:13px;font-weight:600;padding:8px 14px;border-radius:999px;border:1px solid var(--hair);background:var(--surface);color:var(--soft);cursor:pointer}
+  .chip.active{background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em));color:#fff;border-color:transparent}
+  .sigchip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:6px 11px;border-radius:8px}
+  .sigchip.ok{background:color-mix(in srgb,var(--em) 16%,transparent);color:var(--em)}
+  .sigchip.warn{background:color-mix(in srgb,var(--amber) 18%,transparent);color:var(--amber)}
+
+  /* match ring + verified */
+  .ring{position:relative;width:48px;height:48px}.ring svg{transform:rotate(-90deg)}
+  .ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+  .verify{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;color:var(--muted)}
+
+  /* property card */
+  .pcard{width:340px;background:var(--surface);border-radius:20px;overflow:hidden;box-shadow:var(--card-shadow)}
+  .pcard .ph{position:relative;aspect-ratio:4/5;background-size:cover;background-position:center;
+    background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=1000&fit=crop&q=80')}
+  .pcard .ph .ring{position:absolute;top:18px;right:18px}
+  .pcard .ph .ring b{color:#fff}
+  .pcard .body{padding:24px}
+  .pcard .kick{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+  .pcard .price{font-size:32px;font-weight:700;letter-spacing:-.02em;margin-top:10px}
+  .pcard .price span{font-size:13px;font-weight:500;color:var(--muted);margin-left:8px}
+  .pcard .ttl{font-size:18px;font-weight:600;margin-top:12px;line-height:1.25}
+  .pcard .loc{font-size:13px;color:var(--muted);margin-top:6px}
+  .pcard .specs{font-size:14px;color:var(--soft);margin-top:14px}
+  .pcard .hair{height:1px;background:var(--hair);margin:16px 0}
+  .pcard .foot{display:flex;align-items:center;justify-content:space-between}
+
+  /* nav */
+  .topnav{display:flex;align-items:center;gap:20px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:12px 18px}
+  .topnav a{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none}
+  .topnav a.active{color:var(--ink);font-weight:600}
+  .botnav{display:flex;justify-content:space-around;background:var(--surface);border:1px solid var(--hair);border-radius:16px;padding:10px 0;width:360px}
+  .botnav .it{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;color:var(--muted);font-weight:600}
+  .botnav .it.active{color:var(--em)}
+
+  /* modal / toast / states */
+  .modal{width:340px;background:var(--surface);border-radius:18px;box-shadow:var(--card-shadow);padding:22px}
+  .modal h4{font-size:16px;font-weight:700}.modal p{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.6}
+  .toast{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:12px 14px;font-size:13px;font-weight:500;min-width:280px;box-shadow:var(--card-shadow)}
+  .toast .dot{width:8px;height:8px;border-radius:50%}
+  .state{width:300px;background:var(--surface);border:1px solid var(--hair);border-radius:16px;padding:28px;text-align:center}
+  .state .ic{width:48px;height:48px;border-radius:14px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--em) 14%,transparent);color:var(--em)}
+  .state h4{font-size:15px;font-weight:700}.state p{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.5}
+  .skel{width:300px;background:var(--surface);border:1px solid var(--hair);border-radius:16px;overflow:hidden}
+  .skel .ph{aspect-ratio:4/5;background:linear-gradient(100deg,color-mix(in srgb,var(--muted) 12%,transparent) 30%,color-mix(in srgb,var(--muted) 20%,transparent) 50%,color-mix(in srgb,var(--muted) 12%,transparent) 70%);background-size:200% 100%;animation:sh 1.3s infinite}
+  .skel .b{padding:18px}.skel .l{height:14px;border-radius:6px;margin-bottom:12px;background:linear-gradient(100deg,color-mix(in srgb,var(--muted) 12%,transparent) 30%,color-mix(in srgb,var(--muted) 20%,transparent) 50%,color-mix(in srgb,var(--muted) 12%,transparent) 70%);background-size:200% 100%;animation:sh 1.3s infinite}
+  @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  .cap{font-size:11px;color:var(--muted);margin-top:8px}
+  .mnav{display:flex;align-items:center;gap:8px;padding:11px 14px;background:var(--surface);border:1px solid var(--hair);border-radius:12px}
+  .mnav .bk{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;background:none;border:0}
+  .mnav .bk svg{color:var(--em)}.mnav .homy{margin-left:auto;font-size:13px;font-weight:800}.mnav .homy .m{color:var(--em)}
+  .wnav2{display:flex;align-items:center;gap:16px;padding:11px 18px;background:var(--surface);border:1px solid var(--hair);border-radius:12px}
+  .wnav2 .brand{font-size:15px;font-weight:800}.wnav2 .brand .m{color:var(--em)}
+  .wnav2 .bk{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--em);cursor:pointer;background:none;border:0}
+
+  /* logo dropdown menu (клик по логотипу) */
+  .lmw{position:relative}
+  .lmw .lm-btn{background:none;border:0;font-family:inherit;font-weight:800;cursor:pointer;color:var(--ink);display:inline-flex;align-items:center;gap:0;letter-spacing:-.02em;padding:0}
+  .lmw .lm-btn .m{color:var(--em)}.lmw .lm-btn>svg{opacity:.55;margin-left:5px}
+  .wnav .lm-btn{font-size:15px}.mnav .lm-btn{font-size:13px}
+  .lm-pop{position:absolute;top:calc(100% + 8px);z-index:60;min-width:232px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.45);padding:8px}
+  .wnav .lm-pop{left:0}.mnav .lm-pop{right:0}
+  .lmw:not(.open) .lm-pop{display:none}
+  .lm-head{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 12px 4px}
+  .lm-i{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;font-size:13.5px;font-weight:500;color:var(--ink);cursor:pointer;text-decoration:none}
+  .lm-i:hover{background:color-mix(in srgb,var(--muted) 12%,transparent)}
+  .lm-i svg{color:var(--muted);flex:none}.lm-i.acc{color:var(--em)}.lm-i.acc svg{color:var(--em)}
+  .lm-sep{height:1px;background:var(--hair);margin:6px 4px}
+
+  .opwrap{margin:0 auto;display:flex;align-items:center}
+  .opbtn{position:relative;width:32px;height:32px;border:0;background:none;cursor:pointer;padding:0}
+  .opbtn .opav{display:block;width:32px;height:32px;border-radius:50%;background-size:cover;background-position:center;border:2px solid var(--surface);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+  .opbtn .opdot{position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:var(--em);border:2px solid var(--surface)}
+
+  /* ===== 20C — единый стиль кнопок (global rollout) ===== */
+  .btn.btn-primary,.btn-primary,.abtn,button.abtn,.cta,.call,.book,.up{
+    background:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;
+    color:var(--em)!important;width:fit-content!important;min-width:0!important;padding:9px 3px!important;
+    position:relative!important;overflow:visible!important;font-weight:700!important;
+    display:inline-flex!important;align-items:center;gap:8px;line-height:1.15;letter-spacing:0}
+  .abtn{margin-left:auto!important;margin-right:auto!important}
+  .btn.btn-primary::before,.abtn::before,.cta::before,.call::before,.book::before,.up::before{
+    content:''!important;position:absolute;left:3px;right:3px;bottom:1px;height:2px;border-radius:2px;background:var(--hair)}
+  .btn.btn-primary::after,.abtn::after,.cta::after,.call::after,.book::after,.up::after{
+    content:''!important;position:absolute;left:3px;bottom:1px;width:calc(100% - 6px);height:3px;border-radius:3px;
+    background:linear-gradient(90deg,var(--em),var(--em-hi));transition:transform .28s cubic-bezier(.22,1,.36,1);transform-origin:left}
+  .btn.btn-primary>span,.abtn>span,.cta>*{display:inline-block;transition:transform .28s cubic-bezier(.22,1,.36,1)}
+  .btn.btn-primary:hover>span,.abtn:hover>span{transform:translateY(-2px)}
+  .btn.btn-primary:hover,.abtn:hover,.cta:hover,.call:hover,.book:hover,.up:hover{color:var(--em-hi)!important}
+  /* secondary → растущая линия на ховере */
+  .btn-sec,.altbtn{background:none!important;border:0!important;box-shadow:none!important;border-radius:0!important;
+    color:var(--soft)!important;padding:9px 3px!important;width:fit-content!important;position:relative!important;overflow:visible!important;
+    font-weight:600!important;display:inline-flex!important;align-items:center;gap:7px}
+  .btn-sec::after,.altbtn::after{content:''!important;position:absolute;left:3px;bottom:1px;width:0;height:2px;border-radius:2px;background:var(--em);transition:width .28s cubic-bezier(.22,1,.36,1)}
+  .btn-sec:hover,.altbtn:hover{color:var(--em)!important}
+  .btn-sec:hover::after,.altbtn:hover::after{width:calc(100% - 6px)}
+  /* MARK20C */
+</style>
+</head>
+<body data-theme="dark">
+  <header>
+    <div class="brand">Ho<span class="m">m</span>y</div>
+    <div class="sub">Design System · источник правды</div>
+    <div class="tgl"><span class="o on" id="tgD" onclick="setT('dark')">☾</span><span class="o" id="tgL" onclick="setT('light')">☀</span></div>
+  </header>
+  <main>
+
+    <!-- FOUNDATIONS -->
+    <section class="sec">
+      <h2>01 · Цвет</h2>
+      <div class="grp"><h3>Поверхности и текст (реагируют на тему)</h3>
+        <div class="swatches">
+          <div class="sw"><div class="c" style="background:var(--bg)"></div><div class="t"><b>bg</b><span>фон</span></div></div>
+          <div class="sw"><div class="c" style="background:var(--surface)"></div><div class="t"><b>surface</b><span>панель</span></div></div>
+          <div class="sw"><div class="c" style="background:var(--surface2)"></div><div class="t"><b>surface-2</b><span>вложенная</span></div></div>
+          <div class="sw"><div class="c" style="background:var(--ink)"></div><div class="t"><b>ink</b><span>текст</span></div></div>
+          <div class="sw"><div class="c" style="background:var(--muted)"></div><div class="t"><b>muted</b><span>вторичный</span></div></div>
+          <div class="sw"><div class="c" style="border-bottom:1px solid var(--hair);background:var(--surface)"></div><div class="t"><b>hairline</b><span>разделитель</span></div></div>
+        </div>
+      </div>
+      <div class="grp"><h3>Акцент — изумруд «кошачий глаз» (единственный акцент)</h3>
+        <div class="swatches">
+          <div class="sw"><div class="c em3d"></div><div class="t"><b>emerald</b><span>CTA / accent</span></div></div>
+          <div class="sw"><div class="c" style="background:var(--amber)"></div><div class="t"><b>amber</b><span>внимание</span></div></div>
+          <div class="sw"><div class="c" style="background:var(--danger)"></div><div class="t"><b>danger</b><span>ошибка</span></div></div>
+        </div>
+        <div class="cap">Правило: акцент применяется скупо — только CTA, активные состояния и match. Никакой радуги. Негатив — нейтральным muted или amber, не красным алармом.</div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2>02 · Типографика — Montserrat</h2>
+      <div class="type-row"><div class="lab">Display · 36/700/-2%</div><div style="font-size:36px;font-weight:700;letter-spacing:-.02em">350 000 AMD</div></div>
+      <div class="type-row"><div class="lab">H1 · 28/700</div><div style="font-size:28px;font-weight:700">Заголовок экрана</div></div>
+      <div class="type-row"><div class="lab">H2 · 21/600</div><div style="font-size:21px;font-weight:600">Заголовок блока</div></div>
+      <div class="type-row"><div class="lab">H3 · 17/600</div><div style="font-size:17px;font-weight:600">Подзаголовок</div></div>
+      <div class="type-row"><div class="lab">Body · 14/500</div><div style="font-size:14px;font-weight:500">Основной текст интерфейса и описаний.</div></div>
+      <div class="type-row"><div class="lab">Small · 12.5/500</div><div style="font-size:12.5px;font-weight:500;color:var(--muted)">Вторичный текст, мета, подписи.</div></div>
+      <div class="type-row"><div class="lab">Caption · 11/600 · +4% · UPPER</div><div style="font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)">Лейбл · аренда · долгосрочно</div></div>
+      <div class="cap">Все цифры (цены, match, метраж) — тоже Montserrat, tabular-настройка не используется (единый шрифт везде).</div>
+    </section>
+
+    <section class="sec">
+      <h2>03 · Spacing · Радиусы · Тени</h2>
+      <div class="grp"><h3>Spacing scale</h3>
+        <div class="scale"><span class="u"><b>4</b></span><span class="u"><b>8</b></span><span class="u"><b>12</b></span><span class="u"><b>16</b></span><span class="u"><b>24</b></span><span class="u"><b>32</b></span><span class="u">card pad <b>24–28</b></span></div>
+      </div>
+      <div class="grp"><h3>Радиусы</h3>
+        <div class="radii"><div style="border-radius:8px">8 · sm</div><div style="border-radius:12px">12 · md</div><div style="border-radius:16px">16 · lg</div><div style="border-radius:20px">20 · card</div><div style="border-radius:999px">999 · pill</div></div>
+      </div>
+      <div class="grp"><h3>Elevation</h3>
+        <div class="row"><div class="elev">card-shadow<br>(мягкая / бордер+свеч.)</div></div>
+        <div class="cap">Light: мягкая тень 0 4px 24px rgba(20,20,26,.08). Dark: без тёмной тени — тонкий бордер rgba(255,255,255,.06) + свечение.</div>
+      </div>
+    </section>
+
+    <!-- COMPONENTS -->
+    <section class="sec">
+      <h2>04 · Кнопки</h2>
+      <div class="row" style="align-items:center">
+        <button class="btn btn-primary em3d"><span>Записаться на просмотр</span></button>
+        <button class="btn btn-secondary">Сравнить</button>
+        <button class="btn btn-ghost">Смотреть объект →</button>
+        <button class="btn btn-disabled">Недоступно</button>
+        <button class="btn btn-icon em3d"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 11a7 7 0 0 1-14 0M12 18v4"/></svg></span></button>
+      </div>
+      <div class="cap">Primary = изумрудный «кошачий глаз» (кабошон + световой блик + объём). Hover — brighten, active — translateY(1). Secondary — outline hairline. Ghost — текст-акцент. Disabled — muted.</div>
+    </section>
+
+    <section class="sec">
+      <h2>05 · Инпуты и AI-строка</h2>
+      <div class="row">
+        <div class="inp"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input placeholder="Поиск по адресу или району"></div>
+        <div class="inp focus"><input placeholder="Фокус-состояние"></div>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <div class="ai-bar"><span class="sp em3d"><svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg></span><span class="txt">Опишите, какой дом ищете…</span><span class="mic em3d"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 11a7 7 0 0 1-14 0M12 18v4"/></svg></span></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2>06 · Чипы · Match · Сигналы</h2>
+      <div class="grp"><h3>Фильтр-чипы</h3><div class="row"><span class="chip active">Аренда</span><span class="chip">Купить</span><span class="chip">Кентрон</span><span class="chip">до 350 000</span><span class="chip">2+ спальни</span></div></div>
+      <div class="grp"><h3>Match-бейдж (кольцо + инлайн) и Verified</h3>
+        <div class="row" style="align-items:center">
+          <div class="ring"><svg width="48" height="48"><circle cx="24" cy="24" r="20" fill="none" stroke="var(--hair)" stroke-width="3"/><circle cx="24" cy="24" r="20" fill="none" stroke="var(--em)" stroke-width="3" stroke-linecap="round" stroke-dasharray="125.6" stroke-dashoffset="2.5"/></svg><b>98</b></div>
+          <span class="verify"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-11"/></svg>Проверено Homy</span>
+          <span class="sigchip ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 13l4 4L19 7"/></svg>Застройщик проверен</span>
+          <span class="sigchip warn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3L2 20h20L12 3z"/></svg>Парковка: уточняется</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2>07 · Карточка объекта (ядро)</h2>
+      <div class="row">
+        <div class="pcard">
+          <div class="ph"><div class="ring"><svg width="48" height="48"><circle cx="24" cy="24" r="20" fill="rgba(0,0,0,.35)" stroke="rgba(255,255,255,.3)" stroke-width="3"/><circle cx="24" cy="24" r="20" fill="none" stroke="var(--em-hi)" stroke-width="3" stroke-linecap="round" stroke-dasharray="125.6" stroke-dashoffset="2.5"/></svg><b>98</b></div></div>
+          <div class="body">
+            <div class="kick">Аренда · долгосрочно</div>
+            <div class="price">350 000<span>AMD / мес</span></div>
+            <div class="ttl">Современная 2-комнатная в Кентроне</div>
+            <div class="loc">Северный проспект · Ереван</div>
+            <div class="specs">2 спальни&nbsp;·&nbsp;85 м²&nbsp;·&nbsp;этаж 7 / 12</div>
+            <div class="hair"></div>
+            <div class="foot"><span class="verify"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-11"/></svg>Проверено Homy</span><button class="btn btn-ghost" style="padding:0">Смотреть →</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="cap">Анатомия: фото 4:5, match-кольцо, kick-лейбл, цена-герой, заголовок, локация, specs, hairline, verified + ghost-CTA. Один акцент — изумруд.</div>
+    </section>
+
+    <section class="sec">
+      <h2>08 · Навигация</h2>
+      <div class="grp"><h3>Top nav (desktop)</h3>
+        <div class="topnav"><div class="brand" style="font-size:17px">Ho<span class="m">m</span>y</div><a class="active">Поиск</a><a>Избранное</a><a>Сравнение</a><a>Просмотры</a><span style="margin-left:auto"></span><button class="btn btn-secondary" style="padding:8px 16px">Войти</button></div>
+      </div>
+      <div class="grp"><h3>Bottom nav (mobile)</h3>
+        <div class="botnav">
+          <div class="it active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>Поиск</div>
+          <div class="it"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5.5-7 10-7 10z"/></svg>Избранное</div>
+          <div class="it"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Чат</div>
+          <div class="it"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>Профиль</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2>09 · Модалка · Тосты</h2>
+      <div class="row">
+        <div class="modal"><h4>Записаться на просмотр</h4><p>Выберите дату и время. Homy согласует с владельцем и пришлёт подтверждение.</p><div class="row" style="margin-top:16px"><button class="btn btn-primary em3d"><span>Подтвердить</span></button><button class="btn btn-secondary">Отмена</button></div></div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="toast"><span class="dot" style="background:var(--em)"></span>Просмотр запланирован на 30 июня, 12:30</div>
+          <div class="toast"><span class="dot" style="background:var(--amber)"></span>Требуется подтверждение владельца</div>
+          <div class="toast"><span class="dot" style="background:var(--danger)"></span>Не удалось отправить — попробуйте снова</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2>10 · Состояния: пусто · загрузка · ошибка</h2>
+      <div class="row">
+        <div class="state"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div><h4>Пока ничего не найдено</h4><p>Уточните бюджет или район — Homy подберёт варианты.</p></div>
+        <div class="skel"><div class="ph"></div><div class="b"><div class="l" style="width:40%"></div><div class="l" style="width:70%;height:24px"></div><div class="l" style="width:85%"></div><div class="l" style="width:55%"></div></div></div>
+        <div class="state"><div class="ic" style="background:color-mix(in srgb,var(--danger) 16%,transparent);color:var(--danger)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg></div><h4>Что-то пошло не так</h4><p>Не удалось загрузить. Обновите страницу.</p></div>
+      </div>
+    </section>
+    <section class="sec">
+      <h2>08b · Возврат к результатам (обязательно на КАЖДОМ экране)</h2>
+      <div class="grp"><h3>Web — шапка с логотипом и «К результатам поиска»</h3>
+        <div class="wnav2"><span class="brand">Ho<span class="m">m</span>y</span><span class="opwrap" style="margin:0 12px"><button class="opbtn" title="Чат со специалистом"><span class="opav" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop')"></span><i class="opdot"></i></button></span><button class="bk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>К результатам поиска</button></div>
+      </div>
+      <div class="grp"><h3>Mobile — верхняя панель «Результаты»</h3>
+        <div class="mnav" style="max-width:320px"><button class="bk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Результаты</button><span class="homy">Ho<span class="m">m</span>y</span></div>
+      </div>
+      <div class="cap">Правило: с любого экрана (кроме лендинга) пользователь всегда может вернуться к результатам поиска. На детальной карточке роль возврата выполняет стрелка «←» на фото.</div>
+    </section>
+    <section class="sec">
+      <h2>08c · Меню по клику на логотип Homy</h2>
+      <div class="row" style="gap:40px">
+        <div><h3 style="font-size:13px;font-weight:700;margin-bottom:12px">Залогинен — разделы ЛК</h3><div class="lm-pop" style="position:static;box-shadow:none;min-width:240px"><div class="lm-head">Личный кабинет</div><a class="lm-i "><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>Главная</a><a class="lm-i "><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Мой дашборд</a><a class="lm-i "><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5.5-7 10-7 10z"/></svg>Избранное</a><a class="lm-i "><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4z"/></svg>Сохранённые поиски</a><a class="lm-i "><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Просмотры</a><a class="lm-i "><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Сообщения</a><a class="lm-i "><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>Профиль</a><a class="lm-i "><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>Настройки</a><div class="lm-sep"></div><a class="lm-i "><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Выйти</a></div></div>
+        <div><h3 style="font-size:13px;font-weight:700;margin-bottom:12px">Не залогинен — 2 пункта</h3><div class="lm-pop" style="position:static;box-shadow:none;min-width:240px"><a class="lm-i acc"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>Войти</a><a class="lm-i "><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>Главная</a></div></div>
+      </div>
+      <div class="cap">Логотип Homy — кликабельный: открывает выпадающее меню. Для гостя — «Войти» и «Главная». Для авторизованного — все разделы личного кабинета.</div>
+    </section>
+
+  </main>
+<script>
+  function setT(t){document.body.dataset.theme=t;document.getElementById('tgD').classList.toggle('on',t==='dark');document.getElementById('tgL').classList.toggle('on',t==='light');}
+</script>
+<style>/*CHIP20C*/
+.chip.active{background:none!important;background-image:none!important;color:var(--em)!important;border:0!important;border-color:transparent!important;border-radius:0!important;box-shadow:inset 0 -2.5px 0 0 var(--em)!important;font-weight:700!important;padding-left:4px!important;padding-right:4px!important}
+</style>
+</body>
+</html>

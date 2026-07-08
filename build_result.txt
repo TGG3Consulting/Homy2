@@ -1,0 +1,30 @@
+├ ƒ /api/properties/list                   204 B         103 kB
+├ ƒ /api/search/voice                      204 B         103 kB
+├ ƒ /api/users/me                          204 B         103 kB
+├ ƒ /api/users/me/dashboard                204 B         103 kB
+├ ƒ /api/users/me/favorites                204 B         103 kB
+├ ƒ /api/users/me/preferences              204 B         103 kB
+├ ƒ /api/users/me/recommendations          204 B         103 kB
+├ ƒ /api/users/me/viewings                 204 B         103 kB
+├ ƒ /api/viewing/schedule                  204 B         103 kB
+├ ○ /dashboard                           5.14 kB         347 kB
+├ ○ /for-buyers                           6.6 kB         145 kB
+├ ○ /for-owners                          4.54 kB         143 kB
+├ ○ /for-renters                         5.83 kB         145 kB
+├ ○ /forgot-password                     2.84 kB         119 kB
+├ ○ /how-it-works                        5.41 kB         144 kB
+├ ○ /list-property                       3.83 kB         143 kB
+├ ○ /login                               3.73 kB         120 kB
+├ ○ /register                            4.72 kB         121 kB
+├ ○ /reset-password                      3.19 kB         120 kB
+├ ○ /results                             3.32 kB         345 kB
+└ ○ /schedule                            6.98 kB         149 kB
++ First Load JS shared by all             102 kB
+  ├ chunks/1255-5c680abb9db89955.js      46.2 kB
+  ├ chunks/4bd1b696-f785427dddbba9fb.js  54.2 kB
+  └ other shared chunks (total)          1.93 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homy — Главный экран (финал · Слой доверия)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root,[data-theme="dark"]{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#F2F4F7;--muted:#8B93A3;--soft:#C5CAD3;
+    --hair:rgba(255,255,255,.10);--em-hi:#2BC091;--em:#0B6E4F;--em-lo:#052A1D;--amber:#E0A83B;--card-shadow:inset 0 0 0 1px rgba(255,255,255,.06),0 24px 60px rgba(0,0,0,.45)}
+  [data-theme="light"]{--bg:#EEF0F3;--surface:#FFFFFF;--surface2:#FAFAF8;--ink:#14181F;--muted:#6A7382;--soft:#39414D;
+    --hair:rgba(20,24,31,.10);--em-hi:#26B083;--em:#0A6045;--em-lo:#04281C;--amber:#B9822A;--card-shadow:0 4px 24px rgba(20,20,26,.08)}
+  body{font-family:'Montserrat',sans-serif;background:#c9ccd2;color:#14181F;-webkit-font-smoothing:antialiased;padding:34px 24px 90px}
+  .ph{max-width:1300px;margin:0 auto 26px;display:flex;align-items:center;gap:14px}
+  .ph .brand{font-size:20px;font-weight:800;letter-spacing:-.02em}.ph .brand .m{color:#0A6045}
+  .ph .t{font-size:13px;font-weight:600;color:#4b5563}
+  .tgl{margin-left:auto;display:flex;gap:2px;background:#fff;border:1px solid #d5d8de;border-radius:999px;padding:3px}
+  .tgl .o{width:34px;height:28px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#6a7382;cursor:pointer}
+  .tgl .o.on{color:#fff;background:radial-gradient(120% 160% at 50% 18%,#2BC091,#04281C)}
+  .frames{max-width:1300px;margin:0 auto;display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+  .caplbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:8px}
+
+  .web{flex:1;min-width:720px;border-radius:16px;overflow:hidden;background:var(--bg);box-shadow:0 20px 50px rgba(0,0,0,.2);border:1px solid rgba(0,0,0,.15)}
+  .webbar{height:34px;background:var(--surface);display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid var(--hair)}
+  .webbar i{width:10px;height:10px;border-radius:50%;background:var(--muted);opacity:.5}
+  .view{position:relative;color:var(--ink)}
+  .phone{width:340px;flex:none}
+  .device{width:340px;height:700px;border:9px solid #16171c;border-radius:40px;overflow:hidden;background:var(--bg);box-shadow:0 24px 60px rgba(0,0,0,.28)}
+  .mv{height:100%;overflow:auto}.mv::-webkit-scrollbar{width:0}
+
+  .em3d{position:relative;overflow:hidden;color:#fff;border:0;background:radial-gradient(135% 175% at 50% 14%,var(--em-hi),var(--em));
+    box-shadow:0 2px 6px rgba(4,40,28,.20),inset 0 1px 0 rgba(255,255,255,.10),inset 0 -2px 5px rgba(3,28,20,.16)}
+  .em3d::after{content:none}
+  .em3d>*{position:relative;z-index:2}
+  .chip{font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--hair);background:var(--surface);color:var(--soft);cursor:pointer}
+  .nav{display:flex;align-items:center;gap:20px;padding:15px 28px;border-bottom:1px solid var(--hair)}
+  .nav .brand{font-size:17px;font-weight:800}.nav .brand .m{color:var(--em)}
+  .nav a{font-size:13px;color:var(--muted);text-decoration:none}
+  .btn-sec{background:transparent;border:1px solid var(--hair);color:var(--ink);font-size:13px;padding:8px 15px;border-radius:11px;cursor:pointer}
+
+  .split{display:grid;grid-template-columns:1.02fr 1fr}
+  .left{padding:52px 46px;display:flex;flex-direction:column;justify-content:center}
+  .kick{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--em)}
+  .left h1{font-size:38px;font-weight:800;letter-spacing:-.02em;line-height:1.08;margin-top:14px}
+  .left h1 em{font-style:normal;color:var(--em)}
+  .left p{font-size:14.5px;color:var(--muted);margin-top:16px;line-height:1.6;max-width:400px}
+  .input{margin-top:24px;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:13px 15px;max-width:440px;box-shadow:var(--card-shadow)}
+  .input .sp{width:26px;height:26px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center}
+  .input .txt{flex:1;font-size:14px;color:var(--muted)}
+  .input .go{width:40px;height:40px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center}
+  .exq{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+  .trust{display:flex;gap:8px;align-items:center;margin-top:28px;font-size:12px;color:var(--muted)}
+  .trust svg{color:var(--em)}
+
+  .right{position:relative;overflow:hidden;border-left:1px solid var(--hair);background:var(--surface2)}
+  .right .photo{position:absolute;inset:0;background-size:cover;background-position:center;background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=900&h=820&fit=crop&q=80')}
+  .right .scrim{position:absolute;inset:0;background:linear-gradient(120deg,color-mix(in srgb,var(--surface2) 78%,transparent),color-mix(in srgb,var(--surface2) 30%,transparent))}
+  .stack{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:40px}
+  .badge{align-self:flex-start;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#fff;padding:5px 11px;border-radius:999px}
+  .ev{background:color-mix(in srgb,var(--surface) 86%,transparent);backdrop-filter:blur(10px);border:1px solid var(--hair);border-radius:14px;padding:13px 15px;display:flex;align-items:center;gap:12px;box-shadow:var(--card-shadow)}
+  .ev .ic{width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--em) 16%,transparent);color:var(--em)}
+  .ev .tx{flex:1}.ev .tx b{font-size:13px;font-weight:600;display:block}.ev .tx span{font-size:11px;color:var(--muted)}
+  .ev .val{font-size:12px;font-weight:700;color:var(--em)}
+  .ev.amber .ic{background:color-mix(in srgb,var(--amber) 18%,transparent);color:var(--amber)}.ev.amber .val{color:var(--amber)}
+  .ev.match{padding:12px 15px}.ev.match .ring{position:relative;width:36px;height:36px;flex:none}.ev.match .ring svg{transform:rotate(-90deg)}.ev.match .ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+  .obj{align-self:flex-start;margin-top:2px;font-size:11px;color:var(--muted)}
+
+  /* ===== 20C — единый стиль кнопок (global rollout) ===== */
+  .btn.btn-primary,.btn-primary,.abtn,button.abtn,.cta,.call,.book,.up{
+    background:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;
+    color:var(--em)!important;width:fit-content!important;min-width:0!important;padding:9px 3px!important;
+    position:relative!important;overflow:visible!important;font-weight:700!important;
+    display:inline-flex!important;align-items:center;gap:8px;line-height:1.15;letter-spacing:0}
+  .abtn{margin-left:auto!important;margin-right:auto!important}
+  .btn.btn-primary::before,.abtn::before,.cta::before,.call::before,.book::before,.up::before{
+    content:''!important;position:absolute;left:3px;right:3px;bottom:1px;height:2px;border-radius:2px;background:var(--hair)}
+  .btn.btn-primary::after,.abtn::after,.cta::after,.call::after,.book::after,.up::after{
+    content:''!important;position:absolute;left:3px;bottom:1px;width:calc(100% - 6px);height:3px;border-radius:3px;
+    background:linear-gradient(90deg,var(--em),var(--em-hi));transition:transform .28s cubic-bezier(.22,1,.36,1);transform-origin:left}
+  .btn.btn-primary>span,.abtn>span,.cta>*{display:inline-block;transition:transform .28s cubic-bezier(.22,1,.36,1)}
+  .btn.btn-primary:hover>span,.abtn:hover>span{transform:translateY(-2px)}
+  .btn.btn-primary:hover,.abtn:hover,.cta:hover,.call:hover,.book:hover,.up:hover{color:var(--em-hi)!important}
+  /* secondary → растущая линия на ховере */
+  .btn-sec,.altbtn{background:none!important;border:0!important;box-shadow:none!important;border-radius:0!important;
+    color:var(--soft)!important;padding:9px 3px!important;width:fit-content!important;position:relative!important;overflow:visible!important;
+    font-weight:600!important;display:inline-flex!important;align-items:center;gap:7px}
+  .btn-sec::after,.altbtn::after{content:''!important;position:absolute;left:3px;bottom:1px;width:0;height:2px;border-radius:2px;background:var(--em);transition:width .28s cubic-bezier(.22,1,.36,1)}
+  .btn-sec:hover,.altbtn:hover{color:var(--em)!important}
+  .btn-sec:hover::after,.altbtn:hover::after{width:calc(100% - 6px)}
+  /* MARK20C */
+</style>
+</head>
+<body data-theme="dark">
+<div class="ph">
+  <div class="brand">Ho<span class="m">m</span>y</div>
+  <div class="t">Главный экран · финал · концепт «Слой доверия» · заменяет A1</div>
+  <div class="tgl"><span class="o on" id="tgD" onclick="setT('dark')">☾</span><span class="o" id="tgL" onclick="setT('light')">☀</span></div>
+</div>
+
+<div class="frames">
+  <!-- WEB -->
+  <div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="view">
+    <div class="nav"><div class="brand">Ho<span class="m">m</span>y</div><a>Купить</a><a>Снять</a><a>Владельцам</a><a>Как это работает</a><span style="margin-left:auto"></span><button class="btn-sec">Войти</button></div>
+    <div class="split">
+      <div class="left">
+        <div class="kick">AI real estate · Armenia</div>
+        <h1>Не доска объявлений.<br><em>Слой доверия.</em></h1>
+        <p>Homy разбирает каждый объект по фактам — застройщик, юридическая чистота, район, маршрут, инвестиция — и честно показывает и плюсы, и риски.</p>
+        <div class="input"><span class="sp em3d"><svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg></span><span class="txt">Опишите, какой дом ищете…</span><span class="go em3d"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+        <div class="exq"><span class="chip">Семья, рядом школа</span><span class="chip">Тихая 2-комн в Кентроне</span><span class="chip">До 200 000, Арабкир</span></div>
+        <div class="trust"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-11"/></svg>1 500 объектов проверено · честно о плюсах и минусах</div>
+      </div>
+      <div class="right"><div class="photo"></div><div class="scrim"></div><div class="stack">
+        <span class="badge em3d"><span>Пример разбора Homy</span></span>
+        <div class="ev match"><div class="ring"><svg width="36" height="36"><circle cx="18" cy="18" r="15" fill="none" stroke="var(--hair)" stroke-width="3"/><circle cx="18" cy="18" r="15" fill="none" stroke="var(--em)" stroke-width="3" stroke-linecap="round" stroke-dasharray="94.2" stroke-dashoffset="1.9" transform="rotate(-90 18 18)"/></svg><b>98</b></div><div class="tx"><b>Совпадение с запросом</b><span>Северный проспект · 2-комн · 350 000 AMD</span></div></div>
+        <div class="ev"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg></div><div class="tx"><b>Застройщик и юр. чистота</b><span>репутация, споры, собственность</span></div><div class="val">проверено</div></div>
+        <div class="ev"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V7l7-4 7 4v14"/></svg></div><div class="tx"><b>Район и маршрут</b><span>школа 6 мин · метро 10 мин</span></div><div class="val">рядом</div></div>
+        <div class="ev amber"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3L2 20h20L12 3z"/></svg></div><div class="tx"><b>Парковка</b><span>Homy честно о минусах</span></div><div class="val">уточняется</div></div>
+      </div></div>
+    </div>
+  </div></div>
+
+  <!-- MOBILE -->
+  <div class="phone"><div class="caplbl">Mobile 390</div><div class="device"><div class="mv">
+    <div class="nav" style="padding:14px 16px"><div class="brand" style="font-size:16px">Ho<span class="m">m</span>y</div><span style="margin-left:auto"></span><button class="btn-sec" style="padding:7px 12px">Войти</button></div>
+    <div style="padding:26px 18px 8px">
+      <div class="kick">AI real estate · Armenia</div>
+      <h1 style="font-size:28px;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-top:12px">Не доска объявлений. <em style="font-style:normal;color:var(--em)">Слой доверия.</em></h1>
+      <p style="font-size:13px;color:var(--muted);margin-top:12px;line-height:1.55">Homy разбирает каждый объект по фактам и честно показывает и плюсы, и риски.</p>
+      <div class="input" style="margin-top:18px;max-width:none"><span class="sp em3d" style="width:24px;height:24px"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg></span><span class="txt" style="font-size:13px">Опишите дом…</span><span class="go em3d" style="width:36px;height:36px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+      <div class="exq"><span class="chip">Семья, школа</span><span class="chip">2-комн Кентрон</span></div>
+    </div>
+    <div style="padding:14px 18px 24px">
+      <div class="caplbl" style="margin:6px 0 10px">Пример разбора Homy</div>
+      <div style="border-radius:16px;overflow:hidden;background:var(--surface);border:1px solid var(--hair)">
+        <div style="position:relative;height:130px;background-size:cover;background-position:center;background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=700&h=300&fit=crop&q=80')"><span class="badge em3d" style="position:absolute;top:12px;left:12px"><span>350 000 · 98%</span></span></div>
+        <div style="padding:6px 14px 12px">
+          <div class="ev" style="border:0;background:none;box-shadow:none;padding:11px 0;border-bottom:1px solid var(--hair)"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg></div><div class="tx"><b>Застройщик и юр.</b></div><div class="val">проверено</div></div>
+          <div class="ev" style="border:0;background:none;box-shadow:none;padding:11px 0;border-bottom:1px solid var(--hair)"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V7l7-4 7 4v14"/></svg></div><div class="tx"><b>Район и маршрут</b><span>школа 6 мин</span></div><div class="val">рядом</div></div>
+          <div class="ev amber" style="border:0;background:none;box-shadow:none;padding:11px 0"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3L2 20h20L12 3z"/></svg></div><div class="tx"><b>Парковка</b><span>честно о минусах</span></div><div class="val">уточняется</div></div>
+        </div>
+      </div>
+    </div>
+  </div></div></div>
+</div>
+
+<script>function setT(t){document.body.dataset.theme=t;document.getElementById('tgD').classList.toggle('on',t==='dark');document.getElementById('tgL').classList.toggle('on',t==='light');}</script>
+</body>
+</html>

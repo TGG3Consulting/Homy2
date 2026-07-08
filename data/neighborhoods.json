@@ -1,0 +1,134 @@
+{
+  "Arabkir": {
+    "name_en": "Arabkir",
+    "name_ru": "Арабкир",
+    "name_hy": "Delays",
+    "lat": 40.205,
+    "lng": 44.505,
+    "radius": 1800,
+    "safety_score": 90,
+    "avg_price_sqm_usd": 1200,
+    "description_en": "Prestigious residential area with good schools and parks"
+  },
+  "Kentron": {
+    "name_en": "Kentron",
+    "name_ru": "Кентрон",
+    "name_hy": "Կdelays",
+    "lat": 40.179,
+    "lng": 44.515,
+    "radius": 1400,
+    "safety_score": 95,
+    "avg_price_sqm_usd": 1800,
+    "description_en": "City center with highest prices and best infrastructure"
+  },
+  "Kanaker-Zeytun": {
+    "name_en": "Kanaker-Zeytun",
+    "name_ru": "Канакер-Зейтун",
+    "name_hy": "Քdelays-Զdelays",
+    "lat": 40.215,
+    "lng": 44.535,
+    "radius": 1600,
+    "safety_score": 85,
+    "avg_price_sqm_usd": 900,
+    "description_en": "Mixed residential and industrial area"
+  },
+  "Davtashen": {
+    "name_en": "Davtashen",
+    "name_ru": "Давташен",
+    "name_hy": "Delays",
+    "lat": 40.215,
+    "lng": 44.465,
+    "radius": 1500,
+    "safety_score": 88,
+    "avg_price_sqm_usd": 1100,
+    "description_en": "Quiet residential area on hills"
+  },
+  "Avan": {
+    "name_en": "Avan",
+    "name_ru": "Аван",
+    "name_hy": "Аван",
+    "lat": 40.185,
+    "lng": 44.555,
+    "radius": 1400,
+    "safety_score": 82,
+    "avg_price_sqm_usd": 800,
+    "description_en": "Suburban area with newer developments"
+  },
+  "Erebuni": {
+    "name_en": "Erebuni",
+    "name_ru": "Эребуни",
+    "name_hy": "Delays",
+    "lat": 40.125,
+    "lng": 44.505,
+    "radius": 2000,
+    "safety_score": 75,
+    "avg_price_sqm_usd": 700,
+    "description_en": "Historical area near ancient fortress"
+  },
+  "Malatia-Sebastia": {
+    "name_en": "Malatia-Sebastia",
+    "name_ru": "Малатия-Себастия",
+    "name_hy": "Delays-Սdelays",
+    "lat": 40.155,
+    "lng": 44.475,
+    "radius": 2200,
+    "safety_score": 78,
+    "avg_price_sqm_usd": 750,
+    "description_en": "Large residential district"
+  },
+  "Nor-Nork": {
+    "name_en": "Nor-Nork",
+    "name_ru": "Нор-Норк",
+    "name_hy": "Նdelays Նdelays",
+    "lat": 40.195,
+    "lng": 44.565,
+    "radius": 1800,
+    "safety_score": 80,
+    "avg_price_sqm_usd": 850,
+    "description_en": "Developing residential area"
+  },
+  "Nork-Marash": {
+    "name_en": "Nork-Marash",
+    "name_ru": "Норк-Мараш",
+    "name_hy": "Նdelays-Մdelays",
+    "lat": 40.185,
+    "lng": 44.535,
+    "radius": 1200,
+    "safety_score": 87,
+    "avg_price_sqm_usd": 1000,
+    "description_en": "Prestigious hillside area"
+  },
+  "Shengavit": {
+    "name_en": "Shengavit",
+    "name_ru": "Шенгавит",
+    "name_hy": "Շdelays",
+    "lat": 40.155,
+    "lng": 44.505,
+    "radius": 1600,
+    "safety_score": 76,
+    "avg_price_sqm_usd": 700,
+    "description_en": "Working-class residential area"
+  },
+  "Ajapnyak": {
+    "name_en": "Ajapnyak",
+    "name_ru": "Аджапняк",
+    "name_hy": "Аdelays",
+    "lat": 40.205,
+    "lng": 44.465,
+    "radius": 2000,
+    "safety_score": 79,
+    "avg_price_sqm_usd": 800,
+    "description_en": "Large residential district"
+  },
+  "Nubarashen": {
+    "name_en": "Nubarashen",
+    "name_ru": "Нубарашен",
+    "name_hy": "Նdelays",
+    "lat": 40.095,
+    "lng": 44.545,
+    "radius": 1200,
+    "safety_score": 70,
+    "avg_price_sqm_usd": 600,
+    "description_en": "Suburban area near airport"
+  }
+}

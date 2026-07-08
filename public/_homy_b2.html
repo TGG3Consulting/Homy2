@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homy — Пачка 2 · Действия покупателя</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root,[data-theme="dark"]{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#F2F4F7;--muted:#8B93A3;--soft:#C5CAD3;
+    --hair:rgba(255,255,255,.10);--em-hi:#2BC091;--em:#0B6E4F;--em-lo:#052A1D;--amber:#E0A83B;--danger:#F0616A;--card-shadow:inset 0 0 0 1px rgba(255,255,255,.06),0 24px 60px rgba(0,0,0,.45)}
+  [data-theme="light"]{--bg:#EEF0F3;--surface:#FFFFFF;--surface2:#FAFAF8;--ink:#14181F;--muted:#6A7382;--soft:#39414D;
+    --hair:rgba(20,24,31,.10);--em-hi:#26B083;--em:#0A6045;--em-lo:#04281C;--amber:#B9822A;--danger:#D8434B;--card-shadow:0 4px 24px rgba(20,20,26,.08)}
+  body{font-family:'Montserrat',sans-serif;background:#c9ccd2;color:#14181F;-webkit-font-smoothing:antialiased;padding:34px 24px 90px}
+  .pagehead{max-width:1300px;margin:0 auto 26px;display:flex;align-items:center;gap:16px}
+  .pagehead .brand{font-size:20px;font-weight:800;letter-spacing:-.02em}.pagehead .brand .m{color:#0A6045}
+  .pagehead .t{font-size:13px;font-weight:600;color:#4b5563}
+  .tgl{margin-left:auto;display:flex;gap:2px;background:#fff;border:1px solid #d5d8de;border-radius:999px;padding:3px}
+  .tgl .o{width:34px;height:28px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#6a7382;cursor:pointer}
+  .tgl .o.on{color:#fff;background:radial-gradient(120% 160% at 50% 18%,#2BC091,#04281C)}
+  .screen{max-width:1300px;margin:0 auto 44px}
+  .screen-h{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#3a4150;margin-bottom:14px}.screen-h b{color:#0A6045}
+  .frames{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+  .web{flex:1;min-width:700px;border-radius:16px;overflow:hidden;background:var(--bg);box-shadow:0 20px 50px rgba(0,0,0,.2);border:1px solid rgba(0,0,0,.15)}
+  .webbar{height:34px;background:var(--surface);display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid var(--hair)}
+  .webbar i{width:10px;height:10px;border-radius:50%;background:var(--muted);opacity:.5}
+  .webview{height:560px;overflow:auto;background:var(--bg);color:var(--ink)}
+  .webview::-webkit-scrollbar{width:6px}.webview::-webkit-scrollbar-thumb{background:var(--hair);border-radius:3px}
+  .mob{width:340px;flex:none}.caplbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:8px}
+  .phone{width:340px;height:700px;border:9px solid #16171c;border-radius:40px;overflow:hidden;background:var(--bg);box-shadow:0 24px 60px rgba(0,0,0,.28)}
+  .mobview{height:100%;overflow:auto;color:var(--ink)}.mobview::-webkit-scrollbar{width:0}
+
+  .em3d{position:relative;overflow:hidden;color:#fff;border:0;background:radial-gradient(135% 175% at 50% 14%,var(--em-hi),var(--em));
+    box-shadow:0 2px 6px rgba(4,40,28,.20),inset 0 1px 0 rgba(255,255,255,.10),inset 0 -2px 5px rgba(3,28,20,.16)}
+  .em3d::after{content:none}
+  .em3d>*{position:relative;z-index:2}
+  .hd{padding:18px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--hair)}
+  .hd h2{font-size:19px;font-weight:700}.hd .n{font-size:12px;color:var(--muted)}
+  .chip{font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--hair);background:var(--surface);color:var(--soft)}
+  .chip.active{color:#fff;border-color:transparent;background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em))}
+  .btn{font-family:inherit;font-weight:600;border-radius:11px;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:7px;justify-content:center}
+  .btn-primary{color:#fff;font-size:13px;padding:11px 18px}
+  .btn-sec{background:transparent;border-color:var(--hair);color:var(--ink);font-size:12.5px;padding:9px 14px}
+  .sig{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:7px}
+  .sig.ok{background:color-mix(in srgb,var(--em) 16%,transparent);color:var(--em)}
+  .sig.warn{background:color-mix(in srgb,var(--amber) 18%,transparent);color:var(--amber)}
+  .sig.err{background:color-mix(in srgb,var(--danger) 16%,transparent);color:var(--danger)}
+
+  /* card */
+  .card{background:var(--surface);border-radius:16px;overflow:hidden;box-shadow:var(--card-shadow)}
+  .card .ph{position:relative;aspect-ratio:16/11;background-size:cover;background-position:center}
+  .card .ph .heart{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:10px;background:rgba(10,13,18,.5);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;border:1px solid rgba(255,255,255,.15)}
+  .card .ph .ring{position:absolute;top:12px;left:12px;width:38px;height:38px}.card .ph .ring svg{transform:rotate(-90deg)}.card .ph .ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700}
+  .card .b{padding:14px}
+  .card .cp{font-size:19px;font-weight:700;letter-spacing:-.02em}.card .cp span{font-size:11px;color:var(--muted);font-weight:500;margin-left:5px}
+  .card .ct{font-size:14px;font-weight:600;margin-top:6px}.card .cl{font-size:12px;color:var(--muted);margin-top:3px}
+  .card .cs{font-size:12px;color:var(--soft);margin-top:9px}
+
+  /* saved search row */
+  .srow{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:16px}
+  .srow .q{flex:1}.srow .q b{font-size:14px;font-weight:600}.srow .q .cr{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+  .srow .q .cr .c{font-size:11px;color:var(--soft);background:var(--surface2);border:1px solid var(--hair);border-radius:6px;padding:3px 8px}
+  .srow .cnt{text-align:center}.srow .cnt b{font-size:20px;font-weight:700;color:var(--em)}.srow .cnt span{display:block;font-size:10px;color:var(--muted)}
+  .toggle{width:40px;height:22px;border-radius:999px;background:var(--em);position:relative;cursor:pointer}
+  .toggle::after{content:'';position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:#fff}
+  .toggle.off{background:color-mix(in srgb,var(--muted) 30%,transparent)}.toggle.off::after{right:auto;left:2px}
+
+  /* compare v2 — desktop: object columns, recommended = one rounded card */
+  .cmp2{display:flex;gap:14px;align-items:stretch}
+  .cmp2 .labels{width:150px;flex:none;display:flex;flex-direction:column;padding-top:170px}
+  .cmp2 .labels .rl{height:48px;display:flex;align-items:center;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  .cmp2 .ocard{flex:1;background:var(--surface);border:1px solid var(--hair);border-radius:18px;overflow:hidden;position:relative}
+  .cmp2 .ocard.best{border:2px solid var(--em);box-shadow:0 14px 34px rgba(4,40,28,.3)}
+  .cmp2 .ocard .badge2{position:absolute;top:12px;left:12px;z-index:2;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:5px 11px;border-radius:999px}
+  .cmp2 .ocard .photo{height:120px;background-size:cover;background-position:center}
+  .cmp2 .ocard .head{padding:12px 16px 10px}
+  .cmp2 .ocard .head b{font-size:14px;font-weight:600;display:block}
+  .cmp2 .ocard .head span{font-size:11px;color:var(--muted)}
+  .cmp2 .ocard .r{height:48px;display:flex;align-items:center;padding:0 16px;border-top:1px solid var(--hair);font-size:13.5px;font-weight:500}
+  .cmp2 .ocard .r.price{font-size:18px;font-weight:700;letter-spacing:-.01em}
+  .cmp2 .v-ok{color:var(--em);font-weight:600}.cmp2 .v-amber{color:var(--amber);font-weight:600}
+  /* compare — mobile: sticky label column + horizontal scroll (до 4 объектов) */
+  .cmphint{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;margin:0 0 8px}
+  .cmpm2{overflow-x:auto;border:1px solid var(--hair);border-radius:16px;background:var(--surface);-webkit-overflow-scrolling:touch}
+  .cmpm2::-webkit-scrollbar{height:5px}.cmpm2::-webkit-scrollbar-thumb{background:var(--hair);border-radius:3px}
+  .cmpm2 table{border-collapse:collapse;width:max-content;min-width:100%}
+  .cmpm2 th,.cmpm2 td{border-bottom:1px solid var(--hair)}
+  .cmpm2 th.lbl,.cmpm2 td.lbl{position:sticky;left:0;z-index:3;background:var(--surface);width:76px;min-width:76px;padding:11px 10px;font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.02em;color:var(--muted);text-align:left;box-shadow:1px 0 0 var(--hair)}
+  .cmpm2 th.obj{min-width:114px;padding:12px 9px;text-align:center;vertical-align:bottom;border-left:1px solid var(--hair)}
+  .cmpm2 th.obj.best,.cmpm2 td.v.best{background:color-mix(in srgb,var(--em) 9%,transparent)}
+  .cmpm2 th.obj .tag{font-size:8px;font-weight:700;text-transform:uppercase;color:#fff;padding:3px 7px;border-radius:999px;display:inline-block;margin-bottom:7px}
+  .cmpm2 th.obj .th{height:52px;border-radius:8px;background-size:cover;background-position:center;margin-bottom:7px}
+  .cmpm2 th.obj .pp{font-size:13px;font-weight:700}.cmpm2 th.obj .tt{font-size:9.5px;color:var(--muted);margin-top:2px;line-height:1.3}
+  .cmpm2 td.v{min-width:114px;padding:12px 8px;text-align:center;font-size:12.5px;font-weight:500;border-left:1px solid var(--hair)}
+  .cmpm2 td.v.win{color:var(--em);font-weight:700}.cmpm2 td.v.amb{color:var(--amber);font-weight:600}.cmpm2 td.v.mut{color:var(--muted)}
+  .verdict{margin-top:16px;padding-left:14px;border-left:2px solid var(--em)}
+  .verdict .h{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .verdict p{font-size:13px;line-height:1.6;color:var(--soft)}
+
+  /* viewings */
+  .vrow{display:flex;gap:14px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:14px;align-items:center}
+  .vrow .th{width:80px;height:70px;border-radius:10px;background-size:cover;background-position:center;flex:none}
+  .vrow .info{flex:1}.vrow .info b{font-size:14px;font-weight:600}.vrow .info .dt{font-size:12.5px;color:var(--soft);margin-top:6px;display:flex;gap:12px}.vrow .info .cl{font-size:11.5px;color:var(--muted);margin-top:4px}
+  .vrow .act{display:flex;flex-direction:column;gap:7px;align-items:flex-end}
+
+  /* booking */
+  .cal{background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:16px}
+  .cal .cm{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;font-size:13px;font-weight:600}
+  .cal .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+  .cal .dow{font-size:10px;color:var(--muted);padding:4px 0}
+  .cal .d{font-size:12px;padding:8px 0;border-radius:8px;cursor:pointer}
+  .cal .d.mut{color:var(--muted);opacity:.4}.cal .d.sel{color:#fff;background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em))}
+  .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+  .slot{font-size:12.5px;font-weight:600;text-align:center;padding:9px 0;border-radius:9px;border:1px solid var(--hair);background:var(--surface);color:var(--soft);cursor:pointer}
+  .slot.sel{color:#fff;border-color:transparent;background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em))}
+  .success{text-align:center;padding:8px}
+  .success .ic{width:56px;height:56px;border-radius:16px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center}
+  .success h3{font-size:17px;font-weight:700}.success p{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.6}
+
+  /* GLOBAL: back-to-results nav (обязательно на каждом экране) */
+  .mnav{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:8px;padding:11px 14px;background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+  .mnav .bk{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;background:none;border:0;font-family:inherit;padding:0}
+  .mnav .bk svg{color:var(--em)}
+  .mnav .homy{margin-left:auto;font-size:13px;font-weight:800}.mnav .homy .m{color:var(--em)}
+  .wnav{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:16px;padding:11px 20px;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+  .wnav .brand{font-size:15px;font-weight:800}.wnav .brand .m{color:var(--em)}
+  .wnav .bk{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--em);cursor:pointer;background:none;border:0;font-family:inherit}
+
+  /* logo dropdown menu (клик по логотипу) */
+  .lmw{position:relative}
+  .lmw .lm-btn{background:none;border:0;font-family:inherit;font-weight:800;cursor:pointer;color:var(--ink);display:inline-flex;align-items:center;gap:0;letter-spacing:-.02em;padding:0}
+  .lmw .lm-btn .m{color:var(--em)}.lmw .lm-btn>svg{opacity:.55;margin-left:5px}
+  .wnav .lm-btn{font-size:15px}.mnav .lm-btn{font-size:13px}
+  .lm-pop{position:absolute;top:calc(100% + 8px);z-index:60;min-width:232px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.45);padding:8px}
+  .wnav .lm-pop{left:0}.mnav .lm-pop{right:0}
+  .lmw:not(.open) .lm-pop{display:none}
+  .lm-head{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 12px 4px}
+  .lm-i{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;font-size:13.5px;font-weight:500;color:var(--ink);cursor:pointer;text-decoration:none}
+  .lm-i:hover{background:color-mix(in srgb,var(--muted) 12%,transparent)}
+  .lm-i svg{color:var(--muted);flex:none}.lm-i.acc{color:var(--em)}.lm-i.acc svg{color:var(--em)}
+  .lm-sep{height:1px;background:var(--hair);margin:6px 4px}
+
+  .opwrap{margin:0 auto;display:flex;align-items:center}
+  .opbtn{position:relative;width:32px;height:32px;border:0;background:none;cursor:pointer;padding:0}
+  .opbtn .opav{display:block;width:32px;height:32px;border-radius:50%;background-size:cover;background-position:center;border:2px solid var(--surface);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+  .opbtn .opdot{position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:var(--em);border:2px solid var(--surface)}
+
+  /* ===== 20C — единый стиль кнопок (global rollout) ===== */
+  .btn.btn-primary,.btn-primary,.abtn,button.abtn,.cta,.call,.book,.up{
+    background:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;
+    color:var(--em)!important;width:fit-content!important;min-width:0!important;padding:9px 3px!important;
+    position:relative!important;overflow:visible!important;font-weight:700!important;
+    display:inline-flex!important;align-items:center;gap:8px;line-height:1.15;letter-spacing:0}
+  .abtn{margin-left:auto!important;margin-right:auto!important}
+  .btn.btn-primary::before,.abtn::before,.cta::before,.call::before,.book::before,.up::before{
+    content:''!important;position:absolute;left:3px;right:3px;bottom:1px;height:2px;border-radius:2px;background:var(--hair)}
+  .btn.btn-primary::after,.abtn::after,.cta::after,.call::after,.book::after,.up::after{
+    content:''!important;position:absolute;left:3px;bottom:1px;width:calc(100% - 6px);height:3px;border-radius:3px;
+    background:linear-gradient(90deg,var(--em),var(--em-hi));transition:transform .28s cubic-bezier(.22,1,.36,1);transform-origin:left}
+  .btn.btn-primary>span,.abtn>span,.cta>*{display:inline-block;transition:transform .28s cubic-bezier(.22,1,.36,1)}
+  .btn.btn-primary:hover>span,.abtn:hover>span{transform:translateY(-2px)}
+  .btn.btn-primary:hover,.abtn:hover,.cta:hover,.call:hover,.book:hover,.up:hover{color:var(--em-hi)!important}
+  /* secondary → растущая линия на ховере */
+  .btn-sec,.altbtn{background:none!important;border:0!important;box-shadow:none!important;border-radius:0!important;
+    color:var(--soft)!important;padding:9px 3px!important;width:fit-content!important;position:relative!important;overflow:visible!important;
+    font-weight:600!important;display:inline-flex!important;align-items:center;gap:7px}
+  .btn-sec::after,.altbtn::after{content:''!important;position:absolute;left:3px;bottom:1px;width:0;height:2px;border-radius:2px;background:var(--em);transition:width .28s cubic-bezier(.22,1,.36,1)}
+  .btn-sec:hover,.altbtn:hover{color:var(--em)!important}
+  .btn-sec:hover::after,.altbtn:hover::after{width:calc(100% - 6px)}
+  /* MARK20C */
+</style>
+</head>
+<body data-theme="dark">
+<div class="pagehead"><div class="brand">Ho<span class="m">m</span>y</div><div class="t">Пачка 2 · Действия покупателя · A9 избранное · A10 сохранённые · A11 сравнение · A12 просмотры · A13 запись</div>
+<div class="tgl"><span class="o on" id="tgD" onclick="setT('dark')">☾</span><span class="o" id="tgL" onclick="setT('light')">☀</span></div></div>
+
+<!-- A9 FAVORITES -->
+<div class="screen"><div class="screen-h"><b>A9</b> · Избранное</div><div class="frames">
+  <div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview">
+    <div class="hd"><h2>Избранное</h2><span class="n">4 объекта</span><span style="margin-left:auto;display:flex;gap:8px"><span class="chip active">Все</span><span class="chip">Аренда</span><span class="chip">Покупка</span></span></div>
+    <div style="padding:18px 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px" id="favweb"></div>
+  </div></div>
+  <div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview">
+    <div class="hd" style="padding:16px"><h2 style="font-size:17px">Избранное</h2><span class="n">4</span></div>
+    <div style="padding:14px;display:flex;flex-direction:column;gap:14px" id="favmob"></div>
+  </div></div></div>
+</div></div>
+
+<!-- A10 SAVED SEARCHES -->
+<div class="screen"><div class="screen-h"><b>A10</b> · Сохранённые поиски</div><div class="frames">
+  <div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview">
+    <div class="hd"><h2>Сохранённые поиски</h2><span class="n">3 · уведомления о новых</span></div>
+    <div style="padding:18px 24px;display:flex;flex-direction:column;gap:12px">
+      <div class="srow"><div class="q"><b>Семья, 2-комн, тихий район рядом со школой</b><div class="cr"><span class="c">Аренда</span><span class="c">Кентрон · Арабкир</span><span class="c">до 350 000</span><span class="c">2+ спальни</span></div></div><div class="cnt"><b>6</b><span>совпадений</span></div><div style="text-align:center"><div class="toggle"></div><span style="font-size:10px;color:var(--muted)">уведомл.</span></div><button class="btn btn-sec">Открыть</button></div>
+      <div class="srow"><div class="q"><b>Студия у центра, до 200 000</b><div class="cr"><span class="c">Аренда</span><span class="c">Кентрон</span><span class="c">до 200 000</span><span class="c">студия</span></div></div><div class="cnt"><b>3</b><span>совпадений</span></div><div style="text-align:center"><div class="toggle off"></div><span style="font-size:10px;color:var(--muted)">уведомл.</span></div><button class="btn btn-sec">Открыть</button></div>
+      <div class="srow"><div class="q"><b>Инвестиция, у метро, ликвидная</b><div class="cr"><span class="c">Покупка</span><span class="c">Арабкир</span><span class="c">у метро</span></div></div><div class="cnt"><b>4</b><span>совпадений</span></div><div style="text-align:center"><div class="toggle"></div><span style="font-size:10px;color:var(--muted)">уведомл.</span></div><button class="btn btn-sec">Открыть</button></div>
+    </div>
+  </div></div>
+  <div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview">
+    <div class="hd" style="padding:16px"><h2 style="font-size:17px">Сохранённые поиски</h2></div>
+    <div style="padding:14px;display:flex;flex-direction:column;gap:12px">
+      <div class="srow" style="flex-wrap:wrap;gap:10px"><div class="q" style="flex:1 1 100%"><b>Семья, 2-комн, рядом школа</b><div class="cr"><span class="c">Кентрон</span><span class="c">до 350к</span><span class="c">2+ сп</span></div></div><div class="cnt"><b>6</b><span>совпад.</span></div><div class="toggle" style="margin-left:auto"></div><button class="btn btn-sec" style="flex:none">Открыть</button></div>
+      <div class="srow" style="flex-wrap:wrap;gap:10px"><div class="q" style="flex:1 1 100%"><b>Студия у центра, до 200к</b><div class="cr"><span class="c">Кентрон</span><span class="c">студия</span></div></div><div class="cnt"><b>3</b><span>совпад.</span></div><div class="toggle off" style="margin-left:auto"></div><button class="btn btn-sec" style="flex:none">Открыть</button></div>
+    </div>
+  </div></div></div>
+</div></div>
+
+<!-- A11 COMPARE -->
+<div class="screen"><div class="screen-h"><b>A11</b> · Сравнение объектов (до 4)</div><div class="frames">
+  <div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview"><div style="padding:22px 24px">
+    <div class="cmp2">
+      <div class="labels"><div class="rl">Цена / мес</div><div class="rl">Match</div><div class="rl">Спальни / м²</div><div class="rl">Застройщик</div><div class="rl">Парковка</div><div class="rl">До школы / метро</div></div>
+      <div class="ocard best"><span class="badge2 em3d"><span>Совет Homy</span></span><div class="photo" style="background-image:url('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=500&h=320&fit=crop&q=80')"></div><div class="head"><b>3-комн, Арабкир</b><span>Баграмяна</span></div>
+        <div class="r price">280 000</div><div class="r v-ok">95%</div><div class="r">3 · 120 м²</div><div class="r v-ok">проверен</div><div class="r v-ok">есть</div><div class="r">школа 8 мин</div></div>
+      <div class="ocard"><div class="photo" style="background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500&h=320&fit=crop&q=80')"></div><div class="head"><b>2-комн, Кентрон</b><span>Северный проспект</span></div>
+        <div class="r price">350 000</div><div class="r v-ok">98%</div><div class="r">2 · 85 м²</div><div class="r v-ok">проверен</div><div class="r v-amber">уточняется</div><div class="r">школа 6 мин</div></div>
+      <div class="ocard"><div class="photo" style="background-image:url('https://images.unsplash.com/photo-1540518614846-7eded433c457?w=500&h=320&fit=crop&q=80')"></div><div class="head"><b>1-комн, у метро</b><span>Комитас 55</span></div>
+        <div class="r price">220 000</div><div class="r v-ok">90%</div><div class="r">1 · 55 м²</div><div class="r v-ok">проверен</div><div class="r v-amber">нет</div><div class="r">метро 2 мин</div></div>
+      <div class="ocard"><div class="photo" style="background-image:url('https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=500&h=320&fit=crop&q=80')"></div><div class="head"><b>Студия, Кентрон</b><span>Амирян</span></div>
+        <div class="r price">180 000</div><div class="r v-ok">88%</div><div class="r">45 м²</div><div class="r v-ok">проверен</div><div class="r v-amber">нет</div><div class="r">центр 5 мин</div></div>
+    </div>
+    <div class="verdict"><div class="h">Мнение Homy</div><p>Для семьи — <b style="color:var(--em)">3-комн в Арабкире</b> (120 м², парковка, дешевле). Кентрон выигрывает по match и близости школы. Студия — самый бюджет для одного. У метро — под инвестицию.</p></div>
+  </div></div></div>
+  <div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview"><div style="padding:16px">
+    <div class="hd" style="padding:0 0 10px"><h2 style="font-size:17px">Сравнение</h2><span class="n">4 объекта</span></div>
+    <div class="cmphint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6M11 18l-6-6 6-6"/></svg>Листайте вправо — все 4 объекта · лучшее подсвечено</div>
+    <div class="cmpm2"><table>
+      <thead><tr>
+        <th class="lbl"></th>
+        <th class="obj best"><span class="tag em3d">Совет Homy</span><div class="th" style="background-image:url('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=500&h=320&fit=crop&q=80')"></div><div class="pp">280 000</div><div class="tt">3-комн, Арабкир</div></th>
+        <th class="obj"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500&h=320&fit=crop&q=80')"></div><div class="pp">350 000</div><div class="tt">2-комн, Кентрон</div></th>
+        <th class="obj"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1540518614846-7eded433c457?w=500&h=320&fit=crop&q=80')"></div><div class="pp">220 000</div><div class="tt">1-комн, метро</div></th>
+        <th class="obj"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=500&h=320&fit=crop&q=80')"></div><div class="pp">180 000</div><div class="tt">Студия, Кентрон</div></th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="lbl">Match</td><td class="v best">95%</td><td class="v win">98%</td><td class="v">90%</td><td class="v">88%</td></tr>
+        <tr><td class="lbl">Спальни / м²</td><td class="v best win">3 · 120м²</td><td class="v">2 · 85м²</td><td class="v">1 · 55м²</td><td class="v">45м²</td></tr>
+        <tr><td class="lbl">Застройщик</td><td class="v best">проверен</td><td class="v">проверен</td><td class="v">проверен</td><td class="v">проверен</td></tr>
+        <tr><td class="lbl">Парковка</td><td class="v best win">есть</td><td class="v amb">уточн.</td><td class="v mut">нет</td><td class="v mut">нет</td></tr>
+        <tr><td class="lbl">Цена / мес</td><td class="v best">280к</td><td class="v">350к</td><td class="v">220к</td><td class="v win">180к</td></tr>
+        <tr><td class="lbl">Маршрут</td><td class="v best">школа 8м</td><td class="v win">школа 6м</td><td class="v">метро 2м</td><td class="v">центр</td></tr>
+      </tbody>
+    </table></div>
+    <div class="verdict" style="margin-top:14px"><div class="h">Мнение Homy</div><p style="font-size:12.5px">Для семьи — 3-комн в Арабкире: больше площади и парковка, дешевле. Кентрон — лучший match и школа ближе.</p></div>
+  </div></div></div></div>
+</div></div>
+
+<!-- A12 VIEWINGS -->
+<div class="screen"><div class="screen-h"><b>A12</b> · Просмотры и согласование времени</div><div class="frames">
+  <div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview">
+    <div class="hd"><h2>Мои просмотры</h2><span style="margin-left:auto;display:flex;gap:8px"><span class="chip active">Активные</span><span class="chip">Завершённые</span></span></div>
+    <div style="padding:18px 24px;display:flex;flex-direction:column;gap:12px">
+      <div class="vrow"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=180&fit=crop')"></div><div class="info"><b>Современная 2-комнатная в Кентроне</b><div class="dt"><span>📅 пн, 30 июня · 12:30</span></div><div class="cl">Агент: Анна Акопян · вы предложили время</div></div><div class="act"><span class="sig warn">Ждём агента</span><button class="btn btn-sec">Предложить другое</button></div></div>
+      <div class="vrow"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=200&h=180&fit=crop')"></div><div class="info"><b>3-комнатная семейная, Арабкир</b><div class="dt"><span>📅 вт, 1 июля · 15:00</span></div><div class="cl">Агент подтвердил время</div></div><div class="act"><span class="sig ok">Подтверждено</span><button class="btn btn-sec">Отменить</button></div></div>
+      <div class="vrow"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1540518614846-7eded433c457?w=200&h=180&fit=crop')"></div><div class="info"><b>1-комнатная у метро, Арабкир</b><div class="dt"><span>📅 агент предложил: ср, 2 июля · 11:00</span></div><div class="cl">Нужно ваше подтверждение</div></div><div class="act"><button class="btn btn-primary em3d"><span>Подтвердить</span></button><button class="btn btn-sec">Другое время</button></div></div>
+    </div>
+  </div></div>
+  <div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview">
+    <div class="hd" style="padding:16px"><h2 style="font-size:17px">Мои просмотры</h2></div>
+    <div style="padding:14px;display:flex;flex-direction:column;gap:12px">
+      <div class="vrow" style="flex-wrap:wrap"><div class="th"></div><div class="info" style="min-width:150px"><b style="font-size:13px">1-комн у метро</b><div class="cl">Агент: ср, 2 июля · 11:00 — нужно подтвердить</div></div><div style="display:flex;gap:8px;flex:1 1 100%;margin-top:4px"><button class="btn btn-primary em3d" style="flex:1"><span>Подтвердить</span></button><button class="btn btn-sec">Другое</button></div></div>
+      <div class="vrow"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=180&fit=crop')"></div><div class="info"><b style="font-size:13px">2-комн, Кентрон</b><div class="cl">пн, 30 июня · 12:30</div></div><span class="sig warn">Ждём</span></div>
+    </div>
+  </div></div></div>
+</div></div>
+
+<!-- A13 BOOKING -->
+<div class="screen"><div class="screen-h"><b>A13</b> · Запись на просмотр + подтверждение</div><div class="frames">
+  <div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview"><div style="padding:24px;display:flex;gap:20px;align-items:flex-start">
+    <div style="flex:1;max-width:520px"><h2 style="font-size:18px;font-weight:700">Записаться на просмотр</h2><p style="font-size:13px;color:var(--muted);margin-top:6px">Современная 2-комнатная в Кентроне · Северный проспект</p>
+      <div style="display:flex;gap:16px;margin-top:16px"><div class="cal" style="flex:1">
+        <div class="cm"><span>‹</span><b>Июнь 2026</b><span>›</span></div>
+        <div class="grid"><span class="dow">Пн</span><span class="dow">Вт</span><span class="dow">Ср</span><span class="dow">Чт</span><span class="dow">Пт</span><span class="dow">Сб</span><span class="dow">Вс</span>
+        <span class="d mut">26</span><span class="d mut">27</span><span class="d">28</span><span class="d">29</span><span class="d sel">30</span><span class="d mut">1</span><span class="d mut">2</span>
+        <span class="d">3</span><span class="d">4</span><span class="d">5</span><span class="d">6</span><span class="d">7</span><span class="d mut">8</span><span class="d mut">9</span></div>
+      </div>
+      <div style="flex:1"><div style="font-size:12px;color:var(--muted);margin-bottom:8px">Время · вт, 30 июня</div>
+        <div class="slots"><span class="slot">10:00</span><span class="slot">11:30</span><span class="slot sel">12:30</span><span class="slot">14:00</span><span class="slot">15:30</span><span class="slot">17:00</span></div>
+        <button class="btn btn-primary em3d" style="width:100%;margin-top:16px;padding:13px"><span>Записаться на просмотр</span></button>
+      </div></div>
+    </div>
+    <div style="width:280px" class="cal"><div class="success">
+      <div class="ic em3d"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+      <h3>Просмотр запланирован</h3><p>Вт, 30 июня, 12:30<br>Homy отправил запрос агенту Анне. Придёт подтверждение.</p>
+      <button class="btn btn-sec" style="width:100%;margin-top:14px">Добавить в календарь</button>
+    </div></div>
+  </div></div></div>
+  <div class="mob"><div class="caplbl">Mobile 390 · bottom-sheet</div><div class="phone"><div class="mobview" style="display:flex;flex-direction:column;justify-content:flex-end;background:linear-gradient(180deg,#0000,#0000)">
+    <div style="height:180px;background-size:cover;background-position:center;background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=700&h=400&fit=crop')"></div>
+    <div style="flex:1;background:var(--surface);border-radius:22px 22px 0 0;margin-top:-24px;padding:20px 18px;border:1px solid var(--hair);border-bottom:0">
+      <div style="width:40px;height:5px;border-radius:999px;background:var(--hair);margin:0 auto 14px"></div>
+      <h2 style="font-size:16px;font-weight:700">Записаться на просмотр</h2>
+      <div style="font-size:12px;color:var(--muted);margin:12px 0 8px">Время · вт, 30 июня</div>
+      <div class="slots" style="grid-template-columns:repeat(3,1fr)"><span class="slot">11:30</span><span class="slot sel">12:30</span><span class="slot">14:00</span></div>
+      <button class="btn btn-primary em3d" style="width:100%;margin-top:16px;padding:13px"><span>Записаться</span></button>
+      <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:10px">Homy согласует с агентом и пришлёт подтверждение</div>
+    </div>
+  </div></div></div>
+</div></div>
+
+<script>
+  function setT(t){document.body.dataset.theme=t;document.getElementById('tgD').classList.toggle('on',t==='dark');document.getElementById('tgL').classList.toggle('on',t==='light');}
+  var F=[
+    {t:'Современная 2-комнатная',loc:'Северный проспект · Кентрон',p:'350 000',beds:2,area:85,fl:'7/12',m:98,img:'1586023492125-27b2c045efd7'},
+    {t:'3-комнатная семейная',loc:'Баграмяна · Арабкир',p:'280 000',beds:3,area:120,fl:'5/9',m:95,img:'1600210492486-724fe5c67fb0'},
+    {t:'1-комнатная у метро',loc:'Комитас 55 · Арабкир',p:'220 000',beds:1,area:55,fl:'4/12',m:90,img:'1540518614846-7eded433c457'},
+    {t:'Уютная студия',loc:'Амирян · Кентрон',p:'180 000',beds:'студия',area:45,fl:'3/5',m:88,img:'1618219908412-a29a1bb7b86e'}
+  ];
+  var C=2*Math.PI*15;
+  function fav(p){var off=(C*(1-p.m/100)).toFixed(1);var img='https://images.unsplash.com/photo-'+p.img+'?w=500&h=350&fit=crop&q=80';var beds=(p.beds==='студия'?'студия':p.beds+' сп');
+    return '<div class="card"><div class="ph" style="background-image:url(\''+img+'\')"><div class="ring"><svg width="38" height="38"><circle cx="19" cy="19" r="15" fill="rgba(0,0,0,.4)" stroke="rgba(255,255,255,.3)" stroke-width="2.5"/><circle cx="19" cy="19" r="15" fill="none" stroke="#2BC091" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off+'" transform="rotate(-90 19 19)"/></svg><b>'+p.m+'</b></div><div class="heart"><svg width="16" height="16" viewBox="0 0 24 24" fill="#F0616A" stroke="#F0616A"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5.5-7 10-7 10z"/></svg></div></div><div class="b"><div class="cp">'+p.p+'<span>AMD/мес</span></div><div class="ct">'+p.t+'</div><div class="cl">'+p.loc+'</div><div class="cs">'+beds+' · '+p.area+' м² · этаж '+p.fl+'</div></div></div>';}
+  document.getElementById('favweb').innerHTML=F.map(fav).join('');
+  document.getElementById('favmob').innerHTML=F.slice(0,3).map(fav).join('');
+</script>
+<script>
+(function(){
+ var ANNA='https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop';
+ var IC={back:'<path d="M19 12H5M11 6l-6 6 6 6"/>',chev:'<path d="M6 9l6 6 6-6"/>',home:'<path d="M3 11l9-8 9 8M5 10v10h14V10"/>',grid:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>',heart:'<path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5.5-7 10-7 10z"/>',book:'<path d="M6 3h12v18l-6-4-6 4z"/>',cal:'<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/>',chat:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/>',set:'<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>',out:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',login:'<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/>'};
+ function sv(k,w){return '<svg width="'+(w||16)+'" height="'+(w||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+IC[k]+'</svg>';}
+ function it(k,t,cls){return '<a class="lm-i '+(cls||'')+'">'+sv(k)+t+'</a>';}
+ var LOGGED=window.__homyLogged!==false;
+ function menu(){if(LOGGED){return '<div class="lm-pop"><div class="lm-head">Личный кабинет</div>'+it('home','Главная')+it('grid','Мой дашборд')+it('heart','Избранное')+it('book','Сохранённые поиски')+it('cal','Просмотры')+it('chat','Сообщения')+it('user','Профиль')+it('set','Настройки')+'<div class="lm-sep"></div>'+it('out','Выйти')+'</div>';}return '<div class="lm-pop">'+it('login','Войти','acc')+it('home','Главная')+'</div>';}
+ function logo(){return '<div class="lmw"><button class="lm-btn">Ho<span class="m">m</span>y '+sv('chev',12)+'</button>'+menu()+'</div>';}
+ function op(){if(!LOGGED)return '<span class="opwrap"></span>';return '<span class="opwrap"><button class="opbtn" title="Чат со специалистом" onclick="window.openOperatorChat&&window.openOperatorChat()"><span class="opav" style="background-image:url(\''+ANNA+'\')"></span><i class="opdot"></i></button></span>';}
+ var bk='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'+IC.back+'</svg>';
+ document.querySelectorAll('.mobview').forEach(function(mv){if(mv.querySelector('.hero')||mv.querySelector('.d-back')||mv.querySelector('.mnav'))return;var n=document.createElement('div');n.className='mnav';n.innerHTML='<button class="bk">'+bk+'Результаты</button>'+op()+logo();mv.insertBefore(n,mv.firstChild);});
+ document.querySelectorAll('.webview').forEach(function(wv){if(wv.querySelector('.lnav')||wv.querySelector('.wnav'))return;var n=document.createElement('div');n.className='wnav';n.innerHTML=logo()+op()+'<button class="bk">'+bk+'К результатам поиска</button>';wv.insertBefore(n,wv.firstChild);});
+ window.openOperatorChat=function(){var s=[].slice.call(document.querySelectorAll('.screen')).filter(function(x){return /LIVE-ЧАТ/i.test(x.textContent);})[0];if(s)s.scrollIntoView({behavior:'smooth',block:'start'});};
+ document.addEventListener('click',function(e){var btn=e.target.closest&&e.target.closest('.lm-btn');var all=document.querySelectorAll('.lmw');if(btn){var w=btn.closest('.lmw');var o=w.classList.contains('open');all.forEach(function(x){x.classList.remove('open')});if(!o)w.classList.add('open');e.stopPropagation();return;}all.forEach(function(x){x.classList.remove('open')});});
+})();
+</script>E html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homy — Пачка 2 · Действия покупателя</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root,[data-theme="dark"]{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#F2F4F7;--muted:#8B93A3;--soft:#C5CAD3;
+    --hair:rgba(255,255,255,.10);--em-hi:#2BC091;--em:#0B6E4F;--em-lo:#052A1D;--amber:#E0A83B;--danger:#F0616A;--card-shadow:inset 0 0 0 1px rgba(255,255,255,.06),0 24px 60px rgba(0,0,0,.45)}
+  [data-theme="light"]{--bg:#EEF0F3;--surface:#FFFFFF;--surface2:#FAFAF8;--ink:#14181F;--muted:#6A7382;--soft:#39414D;
+    --hair:rgba(20,24,31,.10);--em-hi:#26B083;--em:#0A6045;--em-lo:#04281C;--amber:#B9822A;--danger:#D8434B;--card-shadow:0 4px 24px rgba(20,20,26,.08)}
+  body{font-family:'Montserrat',sans-serif;background:#c9ccd2;color:#14181F;-webkit-font-smoothing:antialiased;padding:34px 24px 90px}
+  .pagehead{max-width:1300px;margin:0 auto 26px;display:flex;align-items:center;gap:16px}
+  .pagehead .brand{font-size:20px;font-weight:800;letter-spacing:-.02em}.pagehead .brand .m{color:#0A6045}
+  .pagehead .t{font-size:13px;font-weight:600;color:#4b5563}
+  .tgl{margin-left:auto;display:flex;gap:2px;background:#fff;border:1px solid #d5d8de;border-radius:999px;padding:3px}
+  .tgl .o{width:34px;height:28px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#6a7382;cursor:pointer}
+  .tgl .o.on{color:#fff;background:radial-gradient(120% 160% at 50% 18%,#2BC091,#04281C)}
+  .screen{max-width:1300px;margin:0 auto 44px}
+  .screen-h{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#3a4150;margin-bottom:14px}.screen-h b{color:#0A6045}
+  .frames{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+  .web{flex:1;min-width:700px;border-radius:16px;overflow:hidden;background:var(--bg);box-shadow:0 20px 50px rgba(0,0,0,.2);border:1px solid rgba(0,0,0,.15)}
+  .webbar{height:34px;background:var(--surface);display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid var(--hair)}
+  .webbar i{width:10px;height:10px;border-radius:50%;background:var(--muted);opacity:.5}
+  .webview{height:560px;overflow:auto;background:var(--bg);color:var(--ink)}
+  .webview::-webkit-scrollbar{width:6px}.webview::-webkit-scrollbar-thumb{background:var(--hair);border-radius:3px}
+  .mob{width:340px;flex:none}.caplbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:8px}
+  .phone{width:340px;height:700px;border:9px solid #16171c;border-radius:40px;overflow:hidden;background:var(--bg);box-shadow:0 24px 60px rgba(0,0,0,.28)}
+  .mobview{height:100%;overflow:auto;color:var(--ink)}.mobview::-webkit-scrollbar{width:0}
+
+  .em3d{position:relative;overflow:hidden;color:#fff;border:0;background:radial-gradient(135% 175% at 50% 14%,var(--em-hi),var(--em));
+    box-shadow:0 2px 6px rgba(4,40,28,.20),inset 0 1px 0 rgba(255,255,255,.10),inset 0 -2px 5px rgba(3,28,20,.16)}
+  .em3d::after{content:none}
+  .em3d>*{position:relative;z-index:2}
+  .hd{padding:18px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--hair)}
+  .hd h2{font-size:19px;font-weight:700}.hd .n{font-size:12px;color:var(--muted)}
+  .chip{font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--hair);background:var(--surface);color:var(--soft)}
+  .chip.active{color:#fff;border-color:transparent;background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em))}
+  .btn{font-family:inherit;font-weight:600;border-radius:11px;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:7px;justify-content:center}
+  .btn-primary{color:#fff;font-size:13px;padding:11px 18px}
+  .btn-sec{background:transparent;border-color:var(--hair);color:var(--ink);font-size:12.5px;padding:9px 14px}
+  .sig{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:7px}
+  .sig.ok{background:color-mix(in srgb,var(--em) 16%,transparent);color:var(--em)}
+  .sig.warn{background:color-mix(in srgb,var(--amber) 18%,transparent);color:var(--amber)}
+  .sig.err{background:color-mix(in srgb,var(--danger) 16%,transparent);color:var(--danger)}
+
+  /* card */
+  .card{background:var(--surface);border-radius:16px;overflow:hidden;box-shadow:var(--card-shadow)}
+  .card .ph{position:relative;aspect-ratio:16/11;background-size:cover;background-position:center}
+  .card .ph .heart{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:10px;background:rgba(10,13,18,.5);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;border:1px solid rgba(255,255,255,.15)}
+  .card .ph .ring{position:absolute;top:12px;left:12px;width:38px;height:38px}.card .ph .ring svg{transform:rotate(-90deg)}.card .ph .ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700}
+  .card .b{padding:14px}
+  .card .cp{font-size:19px;font-weight:700;letter-spacing:-.02em}.card .cp span{font-size:11px;color:var(--muted);font-weight:500;margin-left:5px}
+  .card .ct{font-size:14px;font-weight:600;margin-top:6px}.card .cl{font-size:12px;color:var(--muted);margin-top:3px}
+  .card .cs{font-size:12px;color:var(--soft);margin-top:9px}
+
+  /* saved search row */
+  .srow{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:16px}
+  .srow .q{flex:1}.srow .q b{font-size:14px;font-weight:600}.srow .q .cr{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+  .srow .q .cr .c{font-size:11px;color:var(--soft);background:var(--surface2);border:1px solid var(--hair);border-radius:6px;padding:3px 8px}
+  .srow .cnt{text-align:center}.srow .cnt b{font-size:20px;font-weight:700;color:var(--em)}.srow .cnt span{display:block;font-size:10px;color:var(--muted)}
+  .toggle{width:40px;height:22px;border-radius:999px;background:var(--em);position:relative;cursor:pointer}
+  .toggle::after{content:'';position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:#fff}
+  .toggle.off{background:color-mix(in srgb,var(--muted) 30%,transparent)}.toggle.off::after{right:auto;left:2px}
+
+  /* compare v2 — desktop: object columns, recommended = one rounded card */
+  .cmp2{display:flex;gap:14px;align-items:stretch}
+  .cmp2 .labels{width:150px;flex:none;display:flex;flex-direction:column;padding-top:170px}
+  .cmp2 .labels .rl{height:48px;display:flex;align-items:center;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  .cmp2 .ocard{flex:1;background:var(--surface);border:1px solid var(--hair);border-radius:18px;overflow:hidden;position:relative}
+  .cmp2 .ocard.best{border:2px solid var(--em);box-shadow:0 14px 34px rgba(4,40,28,.3)}
+  .cmp2 .ocard .badge2{position:absolute;top:12px;left:12px;z-index:2;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:5px 11px;border-radius:999px}
+  .cmp2 .ocard .photo{height:120px;background-size:cover;background-position:center}
+  .cmp2 .ocard .head{padding:12px 16px 10px}
+  .cmp2 .ocard .head b{font-size:14px;font-weight:600;display:block}
+  .cmp2 .ocard .head span{font-size:11px;color:var(--muted)}
+  .cmp2 .ocard .r{height:48px;display:flex;align-items:center;padding:0 16px;border-top:1px solid var(--hair);font-size:13.5px;font-weight:500}
+  .cmp2 .ocard .r.price{font-size:18px;font-weight:700;letter-spacing:-.01em}
+  .cmp2 .v-ok{color:var(--em);font-weight:600}.cmp2 .v-amber{color:var(--amber);font-weight:600}
+  /* compare — mobile: sticky label column + horizontal scroll (до 4 объектов) */
+  .cmphint{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;margin:0 0 8px}
+  .cmpm2{overflow-x:auto;border:1px solid var(--hair);border-radius:16px;background:var(--surface);-webkit-overflow-scrolling:touch}
+  .cmpm2::-webkit-scrollbar{height:5px}.cmpm2::-webkit-scrollbar-thumb{background:var(--hair);border-radius:3px}
+  .cmpm2 table{border-collapse:collapse;width:max-content;min-width:100%}
+  .cmpm2 th,.cmpm2 td{border-bottom:1px solid var(--hair)}
+  .cmpm2 th.lbl,.cmpm2 td.lbl{position:sticky;left:0;z-index:3;background:var(--surface);width:76px;min-width:76px;padding:11px 10px;font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.02em;color:var(--muted);text-align:left;box-shadow:1px 0 0 var(--hair)}
+  .cmpm2 th.obj{min-width:114px;padding:12px 9px;text-align:center;vertical-align:bottom;border-left:1px solid var(--hair)}
+  .cmpm2 th.obj.best,.cmpm2 td.v.best{background:color-mix(in srgb,var(--em) 9%,transparent)}
+  .cmpm2 th.obj .tag{font-size:8px;font-weight:700;text-transform:uppercase;color:#fff;padding:3px 7px;border-radius:999px;display:inline-block;margin-bottom:7px}
+  .cmpm2 th.obj .th{height:52px;border-radius:8px;background-size:cover;background-position:center;margin-bottom:7px}
+  .cmpm2 th.obj .pp{font-size:13px;font-weight:700}.cmpm2 th.obj .tt{font-size:9.5px;color:var(--muted);margin-top:2px;line-height:1.3}
+  .cmpm2 td.v{min-width:114px;padding:12px 8px;text-align:center;font-size:12.5px;font-weight:500;border-left:1px solid var(--hair)}
+  .cmpm2 td.v.win{color:var(--em);font-weight:700}.cmpm2 td.v.amb{color:var(--amber);font-weight:600}.cmpm2 td.v.mut{color:var(--muted)}
+  .verdict{margin-top:16px;padding-left:14px;border-left:2px solid var(--em)}
+  .verdict .h{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .verdict p{font-size:13px;line-height:1.6;color:var(--soft)}
+
+  /* viewings */
+  .vrow{display:flex;gap:14px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:14px;align-items:center}
+  .vrow .th{width:80px;height:70px;border-radius:10px;background-size:cover;background-position:center;flex:none}
+  .vrow .info{flex:1}.vrow .info b{font-size:14px;font-weight:600}.vrow .info .dt{font-size:12.5px;color:var(--soft);margin-top:6px;display:flex;gap:12px}.vrow .info .cl{font-size:11.5px;color:var(--muted);margin-top:4px}
+  .vrow .act{display:flex;flex-direction:column;gap:7px;align-items:flex-end}
+
+  /* booking */
+  .cal{background:var(--surface);border:1px solid var(--hair);border-radius:14px;padding:16px}
+  .cal .cm{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;font-size:13px;font-weight:600}
+  .cal .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+  .cal .dow{font-size:10px;color:var(--muted);padding:4px 0}
+  .cal .d{font-size:12px;padding:8px 0;border-radius:8px;cursor:pointer}
+  .cal .d.mut{color:var(--muted);opacity:.4}.cal .d.sel{color:#fff;background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em))}
+  .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+  .slot{font-size:12.5px;font-weight:600;text-align:center;padding:9px 0;border-radius:9px;border:1px solid var(--hair);background:var(--surface);color:var(--soft);cursor:pointer}
+  .slot.sel{color:#fff;border-color:transparent;background:radial-gradient(120% 160% at 50% 18%,var(--em-hi),var(--em))}
+  .success{text-align:center;padding:8px}
+  .success .ic{width:56px;height:56px;border-radius:16px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center}
+  .success h3{font-size:17px;font-weight:700}.success p{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.6}
+
+  /* GLOBAL: back-to-results nav (обязательно на каждом экране) */
+  .mnav{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:8px;padding:11px 14px;background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+  .mnav .bk{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;background:none;border:0;font-family:inherit;padding:0}
+  .mnav .bk svg{color:var(--em)}
+  .mnav .homy{margin-left:auto;font-size:13px;font-weight:800}.mnav .homy .m{color:var(--em)}
+  .wnav{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:16px;padding:11px 20px;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+  .wnav .brand{font-size:15px;font-weight:800}.wnav .brand .m{color:var(--em)}
+  .wnav .bk{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--em);cursor:pointer;background:none;border:0;font-family:inherit}
+
+  /* logo dropdown menu (клик по логотипу) */
+  .lmw{position:relative}
+  .lmw .lm-btn{background:none;border:0;font-family:inherit;font-weight:800;cursor:pointer;color:var(--ink);display:inline-flex;align-items:center;gap:0;letter-spacing:-.02em;padding:0}
+  .lmw .lm-btn .m{color:var(--em)}.lmw .lm-btn>svg{opacity:.55;margin-left:5px}
+  .wnav .lm-btn{font-size:15px}.mnav .lm-btn{font-size:13px}
+  .lm-pop{position:absolute;top:calc(100% + 8px);z-index:60;min-width:232px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.45);padding:8px}
+  .wnav .lm-pop{left:0}.mnav .lm-pop{right:0}
+  .lmw:not(.open) .lm-pop{display:none}
+  .lm-head{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 12px 4px}
+  .lm-i{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;font-size:13.5px;font-weight:500;color:var(--ink);cursor:pointer;text-decoration:none}
+  .lm-i:hover{background:color-mix(in srgb,var(--muted) 12%,transparent)}
+  .lm-i svg{color:var(--muted);flex:none}.lm-i.acc{color:var(--em)}.lm-i.acc svg{color:var(--em)}
+  .lm-sep{height:1px;background:var(--hair);margin:6px 4px}
+
+  .opwrap{margin:0 auto;display:flex;align-items:center}
+  .opbtn{position:relative;width:32px;height:32px;border:0;background:none;cursor:pointer;padding:0}
+  .opbtn .opav{display:block;width:32px;height:32px;border-radius:50%;background-size:cover;background-position:center;border:2px solid var(--surface);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+  .opbtn .opdot{position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:var(--em);border:2px solid var(--surface)}
+</style>
+</head>
+<body data-theme="dark">
+<div class="pagehead"><div class="brand">Ho<span class="m">m</span>y</div><div class="t">Пачка 2 · Действия покупателя · A9 избранное · A10 сохранённые · A11 сравнение · A12 просмотры · A13 запись</div>
+<div class="tgl"><span class="o on" id="tgD" onclick="setT('dark')">☾</span><span class="o" id="tgL" onclick="setT('light')">☀</span></div></div>
+
+<!-- A9 FAVORITES -->
+<div class="screen"><div class="screen-h"><b>A9</b> · Избранное</div><div class="frames">
+  <div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview">
+    <div class="hd"><h2>Избранное</h2><span class="n">4 объекта</span><span style="margin-left:auto;display:flex;gap:8px"><span class="chip active">Все</span><span class="chip">Аренда</span><span class="chip">Покупка</span></span></div>
+    <div style="padding:18px 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px" id="favweb"></div>
+  </div></div>
+  <div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview">
+    <div class="hd" style="padding:16px"><h2 style="font-size:17px">Избранное</h2><span class="n">4</span></div>
+    <div style="padding:14px;display:flex;flex-direction:column;gap:14px" id="favmob"></div>
+  </div></div></div>
+</div></div>
+
+<!-- A10 SAVED SEARCHES -->
+<div class="screen"><div class="screen-h"><b>A10</b> · Сохранённые поиски</div><div class="frames">
+  <div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview">
+    <div class="hd"><h2>Сохранённые поиски</h2><span class="n">3 · уведомления о новых</span></div>
+    <div style="padding:18px 24px;display:flex;flex-direction:column;gap:12px">
+      <div class="srow"><div class="q"><b>Семья, 2-комн, тихий район рядом со школой</b><div class="cr"><span class="c">Аренда</span><span class="c">Кентрон · Арабкир</span><span class="c">до 350 000</span><span class="c">2+ спальни</span></div></div><div class="cnt"><b>6</b><span>совпадений</span></div><div style="text-align:center"><div class="toggle"></div><span style="font-size:10px;color:var(--muted)">уведомл.</span></div><button class="btn btn-sec">Открыть</button></div>
+      <div class="srow"><div class="q"><b>Студия у центра, до 200 000</b><div class="cr"><span class="c">Аренда</span><span class="c">Кентрон</span><span class="c">до 200 000</span><span class="c">студия</span></div></div><div class="cnt"><b>3</b><span>совпадений</span></div><div style="text-align:center"><div class="toggle off"></div><span style="font-size:10px;color:var(--muted)">уведомл.</span></div><button class="btn btn-sec">Открыть</button></div>
+      <div class="srow"><div class="q"><b>Инвестиция, у метро, ликвидная</b><div class="cr"><span class="c">Покупка</span><span class="c">Арабкир</span><span class="c">у метро</span></div></div><div class="cnt"><b>4</b><span>совпадений</span></div><div style="text-align:center"><div class="toggle"></div><span style="font-size:10px;color:var(--muted)">уведомл.</span></div><button class="btn btn-sec">Открыть</button></div>
+    </div>
+  </div></div>
+  <div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview">
+    <div class="hd" style="padding:16px"><h2 style="font-size:17px">Сохранённые поиски</h2></div>
+    <div style="padding:14px;display:flex;flex-direction:column;gap:12px">
+      <div class="srow" style="flex-wrap:wrap;gap:10px"><div class="q" style="flex:1 1 100%"><b>Семья, 2-комн, рядом школа</b><div class="cr"><span class="c">Кентрон</span><span class="c">до 350к</span><span class="c">2+ сп</span></div></div><div class="cnt"><b>6</b><span>совпад.</span></div><div class="toggle" style="margin-left:auto"></div><button class="btn btn-sec" style="flex:none">Открыть</button></div>
+      <div class="srow" style="flex-wrap:wrap;gap:10px"><div class="q" style="flex:1 1 100%"><b>Студия у центра, до 200к</b><div class="cr"><span class="c">Кентрон</span><span class="c">студия</span></div></div><div class="cnt"><b>3</b><span>совпад.</span></div><div class="toggle off" style="margin-left:auto"></div><button class="btn btn-sec" style="flex:none">Открыть</button></div>
+    </div>
+  </div></div></div>
+</div></div>
+
+<!-- A11 COMPARE -->
+<div class="screen"><div class="screen-h"><b>A11</b> · Сравнение объектов (до 4)</div><div class="frames">
+  <div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview"><div style="padding:22px 24px">
+    <div class="cmp2">
+      <div class="labels"><div class="rl">Цена / мес</div><div class="rl">Match</div><div class="rl">Спальни / м²</div><div class="rl">Застройщик</div><div class="rl">Парковка</div><div class="rl">До школы / метро</div></div>
+      <div class="ocard best"><span class="badge2 em3d"><span>Совет Homy</span></span><div class="photo" style="background-image:url('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=500&h=320&fit=crop&q=80')"></div><div class="head"><b>3-комн, Арабкир</b><span>Баграмяна</span></div>
+        <div class="r price">280 000</div><div class="r v-ok">95%</div><div class="r">3 · 120 м²</div><div class="r v-ok">проверен</div><div class="r v-ok">есть</div><div class="r">школа 8 мин</div></div>
+      <div class="ocard"><div class="photo" style="background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500&h=320&fit=crop&q=80')"></div><div class="head"><b>2-комн, Кентрон</b><span>Северный проспект</span></div>
+        <div class="r price">350 000</div><div class="r v-ok">98%</div><div class="r">2 · 85 м²</div><div class="r v-ok">проверен</div><div class="r v-amber">уточняется</div><div class="r">школа 6 мин</div></div>
+      <div class="ocard"><div class="photo" style="background-image:url('https://images.unsplash.com/photo-1540518614846-7eded433c457?w=500&h=320&fit=crop&q=80')"></div><div class="head"><b>1-комн, у метро</b><span>Комитас 55</span></div>
+        <div class="r price">220 000</div><div class="r v-ok">90%</div><div class="r">1 · 55 м²</div><div class="r v-ok">проверен</div><div class="r v-amber">нет</div><div class="r">метро 2 мин</div></div>
+      <div class="ocard"><div class="photo" style="background-image:url('https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=500&h=320&fit=crop&q=80')"></div><div class="head"><b>Студия, Кентрон</b><span>Амирян</span></div>
+        <div class="r price">180 000</div><div class="r v-ok">88%</div><div class="r">45 м²</div><div class="r v-ok">проверен</div><div class="r v-amber">нет</div><div class="r">центр 5 мин</div></div>
+    </div>
+    <div class="verdict"><div class="h">Мнение Homy</div><p>Для семьи — <b style="color:var(--em)">3-комн в Арабкире</b> (120 м², парковка, дешевле). Кентрон выигрывает по match и близости школы. Студия — самый бюджет для одного. У метро — под инвестицию.</p></div>
+  </div></div></div>
+  <div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview"><div style="padding:16px">
+    <div class="hd" style="padding:0 0 10px"><h2 style="font-size:17px">Сравнение</h2><span class="n">4 объекта</span></div>
+    <div class="cmphint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6M11 18l-6-6 6-6"/></svg>Листайте вправо — все 4 объекта · лучшее подсвечено</div>
+    <div class="cmpm2"><table>
+      <thead><tr>
+        <th class="lbl"></th>
+        <th class="obj best"><span class="tag em3d">Совет Homy</span><div class="th" style="background-image:url('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=500&h=320&fit=crop&q=80')"></div><div class="pp">280 000</div><div class="tt">3-комн, Арабкир</div></th>
+        <th class="obj"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500&h=320&fit=crop&q=80')"></div><div class="pp">350 000</div><div class="tt">2-комн, Кентрон</div></th>
+        <th class="obj"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1540518614846-7eded433c457?w=500&h=320&fit=crop&q=80')"></div><div class="pp">220 000</div><div class="tt">1-комн, метро</div></th>
+        <th class="obj"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=500&h=320&fit=crop&q=80')"></div><div class="pp">180 000</div><div class="tt">Студия, Кентрон</div></th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="lbl">Match</td><td class="v best">95%</td><td class="v win">98%</td><td class="v">90%</td><td class="v">88%</td></tr>
+        <tr><td class="lbl">Спальни / м²</td><td class="v best win">3 · 120м²</td><td class="v">2 · 85м²</td><td class="v">1 · 55м²</td><td class="v">45м²</td></tr>
+        <tr><td class="lbl">Застройщик</td><td class="v best">проверен</td><td class="v">проверен</td><td class="v">проверен</td><td class="v">проверен</td></tr>
+        <tr><td class="lbl">Парковка</td><td class="v best win">есть</td><td class="v amb">уточн.</td><td class="v mut">нет</td><td class="v mut">нет</td></tr>
+        <tr><td class="lbl">Цена / мес</td><td class="v best">280к</td><td class="v">350к</td><td class="v">220к</td><td class="v win">180к</td></tr>
+        <tr><td class="lbl">Маршрут</td><td class="v best">школа 8м</td><td class="v win">школа 6м</td><td class="v">метро 2м</td><td class="v">центр</td></tr>
+      </tbody>
+    </table></div>
+    <div class="verdict" style="margin-top:14px"><div class="h">Мнение Homy</div><p style="font-size:12.5px">Для семьи — 3-комн в Арабкире: больше площади и парковка, дешевле. Кентрон — лучший match и школа ближе.</p></div>
+  </div></div></div></div>
+</div></div>
+
+<!-- A12 VIEWINGS -->
+<div class="screen"><div class="screen-h"><b>A12</b> · Просмотры и согласование времени</div><div class="frames">
+  <div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview">
+    <div class="hd"><h2>Мои просмотры</h2><span style="margin-left:auto;display:flex;gap:8px"><span class="chip active">Активные</span><span class="chip">Завершённые</span></span></div>
+    <div style="padding:18px 24px;display:flex;flex-direction:column;gap:12px">
+      <div class="vrow"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=180&fit=crop')"></div><div class="info"><b>Современная 2-комнатная в Кентроне</b><div class="dt"><span>📅 пн, 30 июня · 12:30</span></div><div class="cl">Агент: Анна Акопян · вы предложили время</div></div><div class="act"><span class="sig warn">Ждём агента</span><button class="btn btn-sec">Предложить другое</button></div></div>
+      <div class="vrow"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=200&h=180&fit=crop')"></div><div class="info"><b>3-комнатная семейная, Арабкир</b><div class="dt"><span>📅 вт, 1 июля · 15:00</span></div><div class="cl">Агент подтвердил время</div></div><div class="act"><span class="sig ok">Подтверждено</span><button class="btn btn-sec">Отменить</button></div></div>
+      <div class="vrow"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1540518614846-7eded433c457?w=200&h=180&fit=crop')"></div><div class="info"><b>1-комнатная у метро, Арабкир</b><div class="dt"><span>📅 агент предложил: ср, 2 июля · 11:00</span></div><div class="cl">Нужно ваше подтверждение</div></div><div class="act"><button class="btn btn-primary em3d"><span>Подтвердить</span></button><button class="btn btn-sec">Другое время</button></div></div>
+    </div>
+  </div></div>
+  <div class="mob"><div class="caplbl">Mobile 390</div><div class="phone"><div class="mobview">
+    <div class="hd" style="padding:16px"><h2 style="font-size:17px">Мои просмотры</h2></div>
+    <div style="padding:14px;display:flex;flex-direction:column;gap:12px">
+      <div class="vrow" style="flex-wrap:wrap"><div class="th"></div><div class="info" style="min-width:150px"><b style="font-size:13px">1-комн у метро</b><div class="cl">Агент: ср, 2 июля · 11:00 — нужно подтвердить</div></div><div style="display:flex;gap:8px;flex:1 1 100%;margin-top:4px"><button class="btn btn-primary em3d" style="flex:1"><span>Подтвердить</span></button><button class="btn btn-sec">Другое</button></div></div>
+      <div class="vrow"><div class="th" style="background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=180&fit=crop')"></div><div class="info"><b style="font-size:13px">2-комн, Кентрон</b><div class="cl">пн, 30 июня · 12:30</div></div><span class="sig warn">Ждём</span></div>
+    </div>
+  </div></div></div>
+</div></div>
+
+<!-- A13 BOOKING -->
+<div class="screen"><div class="screen-h"><b>A13</b> · Запись на просмотр + подтверждение</div><div class="frames">
+  <div class="web"><div class="webbar"><i></i><i></i><i></i></div><div class="webview"><div style="padding:24px;display:flex;gap:20px;align-items:flex-start">
+    <div style="flex:1;max-width:520px"><h2 style="font-size:18px;font-weight:700">Записаться на просмотр</h2><p style="font-size:13px;color:var(--muted);margin-top:6px">Современная 2-комнатная в Кентроне · Северный проспект</p>
+      <div style="display:flex;gap:16px;margin-top:16px"><div class="cal" style="flex:1">
+        <div class="cm"><span>‹</span><b>Июнь 2026</b><span>›</span></div>
+        <div class="grid"><span class="dow">Пн</span><span class="dow">Вт</span><span class="dow">Ср</span><span class="dow">Чт</span><span class="dow">Пт</span><span class="dow">Сб</span><span class="dow">Вс</span>
+        <span class="d mut">26</span><span class="d mut">27</span><span class="d">28</span><span class="d">29</span><span class="d sel">30</span><span class="d mut">1</span><span class="d mut">2</span>
+        <span class="d">3</span><span class="d">4</span><span class="d">5</span><span class="d">6</span><span class="d">7</span><span class="d mut">8</span><span class="d mut">9</span></div>
+      </div>
+      <div style="flex:1"><div style="font-size:12px;color:var(--muted);margin-bottom:8px">Время · вт, 30 июня</div>
+        <div class="slots"><span class="slot">10:00</span><span class="slot">11:30</span><span class="slot sel">12:30</span><span class="slot">14:00</span><span class="slot">15:30</span><span class="slot">17:00</span></div>
+        <button class="btn btn-primary em3d" style="width:100%;margin-top:16px;padding:13px"><span>Записаться на просмотр</span></button>
+      </div></div>
+    </div>
+    <div style="width:280px" class="cal"><div class="success">
+      <div class="ic em3d"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+      <h3>Просмотр запланирован</h3><p>Вт, 30 июня, 12:30<br>Homy отправил запрос агенту Анне. Придёт подтверждение.</p>
+      <button class="btn btn-sec" style="width:100%;margin-top:14px">Добавить в календарь</button>
+    </div></div>
+  </div></div></div>
+  <div class="mob"><div class="caplbl">Mobile 390 · bottom-sheet</div><div class="phone"><div class="mobview" style="display:flex;flex-direction:column;justify-content:flex-end;background:linear-gradient(180deg,#0000,#0000)">
+    <div style="height:180px;background-size:cover;background-position:center;background-image:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=700&h=400&fit=crop')"></div>
+    <div style="flex:1;background:var(--surface);border-radius:22px 22px 0 0;margin-top:-24px;padding:20px 18px;border:1px solid var(--hair);border-bottom:0">
+      <div style="width:40px;height:5px;border-radius:999px;background:var(--hair);margin:0 auto 14px"></div>
+      <h2 style="font-size:16px;font-weight:700">Записаться на просмотр</h2>
+      <div style="font-size:12px;color:var(--muted);margin:12px 0 8px">Время · вт, 30 июня</div>
+      <div class="slots" style="grid-template-columns:repeat(3,1fr)"><span class="slot">11:30</span><span class="slot sel">12:30</span><span class="slot">14:00</span></div>
+      <button class="btn btn-primary em3d" style="width:100%;margin-top:16px;padding:13px"><span>Записаться</span></button>
+      <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:10px">Homy согласует с агентом и пришлёт подтверждение</div>
+    </div>
+  </div></div></div>
+</div></div>
+
+<script>
+  function setT(t){document.body.dataset.theme=t;document.getElementById('tgD').classList.toggle('on',t==='dark');document.getElementById('tgL').classList.toggle('on',t==='light');}
+  var F=[
+    {t:'Современная 2-комнатная',loc:'Северный проспект · Кентрон',p:'350 000',beds:2,area:85,fl:'7/12',m:98,img:'1586023492125-27b2c045efd7'},
+    {t:'3-комнатная семейная',loc:'Баграмяна · Арабкир',p:'280 000',beds:3,area:120,fl:'5/9',m:95,img:'1600210492486-724fe5c67fb0'},
+    {t:'1-комнатная у метро',loc:'Комитас 55 · Арабкир',p:'220 000',beds:1,area:55,fl:'4/12',m:90,img:'1540518614846-7eded433c457'},
+    {t:'Уютная студия',loc:'Амирян · Кентрон',p:'180 000',beds:'студия',area:45,fl:'3/5',m:88,img:'1618219908412-a29a1bb7b86e'}
+  ];
+  var C=2*Math.PI*15;
+  function fav(p){var off=(C*(1-p.m/100)).toFixed(1);var img='https://images.unsplash.com/photo-'+p.img+'?w=500&h=350&fit=crop&q=80';var beds=(p.beds==='студия'?'студия':p.beds+' сп');
+    return '<div class="card"><div class="ph" style="background-image:url(\''+img+'\')"><div class="ring"><svg width="38" height="38"><circle cx="19" cy="19" r="15" fill="rgba(0,0,0,.4)" stroke="rgba(255,255,255,.3)" stroke-width="2.5"/><circle cx="19" cy="19" r="15" fill="none" stroke="#2BC091" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off+'" transform="rotate(-90 19 19)"/></svg><b>'+p.m+'</b></div><div class="heart"><svg width="16" height="16" viewBox="0 0 24 24" fill="#F0616A" stroke="#F0616A"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5.5-7 10-7 10z"/></svg></div></div><div class="b"><div class="cp">'+p.p+'<span>AMD/мес</span></div><div class="ct">'+p.t+'</div><div class="cl">'+p.loc+'</div><div class="cs">'+beds+' · '+p.area+' м² · этаж '+p.fl+'</div></div></div>';}
+  document.getElementById('favweb').innerHTML=F.map(fav).join('');
+  document.getElementById('favmob').innerHTML=F.slice(0,3).map(fav).join('');
+</script>
+<script>
+(function(){
+ var IC={
+  back:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
+  chev:'<path d="M6 9l6 6 6-6"/>',
+  home:'<path d="M3 11l9-8 9 8M5 10v10h14V10"/>',
+  grid:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>',
+  heart:'<path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5.5-7 10-7 10z"/>',
+  book:'<path d="M6 3h12v18l-6-4-6 4z"/>',
+  cal:'<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/>',
+  chat:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/>',
+  set:'<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>',
+  out:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+  login:'<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/>'
+ };
+ function sv(k,w){return '<svg width="'+(w||16)+'" height="'+(w||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+IC[k]+'</svg>';}
+ function it(k,t,cls){return '<a class="lm-i '+(cls||'')+'">'+sv(k)+t+'</a>';}
+ var LOGGED=window.__homyLogged!==false;
+ function menu(){
+   if(LOGGED){return '<div class="lm-pop"><div class="lm-head">Личный кабинет</div>'
+     +it('home','Главная')+it('grid','Мой дашборд')+it('heart','Избранное')+it('book','Сохранённые поиски')+it('cal','Просмотры')+it('chat','Сообщения')+it('user','Профиль')+it('set','Настройки')
+     +'<div class="lm-sep"></div>'+it('out','Выйти')+'</div>';}
+   return '<div class="lm-pop">'+it('login','Войти','acc')+it('home','Главная')+'</div>';
+ }
+ function logo(){return '<div class="lmw"><button class="lm-btn">Ho<span class="m">m</span>y '+sv('chev',12)+'</button>'+menu()+'</div>';}
+ var bk='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'+IC.back+'</svg>';
+ document.querySelectorAll('.mobview').forEach(function(mv){
+   if(mv.querySelector('.hero')||mv.querySelector('.d-back')||mv.querySelector('.mnav'))return;
+   var n=document.createElement('div');n.className='mnav';
+   n.innerHTML='<button class="bk">'+bk+'Результаты</button><span style="margin-left:auto">'+logo()+'</span>';
+   mv.insertBefore(n,mv.firstChild);
+ });
+ document.querySelectorAll('.webview').forEach(function(wv){
+   if(wv.querySelector('.lnav')||wv.querySelector('.wnav'))return;
+   var n=document.createElement('div');n.className='wnav';
+   n.innerHTML=logo()+'<button class="bk">'+bk+'К результатам поиска</button>';
+   wv.insertBefore(n,wv.firstChild);
+ });
+ document.addEventListener('click',function(e){
+   var btn=e.target.closest&&e.target.closest('.lm-btn');var all=document.querySelectorAll('.lmw');
+   if(btn){var w=btn.closest('.lmw');var op=w.classList.contains('open');all.forEach(function(x){x.classList.remove('open')});if(!op)w.classList.add('open');e.stopPropagation();return;}
+   all.forEach(function(x){x.classList.remove('open')});
+ });
+})();
+</script>
+<style>/*CHIP20C*/
+.chip.active,.slot.sel{background:none!important;background-image:none!important;color:var(--em)!important;border:0!important;border-color:transparent!important;border-radius:0!important;box-shadow:inset 0 -2.5px 0 0 var(--em)!important;font-weight:700!important;padding-left:4px!important;padding-right:4px!important}
+</style>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homy — Property Card · 3 archetypes × light/dark</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --img:url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1100&h=1375&fit=crop&q=80');
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Montserrat',sans-serif;background:#EAE9E5;color:#14141A;
+       -webkit-font-smoothing:antialiased;padding:56px 40px 96px}
+  .wrap{max-width:1320px;margin:0 auto}
+  .page-h{margin-bottom:8px;font-size:24px;font-weight:700;letter-spacing:-0.02em}
+  .page-sub{font-size:14px;font-weight:500;color:#6B6B76;margin-bottom:44px;max-width:720px;line-height:1.6}
+  .arch{margin-bottom:56px}
+  .arch-h{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#14141A;margin-bottom:6px}
+  .arch-d{font-size:13px;font-weight:500;color:#6B6B76;margin-bottom:24px;max-width:640px;line-height:1.55}
+  .pair{display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start}
+  .cap{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#8a8a86;margin-bottom:12px}
+
+  /* type helpers per spec */
+  .price{font-size:36px;font-weight:700;letter-spacing:-0.02em;line-height:1;white-space:nowrap}
+  .price .u{font-size:14px;font-weight:500;letter-spacing:0;color:var(--muted);margin-left:8px;white-space:nowrap}
+  .ttl{font-size:21px;font-weight:600;line-height:1.25}
+  .loc{font-size:14px;font-weight:500;color:var(--muted)}
+  .kick{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+  .specs{font-size:15px;font-weight:500}
+  .opinion{font-size:14px;font-weight:400;line-height:1.6;color:var(--soft)}
+  .hair{height:1px;background:var(--hair);border:0}
+  .verify{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:500;color:var(--muted)}
+  .cta{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;cursor:pointer;
+       background:none;border:0;color:var(--accent);letter-spacing:.01em}
+  .cta-solid{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:600;
+       background:var(--accent);color:#fff;border:0;border-radius:12px;padding:12px 24px;cursor:pointer;letter-spacing:.01em}
+
+  /* theme tokens */
+  .light{--bg:#FFFFFF;--paper:#FAFAF8;--ink:#14141A;--muted:#6B6B76;--soft:#3a3a42;--hair:#E8E8E4;--accent:#9A7B45;}
+  .dark {--bg:#0A0A0F;--paper:#121218;--ink:#F5F5F2;--muted:#8A8A94;--soft:#c9c9cf;--hair:rgba(255,255,255,0.08);--accent:#C6A56B;}
+
+  .card{background:var(--bg);color:var(--ink);border-radius:20px;overflow:hidden}
+  .light .card,.card.light{box-shadow:0 4px 24px rgba(20,20,26,0.08)}
+  .dark .card,.card.dark{box-shadow:inset 0 0 0 1px rgba(255,255,255,0.08),0 30px 70px rgba(0,0,0,0.45)}
+
+  /* thin match ring */
+  .ring{position:relative;width:46px;height:46px}
+  .ring svg{transform:rotate(-90deg)}
+  .ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+          font-size:13px;font-weight:700;letter-spacing:-0.01em}
+
+  /* ============ ARCHETYPE A — EDITORIAL ============ */
+  .A{width:384px}
+  .A .photo{aspect-ratio:4/5;background-image:var(--img);background-size:cover;background-position:center;position:relative}
+  .A .photo .ring{position:absolute;top:24px;right:24px}
+  .A .body{padding:28px}
+  .A .row-price{display:flex;align-items:baseline;margin-top:0}
+  .A .ttl{margin-top:16px}
+  .A .loc{margin-top:8px}
+  .A .specs{margin-top:16px;color:var(--soft)}
+  .A .hair{margin:24px 0}
+  .A .footer{display:flex;align-items:center;justify-content:space-between}
+  .A .cta{margin-top:0}
+
+  /* ============ ARCHETYPE B — CINEMATIC FULL-BLEED ============ */
+  .B{width:384px;aspect-ratio:4/5;position:relative;border-radius:20px;overflow:hidden;color:#F5F5F2}
+  .B .bg{position:absolute;inset:0;background-image:var(--img);background-size:cover;background-position:center}
+  .B .top{position:absolute;top:24px;right:24px;left:24px;display:flex;justify-content:space-between;align-items:flex-start}
+  .B .content{position:absolute;left:0;right:0;bottom:0;padding:28px}
+  .B .kick{color:rgba(245,245,242,0.75)}
+  .B .price{margin-top:12px}
+  .B .price .u{color:rgba(245,245,242,0.7)}
+  .B .ttl{margin-top:8px}
+  .B .specs{margin-top:12px;color:rgba(245,245,242,0.85)}
+  .B .cta-solid{margin-top:24px}
+  /* dark default scrim */
+  .B.dark .scrim{position:absolute;inset:0;background:linear-gradient(to top,rgba(6,6,10,0.92) 2%,rgba(6,6,10,0.55) 26%,rgba(6,6,10,0) 52%)}
+  .B.dark{box-shadow:inset 0 0 0 1px rgba(255,255,255,0.08),0 30px 70px rgba(0,0,0,0.5)}
+  .B.dark .match-lbl{color:rgba(245,245,242,0.85)}
+  /* light alt scrim = warm paper wash */
+  .B.light{color:#14141A;box-shadow:0 4px 24px rgba(20,20,26,0.10)}
+  .B.light .scrim{position:absolute;inset:0;background:linear-gradient(to top,rgba(250,250,248,0.96) 4%,rgba(250,250,248,0.72) 24%,rgba(250,250,248,0) 50%)}
+  .B.light .kick{color:#6B6B76}
+  .B.light .price .u{color:#6B6B76}
+  .B.light .specs{color:#3a3a42}
+  .B.light .match-lbl{color:#3a3a42}
+  .B .match-lbl{font-size:13px;font-weight:600;letter-spacing:.02em;display:flex;align-items:center;gap:8px;white-space:nowrap}
+  .B.dark .match-lbl{text-shadow:0 1px 8px rgba(0,0,0,0.6)}
+  .B.dark .toptint{position:absolute;top:0;left:0;right:0;height:120px;background:linear-gradient(to bottom,rgba(6,6,10,0.55),rgba(6,6,10,0));pointer-events:none}
+  .B.light .toptint{display:none}
+  .B .content > *{text-shadow:0 1px 10px rgba(0,0,0,0.18)}
+  .B.light .content > *{text-shadow:none}
+
+  /* ============ ARCHETYPE C — STRUCTURED SPLIT ============ */
+  .C{width:664px;display:flex;min-height:432px}
+  .C .photo{flex:0 0 51%;background-image:var(--img);background-size:cover;background-position:center}
+  .C .info{flex:1;padding:28px;display:flex;flex-direction:column}
+  .C .c-top{display:flex;justify-content:space-between;align-items:flex-start}
+  .C .price{margin-top:0}
+  .C .ttl{margin-top:12px}
+  .C .loc{margin-top:8px}
+  .C .rows{margin-top:24px}
+  .C .drow{display:flex;justify-content:space-between;align-items:center;padding:12px 0}
+  .C .drow+.drow{border-top:1px solid var(--hair)}
+  .C .drow .k{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+  .C .drow .v{font-size:15px;font-weight:500}
+  .C .quote{margin-top:24px;padding-left:16px;border-left:2px solid var(--accent)}
+  .C .quote .qh{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .C .foot{margin-top:auto;padding-top:24px;display:flex;align-items:center;justify-content:space-between}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="page-h">Homy — карточка объекта · арт-директорский раунд</div>
+  <div class="page-sub">Один реальный листинг («Современная 2-комнатная в Кентроне», 350 000 AMD/мес, 85 м², этаж 7/12, Северный проспект, match 98%), три разных архетипа композиции, каждый в светлой и тёмной версии. Montserrat, один акцент — латунь, скупо. Реальное фото объекта.</div>
+
+  <!-- ARCHETYPE A -->
+  <div class="arch">
+    <div class="arch-h">Архетип A — Издательский</div>
+    <div class="arch-d">Крупное портретное фото 4:5 сверху, ниже — воздух и герой-число. Никаких плашек: «проверено» — тонкая инлайн-галочка, match — тонкое кольцо в углу фото. Разворот Architectural Digest.</div>
+    <div class="pair">
+      <div>
+        <div class="cap">Светлая</div>
+        <div class="card A light">
+          <div class="photo">
+            <div class="ring"><svg width="46" height="46"><circle cx="23" cy="23" r="20" fill="rgba(0,0,0,0.35)" stroke="rgba(255,255,255,0.25)" stroke-width="2"/><circle cx="23" cy="23" r="20" fill="none" stroke="#C6A56B" stroke-width="2" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="2.5"/></svg><b style="color:#fff">98</b></div>
+          </div>
+          <div class="body">
+            <div class="kick">Аренда · долгосрочно</div>
+            <div class="row-price" style="margin-top:12px"><span class="price">350 000<span class="u">AMD / мес</span></span></div>
+            <div class="ttl">Современная 2-комнатная в Кентроне</div>
+            <div class="loc">Северный проспект · Ереван</div>
+            <div class="specs">2 спальни&nbsp;&nbsp;·&nbsp;&nbsp;85 м²&nbsp;&nbsp;·&nbsp;&nbsp;этаж 7 / 12</div>
+            <div class="loc" style="margin-top:8px;font-size:13px">Парковка: уточняется</div>
+            <hr class="hair">
+            <div class="footer">
+              <span class="verify"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-11"/></svg>Проверено Homy</span>
+              <button class="cta">Смотреть объект
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="cap">Тёмная</div>
+        <div class="card A dark">
+          <div class="photo">
+            <div class="ring"><svg width="46" height="46"><circle cx="23" cy="23" r="20" fill="rgba(0,0,0,0.35)" stroke="rgba(255,255,255,0.18)" stroke-width="2"/><circle cx="23" cy="23" r="20" fill="none" stroke="#C6A56B" stroke-width="2" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="2.5"/></svg><b style="color:#fff">98</b></div>
+          </div>
+          <div class="body">
+            <div class="kick">Аренда · долгосрочно</div>
+            <div class="row-price" style="margin-top:12px"><span class="price">350 000<span class="u">AMD / мес</span></span></div>
+            <div class="ttl">Современная 2-комнатная в Кентроне</div>
+            <div class="loc">Северный проспект · Ереван</div>
+            <div class="specs">2 спальни&nbsp;&nbsp;·&nbsp;&nbsp;85 м²&nbsp;&nbsp;·&nbsp;&nbsp;этаж 7 / 12</div>
+            <div class="loc" style="margin-top:8px;font-size:13px">Парковка: уточняется</div>
+            <hr class="hair">
+            <div class="footer">
+              <span class="verify"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-11"/></svg>Проверено Homy</span>
+              <button class="cta">Смотреть объект
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARCHETYPE B -->
+  <div class="arch">
+    <div class="arch-h">Архетип B — Кинематографичный (full-bleed)</div>
+    <div class="arch-d">Фото на всю карту, текст поверх. Тёмная версия — основная (постер люкс-отеля), светлая — альтернатива с тёплым скримом. Один акцентный CTA.</div>
+    <div class="pair">
+      <div>
+        <div class="cap">Тёмная — по умолчанию</div>
+        <div class="B dark">
+          <div class="bg"></div><div class="scrim"></div><div class="toptint"></div>
+          <div class="top">
+            <span></span>
+            <span class="match-lbl"><svg width="8" height="8"><circle cx="4" cy="4" r="3.2" fill="#C6A56B"/></svg>98% совпадение</span>
+          </div>
+          <div class="content">
+            <div class="kick">Северный проспект · Кентрон</div>
+            <div class="price">350 000<span class="u">AMD / мес</span></div>
+            <div class="ttl">Современная 2-комнатная в Кентроне</div>
+            <div class="specs">2 спальни&nbsp;&nbsp;·&nbsp;&nbsp;85 м²&nbsp;&nbsp;·&nbsp;&nbsp;этаж 7 / 12&nbsp;&nbsp;·&nbsp;&nbsp;парковка уточняется</div>
+            <button class="cta-solid">Записаться на просмотр</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="cap">Светлая — альтернатива</div>
+        <div class="B light">
+          <div class="bg"></div><div class="scrim"></div>
+          <div class="top">
+            <span></span>
+            <span class="match-lbl"><svg width="8" height="8"><circle cx="4" cy="4" r="3.2" fill="#9A7B45"/></svg>98% совпадение</span>
+          </div>
+          <div class="content">
+            <div class="kick">Северный проспект · Кентрон</div>
+            <div class="price">350 000<span class="u">AMD / мес</span></div>
+            <div class="ttl">Современная 2-комнатная в Кентроне</div>
+            <div class="specs">2 спальни&nbsp;&nbsp;·&nbsp;&nbsp;85 м²&nbsp;&nbsp;·&nbsp;&nbsp;этаж 7 / 12&nbsp;&nbsp;·&nbsp;&nbsp;парковка уточняется</div>
+            <button class="cta-solid">Записаться на просмотр</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARCHETYPE C -->
+  <div class="arch">
+    <div class="arch-h">Архетип C — Структурный элегантный</div>
+    <div class="arch-d">Сплит: фото слева 55%, справа — данные строками через hairline (без рамок). Цена доминирует, «Мнение Homy» — издательская врезка с тонкой линией. Для серьёзного покупателя.</div>
+    <div class="pair">
+      <div>
+        <div class="cap">Светлая</div>
+        <div class="card C light">
+          <div class="photo"></div>
+          <div class="info">
+            <div class="c-top">
+              <div>
+                <div class="kick">Аренда · долгосрочно</div>
+                <div class="price" style="margin-top:12px">350 000<span class="u">AMD / мес</span></div>
+              </div>
+              <div class="ring"><svg width="46" height="46"><circle cx="23" cy="23" r="20" fill="none" stroke="var(--hair)" stroke-width="2"/><circle cx="23" cy="23" r="20" fill="none" stroke="#9A7B45" stroke-width="2" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="2.5"/></svg><b>98</b></div>
+            </div>
+            <div class="ttl">Современная 2-комнатная в Кентроне</div>
+            <div class="loc">Северный проспект · Ереван</div>
+            <div class="rows">
+              <div class="drow"><span class="k">Спальни</span><span class="v">2</span></div>
+              <div class="drow"><span class="k">Площадь</span><span class="v">85 м²</span></div>
+              <div class="drow"><span class="k">Этаж</span><span class="v">7 / 12</span></div>
+              <div class="drow"><span class="k">Парковка</span><span class="v" style="color:var(--muted)">уточняется</span></div>
+            </div>
+            <div class="quote">
+              <div class="qh">Мнение Homy</div>
+              <div class="opinion">Центральная локация, отличный естественный свет и свежий ремонт. Стоит заранее уточнить организацию парковки.</div>
+            </div>
+            <div class="foot">
+              <span class="verify"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-11"/></svg>Проверено Homy</span>
+              <button class="cta-solid">Записаться на просмотр</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="cap">Тёмная</div>
+        <div class="card C dark">
+          <div class="photo"></div>
+          <div class="info">
+            <div class="c-top">
+              <div>
+                <div class="kick">Аренда · долгосрочно</div>
+                <div class="price" style="margin-top:12px">350 000<span class="u">AMD / мес</span></div>
+              </div>
+              <div class="ring"><svg width="46" height="46"><circle cx="23" cy="23" r="20" fill="none" stroke="var(--hair)" stroke-width="2"/><circle cx="23" cy="23" r="20" fill="none" stroke="#C6A56B" stroke-width="2" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="2.5"/></svg><b>98</b></div>
+            </div>
+            <div class="ttl">Современная 2-комнатная в Кентроне</div>
+            <div class="loc">Северный проспект · Ереван</div>
+            <div class="rows">
+              <div class="drow"><span class="k">Спальни</span><span class="v">2</span></div>
+              <div class="drow"><span class="k">Площадь</span><span class="v">85 м²</span></div>
+              <div class="drow"><span class="k">Этаж</span><span class="v">7 / 12</span></div>
+              <div class="drow"><span class="k">Парковка</span><span class="v" style="color:var(--muted)">уточняется</span></div>
+            </div>
+            <div class="quote">
+              <div class="qh">Мнение Homy</div>
+              <div class="opinion">Центральная локация, отличный естественный свет и свежий ремонт. Стоит заранее уточнить организацию парковки.</div>
+            </div>
+            <div class="foot">
+              <span class="verify"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-11"/></svg>Проверено Homy</span>
+              <button class="cta-solid">Записаться на просмотр</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
