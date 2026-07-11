@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtService } from '../services/jwtService';
+import { getAccessTokenFromRequest } from '../cookies';
 import prisma from '../db/prisma';
+
+/** Token from Authorization header OR HttpOnly cookie (browser uses cookies). */
+function extractAdminToken(req: NextRequest): string | null {
+  return jwtService.extractTokenFromHeader(req.headers.get('authorization')) || getAccessTokenFromRequest(req);
+}
 
 // Roles hierarchy
 export type UserRole = 'user' | 'moderator' | 'admin';
@@ -37,8 +43,7 @@ async function getUserWithRole(userId: string) {
  */
 export function withAdmin(handler: AdminHandler) {
   return async (req: NextRequest) => {
-    const authHeader = req.headers.get('authorization');
-    const token = jwtService.extractTokenFromHeader(authHeader);
+    const token = extractAdminToken(req);
 
     if (!token) {
       return NextResponse.json(
@@ -97,8 +102,7 @@ export function withAdmin(handler: AdminHandler) {
  */
 export function withModerator(handler: AdminHandler) {
   return async (req: NextRequest) => {
-    const authHeader = req.headers.get('authorization');
-    const token = jwtService.extractTokenFromHeader(authHeader);
+    const token = extractAdminToken(req);
 
     if (!token) {
       return NextResponse.json(

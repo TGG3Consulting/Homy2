@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+		<link type="image/svg+xml" href="/favicon.svg" rel="icon">
+		
+        <link rel="preload" as="style" href="https://moneycat.info/build/assets/app-402dda30.css" /><link rel="preload" as="style" href="https://moneycat.info/build/assets/app-cd6f2957.css" /><link rel="modulepreload" href="https://moneycat.info/build/assets/app-fa624b18.js" /><link rel="stylesheet" href="https://moneycat.info/build/assets/app-402dda30.css" /><link rel="stylesheet" href="https://moneycat.info/build/assets/app-cd6f2957.css" /><script type="module" src="https://moneycat.info/build/assets/app-fa624b18.js"></script>
+        <title>Money Cat</title>
+    </head>
+    <body>
+            <div id="app">
+        <app/>
+    </div>
+    </body>
+</html>

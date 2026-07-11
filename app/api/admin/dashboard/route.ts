@@ -39,6 +39,10 @@ interface DashboardStats {
     completed: number;
     this_week: number;
   };
+  deals: {
+    open: number;
+    won_this_month: number;
+  };
   recent_actions: Array<{
     id: string;
     admin_email: string;
@@ -53,6 +57,7 @@ async function getDashboardStats(req: AdminAuthenticatedRequest) {
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const weekStart = new Date(todayStart);
   weekStart.setDate(weekStart.getDate() - 7);
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
   try {
     // Parallel queries for performance
@@ -76,6 +81,8 @@ async function getDashboardStats(req: AdminAuthenticatedRequest) {
       completedViewings,
       weekViewings,
       recentActions,
+      dealsOpen,
+      dealsWonMonth,
     ] = await Promise.all([
       prisma.user.count(),
       prisma.user.count({ where: { is_blocked: true } }),
@@ -100,6 +107,8 @@ async function getDashboardStats(req: AdminAuthenticatedRequest) {
         orderBy: { created_at: 'desc' },
         include: { admin: { select: { email: true } } },
       }),
+      prisma.deal.count({ where: { status: 'open' } }),
+      prisma.deal.count({ where: { status: 'won', closed_at: { gte: monthStart } } }),
     ]);
 
     // Transform role counts
@@ -146,6 +155,10 @@ async function getDashboardStats(req: AdminAuthenticatedRequest) {
         pending: pendingViewings,
         completed: completedViewings,
         this_week: weekViewings,
+      },
+      deals: {
+        open: dealsOpen,
+        won_this_month: dealsWonMonth,
       },
       recent_actions: recentActions.map(a => ({
         id: a.id,

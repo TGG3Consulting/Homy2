@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { X, Scale, Trash2 } from 'lucide-react';
 import { useCompare } from '@/lib/contexts/CompareContext';
 import { useT, getLocalized } from '@/lib/i18n';
@@ -17,6 +18,7 @@ interface PropertyPreview {
 export default function CompareBar() {
   const { compareList, removeFromCompare, clearCompare, maxItems } = useCompare();
   const { t, lang } = useT();
+  const pathname = usePathname();
   const [properties, setProperties] = useState<PropertyPreview[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -52,8 +54,8 @@ export default function CompareBar() {
     fetchProperties();
   }, [compareList]);
 
-  // Don't render if no properties in compare list
-  if (compareList.length === 0) {
+  // Don't render if no properties in compare list, or on the compare page itself (redundant there)
+  if (compareList.length === 0 || pathname === '/compare') {
     return null;
   }
 

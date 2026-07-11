@@ -20,53 +20,46 @@ async function rejectListing(
       );
     }
 
-    const listing = await prisma.propertyListing.findUnique({
-      where: { id: listingId },
-      select: { id: true, status: true, owner_id: true },
+    // Atomic claim: only a still-pending listing can be rejected, and only one
+    // moderator wins. Concurrent moderators get 409.
+    const claim = await prisma.propertyListing.updateMany({
+      where: { id: listingId, status: 'pending' },
+      data: { status: 'rejected', moderated_at: new Date(), moderated_by: adminId, rejection_reason: reason.trim() },
     });
 
-    if (!listing) {
+    if (claim.count === 0) {
+      const existing = await prisma.propertyListing.findUnique({ where: { id: listingId }, select: { status: true } });
+      if (!existing) return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
       return NextResponse.json(
-        { error: 'Listing not found' },
-        { status: 404 }
+        { error: 'Объявление уже обработано другим модератором', status: existing.status },
+        { status: 409 }
       );
     }
 
-    if (listing.status === 'rejected') {
-      return NextResponse.json(
-        { error: 'Listing is already rejected' },
-        { status: 400 }
-      );
-    }
+    const listing = await prisma.propertyListing.findUnique({ where: { id: listingId }, select: { owner_id: true, location: true } });
 
-    const [updatedListing] = await Promise.all([
-      prisma.propertyListing.update({
-        where: { id: listingId },
-        data: {
-          status: 'rejected',
-          moderated_at: new Date(),
-          moderated_by: adminId,
-          rejection_reason: reason.trim(),
-        },
-      }),
+    await Promise.all([
       prisma.adminActionLog.create({
         data: {
           admin_id: adminId!,
           action_type: 'listing_reject',
           target_type: 'listing',
           target_id: listingId,
-          details: { previous_status: listing.status, reason },
+          details: { previous_status: 'pending', reason },
         },
       }),
+      listing ? prisma.notification.create({
+        data: {
+          userId: listing.owner_id,
+          type: 'listing_rejected',
+          title: 'Объявление отклонено',
+          body: `«${listing.location}» не прошло модерацию: ${reason.trim()}`,
+          data: { listingId, reason: reason.trim() },
+        },
+      }) : Promise.resolve(),
     ]);
 
-    // TODO: Send notification to owner about rejection with reason
-
-    return NextResponse.json({
-      success: true,
-      message: 'Listing rejected',
-      listing: updatedListing,
-    });
+    return NextResponse.json({ success: true, message: 'Listing rejected' });
   } catch (error) {
     console.error('Reject listing error:', error);
     return NextResponse.json(

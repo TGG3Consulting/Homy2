@@ -214,7 +214,10 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose 
               <div className="main" style={{ backgroundImage: `url('${images[activeImg] || property.image_url}')` }}>
                 {property.is_top_choice && <span className="badge">Топ-выбор Homy</span>}
                 {property.has_virtual_tour && (
-                  <button className="vtour-btn" onClick={() => setShowTour(true)}><Video size={13} />Виртуальный тур</button>
+                  <button className="vtour-btn" onClick={() => setShowTour(true)}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 7l-7 5 7 5V7z" /><rect x="1" y="5" width="15" height="14" rx="2" /></svg>
+                    Виртуальный тур
+                  </button>
                 )}
               </div>
               {images.length > 1 && (

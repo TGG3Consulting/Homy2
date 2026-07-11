@@ -137,6 +137,15 @@ function ResultsInner() {
   const [composer, setComposer] = useState('');
   const [detailId, setDetailId] = useState<string | null>(null);
 
+  // ---- save search (logged-in buyers) ----
+  const [saveOpen, setSaveOpen] = useState(false);
+  const [savedList, setSavedList] = useState<any[]>([]);
+  const [saveMode, setSaveMode] = useState<'new' | 'overwrite'>('new');
+  const [overwriteId, setOverwriteId] = useState<string>('');
+  const [saveComment, setSaveComment] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState<{ ok: boolean; text: string } | null>(null);
+
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [wsConnected, setWsConnected] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -208,6 +217,76 @@ function ResultsInner() {
       );
     } catch {}
   }, [chatMessages, properties, criteriaChips, insights, topChoiceId, query, storageKey]);
+
+  // ---- save search: toast helper ----
+  const showToast = useCallback((ok: boolean, text: string) => {
+    setToast({ ok, text });
+    window.setTimeout(() => setToast(null), 3200);
+  }, []);
+
+  // ---- open save modal (requires login; loads existing for overwrite option) ----
+  const openSaveModal = useCallback(async () => {
+    let authed = false;
+    try { const r = await fetch('/api/users/me', { credentials: 'include' }); authed = r.ok; } catch {}
+    if (!authed) {
+      const cur = window.location.pathname + window.location.search;
+      window.location.href = `/login?redirect=${encodeURIComponent(cur)}`;
+      return;
+    }
+    try {
+      const r = await fetch('/api/users/me/saved-searches', { credentials: 'include' });
+      if (r.ok) {
+        const d = await r.json();
+        const list = d.searches || d.savedSearches || [];
+        setSavedList(list);
+        setOverwriteId(list[0]?.id || '');
+      }
+    } catch {}
+    setSaveMode('new');
+    setSaveComment('');
+    setSaveOpen(true);
+  }, []);
+
+  // ---- persist the current search (new = POST, overwrite = PUT) ----
+  const handleSaveSearch = useCallback(async () => {
+    if (saving) return;
+    setSaving(true);
+    const light = properties.map((p) => { const { images, nearby_pois, ...rest } = p as any; return rest; });
+    const payload = {
+      name: query || null,
+      comment: saveComment.trim() || null,
+      query: query || '(поиск)',
+      chatMessages,
+      properties: light,
+      criteriaChips,
+      insights,
+      topChoiceId,
+    };
+    try {
+      const overwrite = saveMode === 'overwrite' && overwriteId;
+      const res = overwrite
+        ? await fetch(`/api/users/me/saved-searches/${overwriteId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(payload) })
+        : await fetch('/api/users/me/saved-searches', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(payload) });
+      if (res.status === 401) {
+        const cur = window.location.pathname + window.location.search;
+        window.location.href = `/login?redirect=${encodeURIComponent(cur)}`;
+        return;
+      }
+      const d = await res.json().catch(() => ({} as any));
+      if (!res.ok) {
+        showToast(false, d?.error === 'limit_exceeded' ? 'Достигнут лимит сохранённых поисков (20)' : 'Не удалось сохранить поиск');
+        return;
+      }
+      setSaveOpen(false);
+      showToast(true, overwrite ? 'Поиск обновлён' : 'Поиск сохранён');
+    } catch {
+      showToast(false, 'Не удалось сохранить поиск');
+    } finally {
+      setSaving(false);
+    }
+  }, [saving, properties, query, saveComment, chatMessages, criteriaChips, insights, topChoiceId, saveMode, overwriteId, showToast]);
+
+  const canSave = properties.length > 0 || chatMessages.length > 0;
 
   // ---- apply AI property update (from show_properties tool) ----
   const handlePropertiesUpdate = useCallback((command: WebSocketPropertyDisplayCommand) => {
@@ -420,14 +499,27 @@ function ResultsInner() {
         </div>
       </div>
 
-      {/* theme toggle */}
-      <div className="themebtn">
-        <button className={`opt${theme === 'light' ? ' on' : ''}`} title="Светлая" onClick={() => setTheme('light')}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.4 1.4M17.6 17.6L19 19M5 19l1.4-1.4M17.6 6.4L19 5" /></svg>
-        </button>
-        <button className={`opt${theme === 'dark' ? ' on' : ''}`} title="Тёмная" onClick={() => setTheme('dark')}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>
-        </button>
+      {/* top-right: actions cluster (save search · favorites · compare) + theme toggle */}
+      <div className="topright">
+        <div className="acts">
+          <button className="ab" type="button" title="Сохранить поиск" disabled={!canSave} onClick={openSaveModal}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>
+          </button>
+          <button className="ab" type="button" title="Избранное" onClick={() => router.push('/dashboard?tab=favorites')}>
+            <Heart size={17} />
+          </button>
+          <button className="ab" type="button" title="Сравнение" onClick={() => router.push('/compare')}>
+            <Scale size={17} />
+          </button>
+        </div>
+        <div className="themebtn">
+          <button className={`opt${theme === 'light' ? ' on' : ''}`} title="Светлая" onClick={() => setTheme('light')}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.4 1.4M17.6 17.6L19 19M5 19l1.4-1.4M17.6 6.4L19 5" /></svg>
+          </button>
+          <button className={`opt${theme === 'dark' ? ' on' : ''}`} title="Тёмная" onClick={() => setTheme('dark')}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>
+          </button>
+        </div>
       </div>
 
       {/* left AI panel */}
@@ -585,6 +677,59 @@ function ResultsInner() {
 
       {/* support live-chat launcher (bottom-right) */}
       <SupportFab />
+
+      {/* save-search modal */}
+      {saveOpen && (
+        <div className="smback" onClick={() => !saving && setSaveOpen(false)}>
+          <div className="smodal" onClick={(e) => e.stopPropagation()}>
+            <div className="smh">
+              <h3>Сохранить поиск</h3>
+              <button className="smx" type="button" onClick={() => !saving && setSaveOpen(false)} aria-label="Закрыть">✕</button>
+            </div>
+
+            <div className="smsub">{query ? `«${query}»` : 'Текущий поиск'} · {properties.length} объектов</div>
+
+            {savedList.length > 0 && (
+              <div className="smopts">
+                <button type="button" className={`smopt${saveMode === 'new' ? ' on' : ''}`} onClick={() => setSaveMode('new')}>
+                  <b>Сохранить как новый</b>
+                  <span>Создать новый сохранённый поиск</span>
+                </button>
+                <button type="button" className={`smopt${saveMode === 'overwrite' ? ' on' : ''}`} onClick={() => setSaveMode('overwrite')}>
+                  <b>Перезаписать существующий</b>
+                  <span>Обновить ранее сохранённый поиск</span>
+                </button>
+              </div>
+            )}
+
+            {saveMode === 'overwrite' && savedList.length > 0 && (
+              <div className="smfield">
+                <label>Выберите поиск для перезаписи</label>
+                <select className="smsel" value={overwriteId} onChange={(e) => setOverwriteId(e.target.value)}>
+                  {savedList.map((s) => (
+                    <option key={s.id} value={s.id}>{s.name || s.query || 'Поиск'}{s.comment ? ` — ${s.comment}` : ''}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            <div className="smfield">
+              <label>Комментарий (необязательно)</label>
+              <input className="smin" value={saveComment} onChange={(e) => setSaveComment(e.target.value)} placeholder="Например: поиск для семьи" maxLength={120} />
+            </div>
+
+            <div className="smact">
+              <button type="button" className="smcancel" onClick={() => !saving && setSaveOpen(false)}>Отмена</button>
+              <button type="button" className="smsave" disabled={saving || (saveMode === 'overwrite' && !overwriteId)} onClick={handleSaveSearch}>
+                <span>{saving ? 'Сохраняем…' : saveMode === 'overwrite' ? 'Обновить поиск' : 'Сохранить поиск'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* toast */}
+      {toast && <div className={`smtoast${toast.ok ? ' ok' : ' err'}`}>{toast.text}</div>}
 
       {/* property detail popup */}
       {detailId && <PropertyDetailView propertyId={detailId} mode="popup" onClose={() => setDetailId(null)} />}

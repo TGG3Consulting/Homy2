@@ -1,237 +1,68 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default function ComingSoon() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isLoaded, setIsLoaded] = useState(false);
+const CS_CSS = `
+.homy-cs{--bg:#EEF0F3;--surface:#FFFFFF;--surface2:#F4F6F8;--ink:#14181F;--muted:#6A7382;--soft:#39414D;--hair:rgba(20,24,31,.10);--em-hi:#26B083;--em:#0A6045;
+  min-height:100vh;background:var(--bg);color:var(--ink);font-family:'Montserrat',sans-serif;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+html.dark .homy-cs{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#F2F4F7;--muted:#8B93A3;--soft:#C5CAD3;--hair:rgba(255,255,255,.10);--em-hi:#2BC091;--em:#0B6E4F}
+.homy-cs *{box-sizing:border-box}
+.homy-cs .cnav{position:sticky;top:0;display:flex;align-items:center;gap:14px;padding:12px 22px;background:color-mix(in srgb,var(--surface) 93%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+.homy-cs .lg{font-weight:800;font-size:16px;color:var(--ink);text-decoration:none}.homy-cs .lg .m{color:var(--em)}
+.homy-cs .estate{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 26px}
+.homy-cs .big{width:84px;height:84px;border-radius:24px;display:flex;align-items:center;justify-content:center;margin-bottom:22px;background:color-mix(in srgb,var(--em) 14%,transparent);color:var(--em)}
+.homy-cs h1{font-size:28px;font-weight:800;letter-spacing:-.02em}
+.homy-cs p{font-size:13.5px;color:var(--muted);margin-top:10px;line-height:1.6;max-width:420px}
+.homy-cs .emailrow{display:flex;gap:10px;margin-top:22px;max-width:420px;width:100%}
+.homy-cs .inp{flex:1;display:flex;align-items:center;background:var(--surface2);border:1px solid var(--hair);border-radius:12px;padding:12px 14px}
+.homy-cs .inp input{flex:1;background:none;border:0;outline:none;font-family:inherit;font-size:13.5px;color:var(--ink);min-width:0}
+.homy-cs .inp:focus-within{border-color:var(--em)}
+.homy-cs .em3d{color:#fff;border:0;background:radial-gradient(135% 175% at 50% 14%,var(--em-hi),var(--em));box-shadow:0 2px 8px rgba(4,40,28,.24);font-weight:700;font-size:13.5px;padding:12px 20px;border-radius:12px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.homy-cs .em3d:disabled{opacity:.55;pointer-events:none}
+.homy-cs .ok{margin-top:20px;font-size:13.5px;font-weight:600;color:var(--em)}
+.homy-cs .sec{margin-top:22px;background:none;border:0;color:var(--soft);font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit}
+.homy-cs .sec:hover{color:var(--em)}
+@media(max-width:520px){.homy-cs .emailrow{flex-direction:column}}
+`;
 
-  useEffect(() => {
-    setIsLoaded(true);
+export default function ComingSoonPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [sent, setSent] = useState(false);
+  const [busy, setBusy] = useState(false);
 
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({
-        x: (e.clientX / window.innerWidth - 0.5) * 20,
-        y: (e.clientY / window.innerHeight - 0.5) * 20,
-      });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  const submit = async () => {
+    const v = email.trim();
+    if (!/.+@.+\..+/.test(v)) return;
+    setBusy(true);
+    try {
+      await fetch('/api/waitlist', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: v }),
+      }).catch(() => {});
+      setSent(true);
+    } finally { setBusy(false); }
+  };
 
   return (
-    <div className="relative w-full min-h-screen overflow-hidden bg-[#0a0a0f] flex items-center justify-center">
-      {/* Animated gradient background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div
-          className="absolute w-[800px] h-[800px] rounded-full blur-[120px] animate-pulse"
-          style={{
-            background: 'radial-gradient(circle, rgba(10, 96, 69,0.3) 0%, transparent 70%)',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            animation: 'pulse 4s ease-in-out infinite',
-          }}
-        />
-        <div
-          className="absolute w-[600px] h-[600px] rounded-full blur-[100px]"
-          style={{
-            background: 'radial-gradient(circle, rgba(108,156,255,0.2) 0%, transparent 70%)',
-            top: '30%',
-            left: '30%',
-            animation: 'float 8s ease-in-out infinite',
-          }}
-        />
-        <div
-          className="absolute w-[500px] h-[500px] rounded-full blur-[80px]"
-          style={{
-            background: 'radial-gradient(circle, rgba(255,108,208,0.15) 0%, transparent 70%)',
-            top: '60%',
-            right: '20%',
-            animation: 'float 6s ease-in-out infinite reverse',
-          }}
-        />
-      </div>
-
-      {/* Grid pattern overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
-          `,
-          backgroundSize: '50px 50px',
-        }}
-      />
-
-      {/* Floating particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 rounded-full bg-white/20"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animation: `particle ${5 + Math.random() * 10}s linear infinite`,
-              animationDelay: `${Math.random() * 5}s`,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Main content */}
-      <div
-        className="relative z-10 text-center px-6"
-        style={{
-          transform: `translate(${mousePosition.x * 0.5}px, ${mousePosition.y * 0.5}px)`,
-          transition: 'transform 0.3s ease-out',
-        }}
-      >
-        {/* Logo container with glow */}
-        <div
-          className={`relative mb-8 transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-          style={{
-            transform: `translate(${mousePosition.x}px, ${mousePosition.y}px)`,
-            transition: 'transform 0.2s ease-out, opacity 1s ease-out',
-          }}
-        >
-          {/* Logo glow effect */}
-          <div
-            className="absolute inset-0 blur-[60px] opacity-60"
-            style={{
-              background: 'radial-gradient(circle, rgba(10, 96, 69,0.8) 0%, transparent 70%)',
-              animation: 'glow 3s ease-in-out infinite',
-            }}
-          />
-
-          {/* Logo with ring animation */}
-          <div className="relative">
-            {/* Outer ring */}
-            <div
-              className="absolute inset-[-40px] rounded-full border border-[#0A6045]/20"
-              style={{ animation: 'spin 20s linear infinite' }}
-            />
-            {/* Middle ring */}
-            <div
-              className="absolute inset-[-25px] rounded-full border border-[#0A6045]/30"
-              style={{ animation: 'spin 15s linear infinite reverse' }}
-            />
-            {/* Inner ring with dots */}
-            <div
-              className="absolute inset-[-10px] rounded-full border border-[#0A6045]/40"
-              style={{ animation: 'spin 10s linear infinite' }}
-            >
-              <div className="absolute w-2 h-2 bg-[#0A6045] rounded-full -top-1 left-1/2 -translate-x-1/2" />
-              <div className="absolute w-2 h-2 bg-[#0A6045] rounded-full -bottom-1 left-1/2 -translate-x-1/2" />
-            </div>
-
-            {/* Main logo */}
-            <div
-              className="relative w-32 h-32 mx-auto flex items-center justify-center"
-              style={{ animation: 'float 4s ease-in-out infinite' }}
-            >
-              <Image
-                src="/logo/homy_brand_purple.svg"
-                alt="Homy"
-                width={120}
-                height={120}
-                className="drop-shadow-2xl"
-                priority
-              />
-            </div>
+    <div className="homy-cs">
+      <style dangerouslySetInnerHTML={{ __html: CS_CSS }} />
+      <div className="cnav"><a href="/" className="lg">Ho<span className="m">m</span>y</a></div>
+      <div className="estate">
+        <div className="big"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8v4l3 2" /><circle cx="12" cy="12" r="9" /></svg></div>
+        <h1>Скоро запуск</h1>
+        <p>Мы готовим ИИ-разбор новостроек Еревана. Оставьте email — сообщим первым, когда откроем.</p>
+        {sent ? (
+          <div className="ok">Спасибо! Сообщим на {email}, когда откроем.</div>
+        ) : (
+          <div className="emailrow">
+            <div className="inp"><input type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') submit(); }} /></div>
+            <button className="em3d" disabled={busy} onClick={submit}>{busy ? 'Отправляем…' : 'Уведомить меня'}</button>
           </div>
-        </div>
-
-        {/* Coming Soon text */}
-        <div
-          className={`transition-all duration-1000 delay-300 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-        >
-          <h1
-            className="text-5xl md:text-7xl font-bold tracking-tight mb-4"
-            style={{
-              background: 'linear-gradient(135deg, #ffffff 0%, #0A6045 50%, #ffffff 100%)',
-              backgroundSize: '200% 200%',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              animation: 'gradient 5s ease infinite',
-            }}
-          >
-            Coming Soon
-          </h1>
-
-          <p className="text-lg md:text-xl text-white/50 font-light mb-8 max-w-md mx-auto">
-            We&apos;re building something amazing. Stay tuned for the future of real estate.
-          </p>
-        </div>
-
-        {/* Animated line */}
-        <div
-          className={`mt-16 h-px w-48 mx-auto transition-all duration-1000 delay-900 ${isLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
-          style={{
-            background: 'linear-gradient(90deg, transparent, #0A6045, transparent)',
-          }}
-        />
-
-        {/* G3 Consulting - Parent Company */}
-        <div
-          className={`mt-8 flex flex-col items-center gap-2 transition-all duration-1000 delay-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
-        >
-          <p className="text-white/30 text-xs">A project by</p>
-          <Image
-            src="/logo/g3_logo.png"
-            alt="G3 Consulting"
-            width={300}
-            height={140}
-            className="opacity-90 hover:opacity-100 transition-opacity duration-300"
-          />
-        </div>
-
-        <p
-          className={`mt-6 text-white/20 text-xs transition-all duration-1000 delay-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-        >
-          Homy &copy; 2026. All rights reserved.
-        </p>
+        )}
+        <button className="sec" onClick={() => router.push('/')}>На главную</button>
       </div>
-
-      {/* CSS Animations */}
-      <style jsx global>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-20px); }
-        }
-
-        @keyframes glow {
-          0%, 100% { opacity: 0.4; transform: scale(1); }
-          50% { opacity: 0.8; transform: scale(1.1); }
-        }
-
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-
-        @keyframes gradient {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-
-        @keyframes particle {
-          0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-          10% { opacity: 1; }
-          90% { opacity: 1; }
-          100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
-        }
-
-        @keyframes pulse {
-          0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
-          50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.5; }
-        }
-      `}</style>
     </div>
   );
 }

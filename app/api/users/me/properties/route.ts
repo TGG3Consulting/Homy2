@@ -46,14 +46,13 @@ async function getHandler(req: AuthenticatedRequest) {
     // Build where clause based on user type
     let whereClause: Record<string, unknown> = {};
 
-    if (currentUser.user_type === 'owner') {
-      // Owners see only their own properties
-      whereClause = {
-        owner_id: userId,
-      };
+    // ?mine=true → only the caller's own listings (used by the broker cabinet D2)
+    const mine = new URL(req.url).searchParams.get('mine') === 'true';
+
+    if (mine || currentUser.user_type === 'owner') {
+      whereClause = { owner_id: userId };
     }
-    // Agents see all properties (no filter)
-    // Can be enhanced later with agent-property management relationship
+    // Agents (without ?mine) see all properties (used for viewing creation)
 
     // Fetch properties
     const properties = await prisma.property.findMany({
@@ -105,3 +104,53 @@ async function getHandler(req: AuthenticatedRequest) {
 }
 
 export const GET = withAuth(getHandler);
+
+/**
+ * POST /api/users/me/properties
+ * Create a new listing owned by the current agent/owner (D3).
+ * Body: { title?, dealType, propertyType?, district?, address?, price, rooms?, area?, floor?, totalFloors?, description?, images?, neighborhood? }
+ */
+async function postHandler(req: AuthenticatedRequest) {
+  const userId = req.user?.id;
+  if (!userId) return NextResponse.json({ error: 'User not found' }, { status: 401 });
+
+  try {
+    const b = await req.json();
+    const rooms = b.rooms != null ? Number(b.rooms) : null;
+    const district = b.district || null;
+    const roomsLabel = rooms ? `${rooms}-комнатная` : (b.propertyType === 'studio' ? 'Студия' : 'Объект');
+    const titleText = (b.title && String(b.title).trim()) || [roomsLabel, district].filter(Boolean).join(' · ');
+    const images = Array.isArray(b.images) ? b.images.filter((x: any) => typeof x === 'string') : [];
+
+    const property = await prisma.property.create({
+      data: {
+        title: JSON.stringify({ ru: titleText, en: titleText, hy: titleText }),
+        owner: { connect: { id: userId } },
+        address: b.address || null,
+        district,
+        neighborhood: b.neighborhood ? JSON.stringify({ ru: b.neighborhood, en: b.neighborhood, hy: b.neighborhood }) : null,
+        price: b.price != null ? Number(b.price) : null,
+        currency: 'AMD',
+        rooms,
+        bedrooms: rooms,
+        area: b.area != null ? Number(b.area) : null,
+        sizeSqm: b.area != null ? Number(b.area) : null,
+        floor: b.floor != null ? Number(b.floor) : null,
+        totalFloors: b.totalFloors != null ? Number(b.totalFloors) : null,
+        description: b.description || null,
+        images,
+        imageUrl: images[0] || null,
+        dealType: b.dealType || null,
+        propertyType: b.propertyType || 'apartment',
+        available: true,
+      },
+    });
+
+    return NextResponse.json({ success: true, id: property.id });
+  } catch (error) {
+    console.error('[POST /api/users/me/properties] Error:', error);
+    return NextResponse.json({ error: 'Failed to create listing', success: false }, { status: 500 });
+  }
+}
+
+export const POST = withAuth(postHandler);

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
@@ -72,6 +72,16 @@ html.dark .homy-landing{
 export default function Home() {
   const router = useRouter()
   const [q, setQ] = useState('')
+  const [authed, setAuthed] = useState<boolean | null>(null)
+
+  // Reflect auth state in the nav (landing previously always showed "Войти").
+  useEffect(() => {
+    let alive = true
+    fetch('/api/users/me', { credentials: 'include' })
+      .then((r) => { if (alive) setAuthed(r.ok) })
+      .catch(() => { if (alive) setAuthed(false) })
+    return () => { alive = false }
+  }, [])
 
   const go = (text?: string) => {
     const v = (text ?? q).trim()
@@ -94,7 +104,11 @@ export default function Home() {
         <span style={{ marginLeft: 'auto' }} />
         <LanguageSwitcher variant="light" />
         <ThemeToggle />
-        <Link href="/login" className="btn-sec">Войти</Link>
+        {authed ? (
+          <Link href="/dashboard" className="btn-sec">Личный кабинет</Link>
+        ) : (
+          <Link href="/login" className="btn-sec">Войти</Link>
+        )}
       </div>
 
       {/* split hero */}

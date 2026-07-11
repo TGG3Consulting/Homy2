@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { deriveNotifyCriteria, generateNotifications, getUnseenCounts } from '@/lib/services/savedSearchMatcher';
 
 const MAX_SAVED_SEARCHES = 20;
 
@@ -14,6 +15,10 @@ export const GET = withAuth(async (req: AuthenticatedRequest) => {
   try {
     const userId = req.user!.id;
 
+    // Evaluate notify-enabled searches for new matches (idempotent), then read counts.
+    try { await generateNotifications(userId); } catch (e) { console.error('[saved-searches] notify eval failed:', e); }
+    const newCounts = await getUnseenCounts(userId).catch(() => ({} as Record<string, number>));
+
     const searches = await prisma.savedSearch.findMany({
       where: { userId },
       orderBy: { updatedAt: 'desc' },
@@ -22,7 +27,7 @@ export const GET = withAuth(async (req: AuthenticatedRequest) => {
 
     return NextResponse.json({
       success: true,
-      searches,
+      searches: searches.map((s) => ({ ...s, newCount: newCounts[s.id] || 0 })),
       count: searches.length,
     });
   } catch (error) {
@@ -96,6 +101,13 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
       );
     }
 
+    // Derive structured notify criteria + seed the known set from the snapshot,
+    // so notifications only fire for listings that appear AFTER this save.
+    const notifyCriteria = deriveNotifyCriteria(properties);
+    const knownPropertyIds = Array.isArray(properties)
+      ? properties.map((p: any) => p?.id).filter((x: any): x is string => typeof x === 'string')
+      : [];
+
     // Create saved search
     const search = await prisma.savedSearch.create({
       data: {
@@ -108,6 +120,9 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
         criteriaChips,
         insights: insights || null,
         topChoiceId: topChoiceId || null,
+        notifyCriteria: notifyCriteria as any,
+        knownPropertyIds,
+        lastCheckedAt: new Date(),
       },
     });
 

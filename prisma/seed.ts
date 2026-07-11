@@ -1170,6 +1170,38 @@ async function main() {
 
   console.log(`  Admin user created/updated: ${adminUser.email} (role: admin)\n`);
 
+  // ============================================
+  // SEED OWNER / AGENT USERS (real accounts so listings have an owner)
+  // ============================================
+  console.log('Creating owner/agent users from contacts...');
+  const DEFAULT_PW = '$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu.1u'; // "admin123"
+  const slug = (name: string) =>
+    name.toLowerCase().replace(/[^a-z\s]/g, '').trim().replace(/\s+/g, '.');
+  const contactUserIds: string[] = [];
+  for (const c of CONTACTS) {
+    const [first, ...rest] = c.name.split(' ');
+    const last = rest.join(' ') || first;
+    const email = `${slug(c.name)}@homy.am`;
+    const u = await prisma.user.upsert({
+      where: { email },
+      update: { user_type: c.type, first_name: first, last_name: last, emailVerified: true },
+      create: {
+        email,
+        passwordHash: DEFAULT_PW,
+        role: 'user',
+        emailVerified: true,
+        user_type: c.type, // agent | owner
+        language_preference: 'en',
+        notifications_enabled: true,
+        first_name: first,
+        last_name: last,
+        phone: c.phone,
+      },
+    });
+    contactUserIds.push(u.id);
+  }
+  console.log(`  Created/updated ${contactUserIds.length} owner/agent users.\n`);
+
   // Clear existing data in correct order (respecting foreign keys)
   console.log('Clearing existing data...');
   await prisma.virtualTourRoom.deleteMany({});
@@ -1188,11 +1220,13 @@ async function main() {
   for (let i = 0; i < PROPERTIES.length; i++) {
     const prop = PROPERTIES[i];
     const contact = CONTACTS[i % CONTACTS.length];
+    const ownerUserId = contactUserIds[i % CONTACTS.length];
     const developer = DEVELOPERS[i % DEVELOPERS.length];
     const images = generatePropertyImages(i);
 
     const propertyData: Prisma.PropertyCreateInput = {
       id: prop.id,
+      owner: { connect: { id: ownerUserId } },
       title: JSON.stringify(prop.title), // Store as JSON string for localization
       address: prop.address,
       district: prop.district,

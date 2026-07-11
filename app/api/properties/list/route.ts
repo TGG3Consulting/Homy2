@@ -14,35 +14,57 @@ async function handler(req: AuthenticatedRequest) {
     property_type,
     location,
     price,
-    currency = 'USD',
+    currency = 'AMD',
     area,
     rooms,
     description,
     photos,
-    contact
+    contact,
+    deal_type,
+    district,
+    neighborhood,
+    address,
+    floor,
+    title,
   } = body;
 
-  // Validation
-  if (!property_type || !location || !price || !area || !rooms || !contact) {
+  // Build a human location from address/district if not supplied.
+  const loc = location || [address, district].filter(Boolean).join(' · ') || district || null;
+
+  // Validation (contact defaults to the submitter below)
+  if (!property_type || !price || !area || !rooms || !loc) {
     return NextResponse.json(
       { error: 'Missing required fields' },
       { status: 400 }
     );
   }
 
+  // Default the contact to the submitter's own account.
+  let contactValue = contact;
+  if (!contactValue) {
+    const me = await prisma.user.findUnique({ where: { id: userId }, select: { name: true, first_name: true, last_name: true, email: true, phone: true } });
+    contactValue = [me?.name || [me?.first_name, me?.last_name].filter(Boolean).join(' '), me?.phone || me?.email].filter(Boolean).join(' · ') || 'Владелец';
+  }
+
   const listing = await prisma.propertyListing.create({
     data: {
       owner_id: userId,
       property_type,
-      location,
+      location: loc,
       price: parseFloat(price),
       currency,
       area: parseFloat(area),
       rooms: parseInt(rooms),
       description: description || null,
       photos: photos || null,
-      contact,
-      status: 'pending'
+      contact: contactValue,
+      status: 'pending',
+      deal_type: deal_type || null,
+      district: district || null,
+      neighborhood: neighborhood || district || null,
+      address: address || null,
+      floor: floor != null ? parseInt(floor) : null,
+      title: title || null,
     }
   });
 

@@ -12,6 +12,7 @@ import { Server as SocketIOServer } from 'socket.io';
 import { anthropicSessionManager } from './lib/anthropicClient';
 import { jwtService } from './lib/services/jwtService';
 import { prisma } from './lib/db/prisma';
+import { runForAll } from './lib/services/savedSearchMatcher';
 import { v4 as uuidv4 } from 'uuid';
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -449,4 +450,15 @@ app.prepare().then(() => {
     console.log(`[Server] Live Chat Socket.io: http://localhost:${PORT}/socket.io`);
     console.log(`[Server] Mode: ${dev ? 'development' : 'production'}`);
   });
+
+  // In-process scheduler: generate saved-search "new match" notifications for
+  // every user on a fixed interval (no external cron needed).
+  const NOTIFY_INTERVAL_MS = 60 * 60 * 1000; // hourly
+  const runNotify = () => {
+    runForAll()
+      .then((r) => console.log(`[Scheduler] saved-search notifications checked for ${r.users} user(s)`))
+      .catch((e) => console.error('[Scheduler] saved-search notify failed:', e));
+  };
+  setTimeout(runNotify, 30_000);            // once shortly after boot
+  setInterval(runNotify, NOTIFY_INTERVAL_MS); // then hourly
 });

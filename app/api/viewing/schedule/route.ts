@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 import emailService from '@/lib/services/emailService';
+import { captureLead } from '@/lib/services/crmService';
 
 export const POST = withAuth(async (req: AuthenticatedRequest) => {
   try {
@@ -37,6 +38,11 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
         id: true,
         title: true,
         owner_id: true,
+        price: true,
+        rooms: true,
+        bedrooms: true,
+        district: true,
+        neighborhood: true,
         owner: {
           select: {
             id: true,
@@ -67,7 +73,7 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
     // Get current user info
     const currentUser = await prisma.user.findUnique({
       where: { id: clientId },
-      select: { name: true },
+      select: { name: true, first_name: true, last_name: true, email: true, phone: true },
     });
 
     // Check if there's already an active viewing for this property by this client
@@ -99,6 +105,19 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
         status: 'pending_agent', // Waiting for agent to respond
       },
     });
+
+    // Capture / refresh a CRM lead for the agent (buyer engaged with their property)
+    try {
+      await captureLead({
+        agentId,
+        clientId,
+        property,
+        client: { ...currentUser, id: clientId },
+        source: 'viewing',
+      });
+    } catch (e) {
+      console.error('[viewing/schedule] lead capture failed:', e);
+    }
 
     // Create notification for the agent
     await prisma.notification.create({

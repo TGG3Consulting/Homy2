@@ -34,6 +34,9 @@ import SavedSearchesList from '@/components/dashboard/SavedSearchesList';
 import SupportInbox from '@/components/dashboard/SupportInbox';
 import { ChatPanel } from '@/components/Chat';
 import { Headphones } from 'lucide-react';
+import BuyerDashboard from '@/components/homy/BuyerDashboard';
+import BrokerCabinet from '@/components/homy/BrokerCabinet';
+import AdminPanel from '@/components/homy/AdminPanel';
 
 // Type definitions
 type UserType = 'buyer' | 'renter' | 'owner' | 'agent' | 'consultant';
@@ -600,6 +603,21 @@ function DashboardContent() {
         </div>
       </div>
     );
+  }
+
+  // Buyer/renter get the new 1:1 dashboard (C1). Owner/agent/consultant keep the existing UI.
+  if (user && (user.user_type === 'buyer' || user.user_type === 'renter' || !user.user_type)) {
+    return <BuyerDashboard user={user} />;
+  }
+
+  // Admin/moderator get the new 1:1 admin panel (E1–E3).
+  if (user && (user.role === 'admin' || user.role === 'moderator' || user.user_type === 'admin')) {
+    return <AdminPanel user={user} />;
+  }
+
+  // Agent/owner get the new 1:1 broker cabinet (D1–D5).
+  if (user && (user.user_type === 'agent' || user.user_type === 'owner')) {
+    return <BrokerCabinet user={user} />;
   }
 
   // Render overview content (default tab)
