@@ -108,14 +108,14 @@ async function cancelViewingHandler(req: AuthenticatedRequest) {
       data: {
         userId: notifyUserId,
         type: 'viewing_cancelled',
-        title: 'Viewing Cancelled',
-        body: `${cancellerName || 'The other party'} has cancelled the viewing for "${viewing.property.title}" that was scheduled for ${viewing.scheduledAt.toLocaleDateString('en-US', {
+        title: 'Просмотр отменён',
+        body: `${cancellerName || 'Другая сторона'} отменил(а) просмотр «${viewing.property.title}», назначенный на ${viewing.scheduledAt.toLocaleDateString('ru-RU', {
           weekday: 'long',
           month: 'long',
           day: 'numeric',
           hour: '2-digit',
           minute: '2-digit',
-        })}${reason ? `. Reason: ${reason}` : ''}`,
+        })}${reason ? `. Причина: ${reason}` : ''}`,
         data: {
           viewingId: viewing.id,
           propertyId: viewing.propertyId,

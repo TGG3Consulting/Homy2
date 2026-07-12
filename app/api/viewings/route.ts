@@ -200,17 +200,17 @@ async function createViewingHandler(req: AuthenticatedRequest) {
     // Create notification for the other party
     const notifyUserId = isAgentCreating ? finalClientId : agentId;
     const notifyTitle = isAgentCreating
-      ? 'Viewing Proposed'
-      : 'New Viewing Request';
+      ? 'Предложен просмотр'
+      : 'Новый запрос на просмотр';
     const notifyBody = isAgentCreating
-      ? `${property.owner?.name || 'Property owner'} has proposed a viewing for "${property.title}" on ${scheduledDate.toLocaleDateString('en-US', {
+      ? `${property.owner?.name || 'Владелец объекта'} предложил(а) просмотр «${property.title}» на ${scheduledDate.toLocaleDateString('ru-RU', {
           weekday: 'long',
           month: 'long',
           day: 'numeric',
           hour: '2-digit',
           minute: '2-digit',
         })}`
-      : `${currentUser.name || 'A client'} has requested a viewing for "${property.title}" on ${scheduledDate.toLocaleDateString('en-US', {
+      : `${currentUser.name || 'Клиент'} запросил(а) просмотр «${property.title}» на ${scheduledDate.toLocaleDateString('ru-RU', {
           weekday: 'long',
           month: 'long',
           day: 'numeric',

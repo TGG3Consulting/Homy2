@@ -112,8 +112,8 @@ async function approveViewingHandler(req: AuthenticatedRequest) {
       data: {
         userId: notifyUserId,
         type: 'viewing_confirmed',
-        title: 'Viewing Confirmed',
-        body: `${approverName || 'The other party'} has confirmed the viewing for "${viewing.property.title}" on ${viewing.scheduledAt.toLocaleDateString('en-US', {
+        title: 'Просмотр подтверждён',
+        body: `${approverName || 'Другая сторона'} подтвердил(а) просмотр «${viewing.property.title}» на ${viewing.scheduledAt.toLocaleDateString('ru-RU', {
           weekday: 'long',
           month: 'long',
           day: 'numeric',

@@ -226,7 +226,7 @@ export default function ChatContainer({ onPropertiesFound, onLanguageChange, com
   useEffect(() => {
     if (typeof window !== 'undefined' && messages.length > 0) {
       const history = messages.map(m => ({ role: m.role, content: m.content }));
-      sessionStorage.setItem('homly_chat_history', JSON.stringify(history));
+      sessionStorage.setItem('homy_chat_history', JSON.stringify(history));
       console.log('[ChatContainer] Saved to sessionStorage:', messages.length, 'messages');
     }
   }, [messages]);

@@ -67,17 +67,19 @@ export default function FavoritesTab() {
   const router = useRouter();
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [filter, setFilter] = useState<Filter>('all');
   const [removing, setRemoving] = useState<Set<string>>(new Set());
 
   const fetchFavorites = useCallback(async () => {
+    setError(false);
     try {
       const r = await fetch('/api/users/me/favorites', { credentials: 'include' });
       if (r.ok) {
         const d = await r.json();
         setItems(Array.isArray(d.favorites) ? d.favorites : (d.properties || []));
-      }
-    } catch {} finally { setLoading(false); }
+      } else setError(true);
+    } catch { setError(true); } finally { setLoading(false); }
   }, []);
 
   useEffect(() => { fetchFavorites(); }, [fetchFavorites]);
@@ -120,6 +122,13 @@ export default function FavoritesTab() {
 
       {loading ? (
         <div className="fspin" />
+      ) : error ? (
+        <div className="empty">
+          <div className="ec"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" /></svg></div>
+          <h3>Не удалось загрузить</h3>
+          <p>Проверьте соединение и попробуйте снова.</p>
+          <button className="go" onClick={fetchFavorites}>Повторить</button>
+        </div>
       ) : filtered.length === 0 ? (
         <div className="empty">
           <div className="ec"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5.5-7 10-7 10z" /></svg></div>
@@ -149,6 +158,9 @@ export default function FavoritesTab() {
                   <div className="heart" title="Убрать из избранного" onClick={(e) => remove(p.id, e)}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="#F0616A" stroke="#F0616A"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5.5-7 10-7 10z" /></svg>
                   </div>
+                  {(p.is_top_choice || p.isTopChoice) && (
+                    <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 2, display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, color: '#fff', background: 'radial-gradient(120% 160% at 50% 18%,#2BC091,#0B6E4F)', borderRadius: 999, padding: '3px 8px', boxShadow: '0 2px 8px rgba(4,40,28,.35)' }}>★ Топ-выбор</div>
+                  )}
                 </div>
                 <div className="b">
                   <div className="cp">{fmtPrice(p.price)}<span>{(p.currency || 'AMD')}{rental ? '/мес' : ''}</span></div>

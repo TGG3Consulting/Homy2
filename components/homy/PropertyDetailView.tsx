@@ -39,11 +39,25 @@ const BUILDING_TYPE_RU: Record<string, string> = { brick: 'кирпичный д
 function getConversationHistory(): string {
   if (typeof window === 'undefined') return '';
   try {
-    const h = sessionStorage.getItem('homy_chat_history');
+    const h = sessionStorage.getItem('homy_chat_history') || sessionStorage.getItem('homly_chat_history');
     if (!h) return '';
     const msgs = JSON.parse(h);
     return msgs.filter((m: any) => m.role === 'user').map((m: any) => m.content).slice(-20).join('\n');
   } catch { return ''; }
+}
+
+interface ClientContext { query?: string; criteria?: string[]; messages?: { role: string; content: string }[] }
+
+// Build the client's real search context (query + extracted criteria + their chat turns).
+// Prefer what the results page passes in; fall back to sessionStorage for legacy/back-nav.
+function buildClientText(cc?: ClientContext): string {
+  const parts: string[] = [];
+  if (cc?.query && cc.query.trim()) parts.push(`Поисковый запрос: ${cc.query.trim()}`);
+  if (cc?.criteria && cc.criteria.length) parts.push(`Критерии поиска: ${cc.criteria.join(', ')}`);
+  const userMsgs = (cc?.messages || []).filter((m) => m.role === 'user').map((m) => m.content).slice(-20);
+  if (userMsgs.length) parts.push('Реплики клиента:\n' + userMsgs.join('\n'));
+  const text = parts.join('\n');
+  return text.trim() ? text : getConversationHistory();
 }
 
 interface Intelligence {
@@ -55,9 +69,9 @@ interface Intelligence {
 interface Opinion { summary: string; reasons: string[]; warning: string | null }
 type Tab = 'legal' | 'location' | 'infra' | 'invest';
 
-interface Props { propertyId: string; mode?: 'page' | 'popup'; onClose?: () => void }
+interface Props { propertyId: string; mode?: 'page' | 'popup'; onClose?: () => void; clientContext?: ClientContext }
 
-export default function PropertyDetailView({ propertyId, mode = 'page', onClose }: Props) {
+export default function PropertyDetailView({ propertyId, mode = 'page', onClose, clientContext }: Props) {
   const router = useRouter();
   const { lang } = useT();
   const { openPropertyChat } = useChatWidget();
@@ -144,7 +158,7 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose 
     let alive = true; setOpinion(null); setOpinionLoading(true);
     fetch(`/api/properties/${propertyId}/opinion`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ conversationHistory: getConversationHistory() }),
+      body: JSON.stringify({ conversationHistory: buildClientText(clientContext) }),
     }).then((r) => (r.ok ? r.json() : null))
       .then((d) => { if (alive && d && (d.summary || (d.reasons && d.reasons.length))) setOpinion(d); })
       .catch(() => {}).finally(() => { if (alive) setOpinionLoading(false); });

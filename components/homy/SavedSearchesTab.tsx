@@ -32,6 +32,10 @@ html.dark .homy-ssearch{--surface:#0E1218;--surface2:#171C25;--ink:#F2F4F7;--mut
 .homy-ssearch .open::after{content:'';position:absolute;left:3px;bottom:1px;width:0;height:2px;border-radius:2px;background:var(--em);transition:width .28s cubic-bezier(.22,1,.36,1)}
 .homy-ssearch .open:hover{color:var(--em)}
 .homy-ssearch .open:hover::after{width:calc(100% - 6px)}
+.homy-ssearch .srow .q .meta{font-size:11px;color:var(--muted);margin-top:6px}
+.homy-ssearch .srow .q .cr .more{color:var(--muted)}
+.homy-ssearch .del{flex:none;display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:none;border:0;color:var(--muted);cursor:pointer;border-radius:9px;transition:.15s}
+.homy-ssearch .del:hover{color:#D8434B;background:color-mix(in srgb,#D8434B 10%,transparent)}
 .homy-ssearch .empty{text-align:center;padding:60px 20px}
 .homy-ssearch .empty .ec{width:60px;height:60px;border-radius:16px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--em) 12%,transparent);color:var(--em)}
 .homy-ssearch .empty h3{font-size:16px;font-weight:700}
@@ -56,18 +60,26 @@ function matchWord(n: number): string {
   if (a >= 2 && a <= 4 && (b < 10 || b >= 20)) return 'совпадения';
   return 'совпадений';
 }
+function fmtDate(d: any): string {
+  if (!d) return '';
+  try { return new Date(d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' }); } catch { return ''; }
+}
+const MAX_SEARCHES = 20;
 
 export default function SavedSearchesTab() {
   const { lang } = useT();
   const router = useRouter();
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const fetchList = useCallback(async () => {
+    setError(false);
     try {
       const r = await fetch('/api/users/me/saved-searches', { credentials: 'include' });
       if (r.ok) { const d = await r.json(); setItems(d.searches || d.savedSearches || []); }
-    } catch {} finally { setLoading(false); }
+      else setError(true);
+    } catch { setError(true); } finally { setLoading(false); }
   }, []);
 
   useEffect(() => { fetchList(); }, [fetchList]);
@@ -96,6 +108,13 @@ export default function SavedSearchesTab() {
     router.push(`/results?query=${encodeURIComponent(loc(s.query, lang) || s.name || '')}`);
   }, [router, lang]);
 
+  const remove = useCallback(async (id: string) => {
+    setItems((prev) => prev.filter((s) => s.id !== id));
+    try {
+      await fetch(`/api/users/me/saved-searches/${id}`, { method: 'DELETE', credentials: 'include' });
+    } catch { fetchList(); }
+  }, [fetchList]);
+
   const notifOn = items.filter((s) => s.notify).length;
 
   return (
@@ -104,11 +123,18 @@ export default function SavedSearchesTab() {
 
       <div className="hd">
         <h2>Сохранённые поиски</h2>
-        <span className="n">{items.length} · {notifOn} с уведомлениями</span>
+        <span className="n">{items.length} из {MAX_SEARCHES} · {notifOn} с уведомлениями</span>
       </div>
 
       {loading ? (
         <div className="fspin" />
+      ) : error ? (
+        <div className="empty">
+          <div className="ec"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" /></svg></div>
+          <h3>Не удалось загрузить</h3>
+          <p>Проверьте соединение и попробуйте снова.</p>
+          <button className="go" onClick={fetchList}>Повторить</button>
+        </div>
       ) : items.length === 0 ? (
         <div className="empty">
           <div className="ec"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg></div>
@@ -120,13 +146,18 @@ export default function SavedSearchesTab() {
         <div className="list">
           {items.map((s) => {
             const count = Array.isArray(s.properties) ? s.properties.length : 0;
-            const chips = (s.criteriaChips || []).map((c: any) => loc(c, lang)).filter(Boolean).slice(0, 5);
+            const allChips = (s.criteriaChips || []).map((c: any) => loc(c, lang)).filter(Boolean);
+            const chips = allChips.slice(0, 5);
+            const extra = allChips.length - chips.length;
             const name = loc(s.name, lang) || loc(s.query, lang) || 'Ваш поиск';
+            const comment = loc(s.comment, lang);
+            const meta = [fmtDate(s.updatedAt || s.createdAt), comment].filter(Boolean).join(' · ');
             return (
               <div key={s.id} className="srow">
                 <div className="q">
                   <b>{name}{s.newCount > 0 && <span className="new">{s.newCount} новых</span>}</b>
-                  {chips.length > 0 && <div className="cr">{chips.map((c: string, i: number) => <span className="c" key={i}>{c}</span>)}</div>}
+                  {chips.length > 0 && <div className="cr">{chips.map((c: string, i: number) => <span className="c" key={i}>{c}</span>)}{extra > 0 && <span className="c more">+{extra}</span>}</div>}
+                  {meta && <div className="meta">{meta}</div>}
                 </div>
                 <div className="cnt"><b>{count}</b><span>{matchWord(count)}</span></div>
                 <div className="ntog">
@@ -134,6 +165,7 @@ export default function SavedSearchesTab() {
                   <span>уведомл.</span>
                 </div>
                 <button className="open" onClick={() => openSearch(s)}>Открыть</button>
+                <button className="del" title="Удалить поиск" aria-label="Удалить поиск" onClick={() => remove(s.id)}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M10 11v6M14 11v6" /></svg></button>
               </div>
             );
           })}

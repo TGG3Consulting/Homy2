@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { propertyOpinion } from '@/lib/anthropicClient';
+import { propertyIntelligenceService } from '@/lib/services/propertyIntelligence';
 
 export async function POST(
   req: NextRequest,
@@ -21,6 +22,25 @@ export async function POST(
     if (!property) {
       return NextResponse.json({ error: 'Property not found' }, { status: 404 });
     }
+
+    // Pull verified intelligence (legal / price / location) so the opinion is grounded, not generic
+    let intel: Parameters<typeof propertyOpinion>[2];
+    try {
+      const raw: any = await propertyIntelligenceService.getIntelligence(id);
+      intel = {
+        developer_verified: raw?.legal?.developer_verified,
+        double_sale_risk: raw?.legal?.double_sale_risk,
+        ownership_status: raw?.legal?.ownership_status,
+        title_status: raw?.legal?.title_status,
+        price_vs_market: raw?.investment?.price_vs_market,
+        investment_score: raw?.investment?.score,
+        roi_estimate: raw?.investment?.roi_estimate,
+        appreciation_forecast: raw?.investment?.appreciation_forecast,
+        noise_level: raw?.location?.noise_level,
+        commute: raw?.location?.commute_am,
+        parking: raw?.location?.parking_available ? 'есть' : 'ограничена',
+      };
+    } catch { /* intelligence optional */ }
 
     // Use Claude API (handle all nullable fields and Decimal types)
     const opinion = await propertyOpinion(
@@ -40,7 +60,8 @@ export async function POST(
         hasBalcony: property.hasBalcony ?? undefined,
         petsAllowed: property.petsAllowed ?? undefined,
       },
-      conversationHistory
+      conversationHistory,
+      intel
     );
 
     return NextResponse.json(opinion);

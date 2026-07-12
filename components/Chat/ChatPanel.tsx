@@ -352,7 +352,7 @@ export default function ChatPanel({
   const otherParty = getOtherParty();
   const otherPartyName = otherParty
     ? `${otherParty.first_name} ${otherParty.last_name}`.trim()
-    : selectedConversation?.type === 'support' ? 'Поддержка HomLy' : 'Собеседник';
+    : selectedConversation?.type === 'support' ? 'Поддержка Homy' : 'Собеседник';
 
   return (
     <div

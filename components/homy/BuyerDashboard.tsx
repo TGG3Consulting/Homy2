@@ -31,6 +31,7 @@ const TABS = [
   { id: 'favorites', label: 'Избранное' },
   { id: 'searches', label: 'Поиски' },
   { id: 'viewings', label: 'Просмотры' },
+  { id: 'recommendations', label: 'Рекомендации' },
   { id: 'messages', label: 'Сообщения' },
   { id: 'settings', label: 'Настройки' },
 ];

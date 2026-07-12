@@ -732,7 +732,7 @@ function ResultsInner() {
       {toast && <div className={`smtoast${toast.ok ? ' ok' : ' err'}`}>{toast.text}</div>}
 
       {/* property detail popup */}
-      {detailId && <PropertyDetailView propertyId={detailId} mode="popup" onClose={() => setDetailId(null)} />}
+      {detailId && <PropertyDetailView propertyId={detailId} mode="popup" onClose={() => setDetailId(null)} clientContext={{ query, criteria: criteriaChips, messages: chatMessages }} />}
     </div>
   );
 }

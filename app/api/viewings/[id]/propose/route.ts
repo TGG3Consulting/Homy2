@@ -133,14 +133,14 @@ async function proposeViewingHandler(req: AuthenticatedRequest) {
       data: {
         userId: notifyUserId,
         type: 'viewing_proposed',
-        title: 'New Time Proposed',
-        body: `${proposerName || 'The other party'} has proposed a new time for the viewing of "${viewing.property.title}": ${scheduledDate.toLocaleDateString('en-US', {
+        title: 'Предложено новое время',
+        body: `${proposerName || 'Другая сторона'} предложил(а) новое время просмотра «${viewing.property.title}»: ${scheduledDate.toLocaleDateString('ru-RU', {
           weekday: 'long',
           month: 'long',
           day: 'numeric',
           hour: '2-digit',
           minute: '2-digit',
-        })}${comment ? `. Comment: ${comment}` : ''}`,
+        })}${comment ? `. Комментарий: ${comment}` : ''}`,
         data: {
           viewingId: viewing.id,
           propertyId: viewing.propertyId,

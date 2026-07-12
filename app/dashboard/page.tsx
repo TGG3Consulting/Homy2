@@ -26,11 +26,8 @@ import {
 } from 'lucide-react';
 import { useT } from '@/lib/i18n';
 import { Footer } from '@/components/homly';
-import FavoritesList from '@/components/dashboard/FavoritesList';
-import ViewingsList from '@/components/dashboard/ViewingsList';
 import UserSettings from '@/components/dashboard/UserSettings';
 import RecommendedProperties from '@/components/dashboard/RecommendedProperties';
-import SavedSearchesList from '@/components/dashboard/SavedSearchesList';
 import SupportInbox from '@/components/dashboard/SupportInbox';
 import { ChatPanel } from '@/components/Chat';
 import { Headphones } from 'lucide-react';
@@ -383,16 +380,10 @@ function DashboardContent() {
   // Render tab content based on active tab
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'favorites':
-        return <FavoritesList />;
-      case 'viewings':
-        return <ViewingsList userType={user?.user_type} />;
       case 'settings':
         return <UserSettings />;
       case 'recommendations':
         return <RecommendedProperties />;
-      case 'searches':
-        return <SavedSearchesList />;
       case 'messages':
         return (
           <div className="h-[calc(100vh-200px)] min-h-[500px]">

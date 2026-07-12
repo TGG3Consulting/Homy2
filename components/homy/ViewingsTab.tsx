@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useT } from '@/lib/i18n';
+import ViewingCreateForm from '@/components/dashboard/ViewingCreateForm';
 
 /** 1:1 A12 «Мои просмотры» styles from Homy-Batch2 mockup. Scoped under .homy-view. */
 const VIEW_CSS = `
@@ -93,20 +94,25 @@ export default function ViewingsTab() {
   const [busy, setBusy] = useState<string | null>(null);
   const [toast, setToast] = useState<{ ok: boolean; text: string } | null>(null);
   const [proposeFor, setProposeFor] = useState<Viewing | null>(null);
+  const [showCreate, setShowCreate] = useState(false);
+  const [error, setError] = useState(false);
+  const [userType, setUserType] = useState<string>('');
 
   const showToast = useCallback((ok: boolean, text: string) => {
     setToast({ ok, text }); window.setTimeout(() => setToast(null), 3200);
   }, []);
 
   const fetchAll = useCallback(async () => {
+    setError(false);
     try {
       const [vRes, uRes] = await Promise.all([
         fetch('/api/viewings', { credentials: 'include' }),
         fetch('/api/users/me', { credentials: 'include' }),
       ]);
-      if (uRes.ok) { const u = await uRes.json(); setMe(u.id || u.user?.id || ''); }
+      if (uRes.ok) { const u = await uRes.json(); setMe(u.id || u.user?.id || ''); setUserType(u.user_type || u.user?.user_type || ''); }
       if (vRes.ok) { const d = await vRes.json(); setViewings(d.viewings || []); }
-    } catch {} finally { setLoading(false); }
+      else setError(true);
+    } catch { setError(true); } finally { setLoading(false); }
   }, []);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
@@ -154,10 +160,18 @@ export default function ViewingsTab() {
           <span className={`chip${tab === 'active' ? ' active' : ''}`} onClick={() => setTab('active')}>Активные{active.length > 0 && <span className="c">{active.length}</span>}</span>
           <span className={`chip${tab === 'done' ? ' active' : ''}`} onClick={() => setTab('done')}>Завершённые{done.length > 0 && <span className="c">{done.length}</span>}</span>
         </div>
+        <button onClick={() => setShowCreate(true)} style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: '#fff', background: 'radial-gradient(135% 175% at 50% 14%,#2BC091,#0B6E4F)', border: 0, borderRadius: 11, padding: '9px 14px', cursor: 'pointer', fontFamily: 'inherit' }}>+ Запросить просмотр</button>
       </div>
 
       {loading ? (
         <div className="fspin" />
+      ) : error ? (
+        <div className="empty">
+          <div className="ec"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" /></svg></div>
+          <h3>Не удалось загрузить</h3>
+          <p>Проверьте соединение и попробуйте снова.</p>
+          <button className="go" onClick={fetchAll}>Повторить</button>
+        </div>
       ) : list.length === 0 ? (
         <div className="empty">
           <div className="ec"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg></div>
@@ -210,6 +224,13 @@ export default function ViewingsTab() {
                   <b>{title}</b>
                   <div className="dt"><span>📅 {fmtDt(v.scheduledAt)}</span></div>
                   <div className="cl">{statusText}{v.comment ? ` · «${v.comment}»` : ''}</div>
+                  {(() => {
+                    const place = [loc(v.property?.address, lang), loc(v.property?.district || v.property?.neighborhood, lang)].filter(Boolean).join(' · ');
+                    return place ? <div style={{ fontSize: 12, color: 'var(--muted,#6A7382)', marginTop: 3 }}>📍 {place}</div> : null;
+                  })()}
+                  {other?.phone && (
+                    <a href={`tel:${other.phone}`} onClick={(e) => e.stopPropagation()} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 600, color: 'var(--em,#0A6045)', textDecoration: 'none', marginTop: 6 }}>📞 Позвонить · {other.phone}</a>
+                  )}
                 </div>
                 <div className="act">
                   {sig}
@@ -222,6 +243,17 @@ export default function ViewingsTab() {
       )}
 
       {proposeFor && <ProposeModal viewing={proposeFor} lang={lang} busy={busy === proposeFor.id} onClose={() => setProposeFor(null)} onSubmit={propose} />}
+      {showCreate && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 120, background: 'rgba(6,10,20,.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }} onClick={() => setShowCreate(false)}>
+          <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: 560, width: '100%', maxHeight: '90vh', overflow: 'auto', background: 'var(--surface,#fff)', borderRadius: 16 }}>
+            <ViewingCreateForm
+              userType={(userType as any) || 'buyer'}
+              onCancel={() => setShowCreate(false)}
+              onSuccess={() => { setShowCreate(false); showToast(true, 'Запрос на просмотр отправлен'); fetchAll(); }}
+            />
+          </div>
+        </div>
+      )}
       {toast && <div className={`toast ${toast.ok ? 'ok' : 'err'}`}>{toast.text}</div>}
     </div>
   );

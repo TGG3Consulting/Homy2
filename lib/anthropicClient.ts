@@ -1,11 +1,11 @@
 /**
- * Anthropic Claude API Client for HomLy
+ * Anthropic Claude API Client for Homy
  * Replaces CLI subprocess spawning with direct API calls
  */
 
 import Anthropic from '@anthropic-ai/sdk';
-import { HOMLY_SYSTEM_PROMPT, buildPropertyChatPrompt, buildPropertyOpinionPrompt } from './homySystemPrompt';
-import { HOMLY_TOOLS, executeToolCall, ToolName, PropertyShowResult } from './toolHandlers';
+import { HOMY_SYSTEM_PROMPT, buildPropertyChatPrompt, buildPropertyOpinionPrompt } from './homySystemPrompt';
+import { HOMY_TOOLS, executeToolCall, ToolName, PropertyShowResult } from './toolHandlers';
 
 // ============================================
 // TYPES
@@ -58,7 +58,7 @@ const MODEL = 'claude-sonnet-4-6';
  */
 export async function runAgentLoop(
   messages: Array<{ role: 'user' | 'assistant'; content: any }>,
-  systemPrompt: string = HOMLY_SYSTEM_PROMPT
+  systemPrompt: string = HOMY_SYSTEM_PROMPT
 ): Promise<AgentResponse> {
   const client = getAnthropicClient();
   let currentMessages = [...messages];
@@ -74,7 +74,7 @@ export async function runAgentLoop(
         model: MODEL,
         max_tokens: 4096,
         system: systemPrompt,
-        tools: HOMLY_TOOLS as any,
+        tools: HOMY_TOOLS as any,
         messages: currentMessages,
       });
 
@@ -203,9 +203,10 @@ export async function propertyChat(
  */
 export async function propertyOpinion(
   property: Parameters<typeof buildPropertyOpinionPrompt>[0],
-  conversationHistory: string
+  conversationHistory: string,
+  intel?: Parameters<typeof buildPropertyOpinionPrompt>[2]
 ): Promise<{ summary: string; reasons: string[]; warning: string | null }> {
-  const prompt = buildPropertyOpinionPrompt(property, conversationHistory);
+  const prompt = buildPropertyOpinionPrompt(property, conversationHistory, intel);
 
   try {
     const response = await simpleChat(prompt);

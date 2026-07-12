@@ -99,8 +99,8 @@ async function rejectViewingHandler(req: AuthenticatedRequest) {
       data: {
         userId: viewing.client.id,
         type: 'viewing_rejected',
-        title: 'Viewing Request Declined',
-        body: `${currentUser?.name || 'The property owner'} has declined your viewing request for "${viewing.property.title}"${rejectionReason ? `. Reason: ${rejectionReason}` : ''}`,
+        title: 'Просмотр отклонён',
+        body: `${currentUser?.name || 'Владелец объекта'} отклонил(а) ваш запрос на просмотр «${viewing.property.title}»${rejectionReason ? `. Причина: ${rejectionReason}` : ''}`,
         data: {
           viewingId: viewing.id,
           propertyId: viewing.propertyId,

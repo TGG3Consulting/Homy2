@@ -12,10 +12,10 @@ import matchScoreService from '@/lib/services/matchScoreService';
 // TOOL DEFINITIONS (for Claude API)
 // ============================================
 
-export const HOMLY_TOOLS = [
+export const HOMY_TOOLS = [
   {
     name: "search_properties",
-    description: "Поиск объектов недвижимости в базе данных HomLy. Используй для поиска квартир, домов по фильтрам.",
+    description: "Поиск объектов недвижимости в базе данных Homy. Используй для поиска квартир, домов по фильтрам.",
     input_schema: {
       type: "object" as const,
       properties: {
@@ -68,7 +68,7 @@ export const HOMLY_TOOLS = [
   },
   {
     name: "get_platform_metrics",
-    description: "Получить статистику платформы HomLy: количество объектов, средние цены по районам.",
+    description: "Получить статистику платформы Homy: количество объектов, средние цены по районам.",
     input_schema: {
       type: "object" as const,
       properties: {}

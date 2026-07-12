@@ -1,5 +1,5 @@
 /**
- * HomLy Server with WebSocket and Socket.io support
+ * Homy Server with WebSocket and Socket.io support
  * - /ws/chat: AI Chat via Claude API
  * - /socket.io: Real-time live chat
  */

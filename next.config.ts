@@ -125,7 +125,7 @@ const nextConfig: NextConfig = {
 
   // Environment variables exposed to the browser
   env: {
-    NEXT_PUBLIC_APP_NAME: 'HomLy',
+    NEXT_PUBLIC_APP_NAME: 'Homy',
     NEXT_PUBLIC_APP_VERSION: process.env.npm_package_version || '1.0.0',
   },
 

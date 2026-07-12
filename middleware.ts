@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 /**
- * Security middleware for HomLy application
+ * Security middleware for Homy application
  * - Sets security headers on all responses
  * - Protects authenticated routes
  * - Handles CORS for API routes
