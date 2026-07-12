@@ -36,6 +36,12 @@ function loc(v: any, lang: string): string {
   return v;
 }
 const BUILDING_TYPE_RU: Record<string, string> = { brick: 'кирпичный дом', panel: 'панельный дом', monolith: 'монолит' };
+function plur(n: number, forms: [string, string, string]): string {
+  const a = n % 10, b = n % 100;
+  if (a === 1 && b !== 11) return forms[0];
+  if (a >= 2 && a <= 4 && (b < 10 || b >= 20)) return forms[1];
+  return forms[2];
+}
 function getConversationHistory(): string {
   if (typeof window === 'undefined') return '';
   try {
@@ -88,6 +94,21 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
   const [hasExistingViewing, setHasExistingViewing] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [showTour, setShowTour] = useState(false);
+  const [meId, setMeId] = useState<string>('');
+  const [intelError, setIntelError] = useState(false);
+  const [reloadTick, setReloadTick] = useState(0);
+  // nearby
+  const [nearby, setNearby] = useState<any | null>(null);
+  const [nearbyLoading, setNearbyLoading] = useState(true);
+  const [nearbyError, setNearbyError] = useState(false);
+  // reviews
+  const [reviews, setReviews] = useState<any | null>(null);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [reviewsError, setReviewsError] = useState(false);
+  const [myRating, setMyRating] = useState(0);
+  const [myComment, setMyComment] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [reviewMsg, setReviewMsg] = useState<string | null>(null);
 
   const close = useCallback(() => { if (onClose) onClose(); else router.back(); }, [onClose, router]);
 
@@ -141,14 +162,15 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
       finally { if (alive) setLoading(false); }
     })();
     return () => { alive = false; };
-  }, [propertyId, mode]);
+  }, [propertyId, mode, reloadTick]);
 
   // intelligence
   useEffect(() => {
     if (!propertyId) return;
-    let alive = true; setIntel(null);
+    let alive = true; setIntel(null); setIntelError(false);
     fetch(`/api/properties/${propertyId}/intelligence`).then((r) => (r.ok ? r.json() : null))
-      .then((d) => { if (alive && d && d.legal) setIntel(d); }).catch(() => {});
+      .then((d) => { if (!alive) return; if (d && d.legal) setIntel(d); else setIntelError(true); })
+      .catch(() => { if (alive) setIntelError(true); });
     return () => { alive = false; };
   }, [propertyId]);
 
@@ -168,9 +190,50 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
   // auth
   useEffect(() => {
     let alive = true;
-    fetch('/api/users/me', { credentials: 'include' }).then((r) => alive && setIsLoggedIn(r.ok)).catch(() => alive && setIsLoggedIn(false));
+    fetch('/api/users/me', { credentials: 'include' }).then(async (r) => {
+      if (!alive) return;
+      setIsLoggedIn(r.ok);
+      if (r.ok) { try { const u = await r.json(); setMeId(u.id || u.user?.id || ''); } catch {} }
+    }).catch(() => alive && setIsLoggedIn(false));
     return () => { alive = false; };
   }, []);
+
+  // nearby places
+  const loadNearby = useCallback(async () => {
+    if (!propertyId) return;
+    setNearbyLoading(true); setNearbyError(false);
+    try {
+      const r = await fetch(`/api/properties/${propertyId}/nearby`);
+      if (r.ok) setNearby(await r.json()); else setNearbyError(true);
+    } catch { setNearbyError(true); } finally { setNearbyLoading(false); }
+  }, [propertyId]);
+  useEffect(() => { loadNearby(); }, [loadNearby]);
+
+  // reviews
+  const loadReviews = useCallback(async () => {
+    if (!propertyId) return;
+    setReviewsLoading(true); setReviewsError(false);
+    try {
+      const r = await fetch(`/api/properties/${propertyId}/reviews`);
+      if (r.ok) setReviews(await r.json()); else setReviewsError(true);
+    } catch { setReviewsError(true); } finally { setReviewsLoading(false); }
+  }, [propertyId]);
+  useEffect(() => { loadReviews(); }, [loadReviews]);
+
+  const submitReview = async () => {
+    if (!myRating) { setReviewMsg('Поставьте оценку'); return; }
+    setSubmittingReview(true); setReviewMsg(null);
+    try {
+      const r = await fetch(`/api/properties/${propertyId}/reviews`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+        body: JSON.stringify({ rating: myRating, comment: myComment.trim() || undefined }),
+      });
+      if (r.ok) { setMyRating(0); setMyComment(''); setReviewMsg('Спасибо за отзыв!'); loadReviews(); }
+      else if (r.status === 409) setReviewMsg('Вы уже оставили отзыв на этот объект');
+      else if (r.status === 401) setReviewMsg('Войдите, чтобы оставить отзыв');
+      else setReviewMsg('Не удалось отправить отзыв');
+    } catch { setReviewMsg('Ошибка сети'); } finally { setSubmittingReview(false); }
+  };
 
   // existing viewing
   useEffect(() => {
@@ -198,13 +261,22 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
     <div className="irow"><span className="k">{icon}{k}</span><span className={`v${tone ? ' ' + tone : ''}`}>{v}</span></div>
   );
 
+  const stars = (n: number, size = 14) => (
+    <span style={{ display: 'inline-flex', gap: 1, verticalAlign: 'middle' }}>
+      {[1, 2, 3, 4, 5].map((i) => <Star key={i} size={size} fill={i <= Math.round(n) ? 'var(--em)' : 'none'} stroke={i <= Math.round(n) ? 'var(--em)' : 'var(--hair)'} />)}
+    </span>
+  );
+
   const renderBody = () => {
     if (loading) return <div className="pstate"><div className="pspin" /></div>;
     if (error || !property) {
       return (
         <div className="pstate">
           <div style={{ fontSize: 18, fontWeight: 600 }}>{error || 'Объект не найден'}</div>
-          <button className="itab on" onClick={close}>Закрыть</button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="itab on" onClick={() => { setError(null); setLoading(true); setReloadTick((t) => t + 1); }}>Повторить</button>
+            <button className="itab" onClick={close}>Закрыть</button>
+          </div>
         </div>
       );
     }
@@ -388,11 +460,48 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
                 )}
               </div>
             )}
+            {!intel && intelError && (
+              <div className="sec bare">
+                <div className="intel-h">Property Intelligence · {displayLoc}</div>
+                <p style={{ color: 'var(--muted)', fontSize: 13, padding: '8px 2px' }}>Данные проверки временно недоступны.</p>
+              </div>
+            )}
 
-            {/* mini map */}
+            {/* Рядом — реальные места с временем пешком + карта */}
             <div>
               <div className="sh mut" style={{ marginBottom: 9 }}><MapPin size={13} />Рядом</div>
-              <div className="mmapc"><PropertyMiniMap property={property} propertyId={property.id} /></div>
+              {nearbyLoading ? (
+                <div className="loadrow"><Loader2 size={14} className="animate-spin" />Ищем места поблизости…</div>
+              ) : nearbyError ? (
+                <div style={{ fontSize: 13, color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                  Не удалось загрузить.<button className="itab" onClick={loadNearby}>Повторить</button>
+                </div>
+              ) : (() => {
+                const cats: { key: string; label: string; icon: React.ReactNode }[] = [
+                  { key: 'schools', label: 'Школы и сады', icon: <GraduationCap size={14} /> },
+                  { key: 'metro', label: 'Транспорт', icon: <Bus size={14} /> },
+                  { key: 'supermarkets', label: 'Магазины', icon: <ShoppingCart size={14} /> },
+                  { key: 'parks', label: 'Парки', icon: <TreePine size={14} /> },
+                ];
+                const groups = cats.map((c) => ({ ...c, items: (nearby?.[c.key] || []).slice(0, 3) })).filter((g) => g.items.length);
+                if (!groups.length) return <div style={{ fontSize: 13, color: 'var(--muted)' }}>Рядом ничего не найдено.</div>;
+                return (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 10 }}>
+                    {groups.map((g) => (
+                      <div key={g.key} style={{ background: 'var(--surface2)', border: '1px solid var(--hair)', borderRadius: 12, padding: '10px 12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12.5, fontWeight: 700, color: 'var(--em)', marginBottom: 6 }}>{g.icon}{g.label}</div>
+                        {g.items.map((it: any, i: number) => (
+                          <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 10, fontSize: 12.5, color: 'var(--ink)', padding: '3px 0' }}>
+                            <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{it.name}</span>
+                            <span style={{ color: 'var(--muted)', flex: 'none' }}>{it.walk_time_min ? `${it.walk_time_min} мин пешком` : it.distance_m ? `${it.distance_m} м` : ''}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+              <div className="mmapc" style={{ marginTop: 12 }}><PropertyMiniMap property={property} propertyId={property.id} /></div>
             </div>
 
             {/* agent + viewing */}
@@ -416,6 +525,64 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
                 <div className="vformwrap">
                   <ViewingRequestForm property={property} onSuccess={() => { setShowForm(false); setHasExistingViewing(true); }} onCancel={() => setShowForm(false)} />
                 </div>
+              )}
+            </div>
+
+            {/* Отзывы */}
+            <div className="sec">
+              <div className="sh"><Star size={13} />Отзывы</div>
+              {reviewsLoading ? (
+                <div className="loadrow"><Loader2 size={14} className="animate-spin" />Загружаем отзывы…</div>
+              ) : reviewsError ? (
+                <div style={{ fontSize: 13, color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                  Не удалось загрузить отзывы.<button className="itab" onClick={loadReviews}>Повторить</button>
+                </div>
+              ) : (
+                <>
+                  {reviews?.stats?.totalReviews > 0 ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                      <b style={{ fontSize: 22, color: 'var(--ink)' }}>{Number(reviews.stats.averageRating).toFixed(1)}</b>
+                      {stars(reviews.stats.averageRating, 16)}
+                      <span style={{ fontSize: 12.5, color: 'var(--muted)' }}>{reviews.stats.totalReviews} {plur(reviews.stats.totalReviews, ['отзыв', 'отзыва', 'отзывов'])}</span>
+                    </div>
+                  ) : (
+                    <p style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 12 }}>Пока нет отзывов. Будьте первым.</p>
+                  )}
+                  <div style={{ display: 'grid', gap: 10 }}>
+                    {(reviews?.reviews || []).slice(0, 5).map((rv: any) => {
+                      const author = rv.user?.name || [rv.user?.first_name, rv.user?.last_name].filter(Boolean).join(' ') || rv.author_name || 'Пользователь';
+                      const dt = rv.created_at || rv.createdAt;
+                      const date = dt ? new Date(dt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+                      return (
+                        <div key={rv.id} style={{ background: 'var(--surface2)', border: '1px solid var(--hair)', borderRadius: 12, padding: '10px 12px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: rv.comment ? 4 : 0 }}>
+                            <b style={{ fontSize: 13, color: 'var(--ink)' }}>{author}</b>
+                            {stars(rv.rating, 12)}
+                            {date && <span style={{ fontSize: 11, color: 'var(--muted)', marginLeft: 'auto' }}>{date}</span>}
+                          </div>
+                          {rv.comment && <div style={{ fontSize: 12.5, color: 'var(--muted)', lineHeight: 1.5 }}>{rv.comment}</div>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div style={{ marginTop: 14, borderTop: '1px solid var(--hair)', paddingTop: 12 }}>
+                    {isLoggedIn ? (
+                      <>
+                        <div style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>Оставить отзыв</div>
+                        <div style={{ display: 'inline-flex', gap: 3, marginBottom: 8 }}>
+                          {[1, 2, 3, 4, 5].map((i) => <Star key={i} size={24} style={{ cursor: 'pointer' }} fill={i <= myRating ? 'var(--em)' : 'none'} stroke={i <= myRating ? 'var(--em)' : 'var(--muted)'} onClick={() => setMyRating(i)} />)}
+                        </div>
+                        <textarea value={myComment} onChange={(e) => setMyComment(e.target.value)} rows={2} placeholder="Ваш опыт: район, дом, сделка…" style={{ width: '100%', resize: 'vertical', borderRadius: 10, border: '1px solid var(--hair)', background: 'var(--surface)', color: 'var(--ink)', padding: '8px 10px', fontSize: 13, fontFamily: 'inherit', outline: 'none' }} />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8 }}>
+                          <button disabled={submittingReview} onClick={submitReview} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: '#fff', background: 'var(--em)', border: 0, borderRadius: 10, padding: '9px 16px', cursor: 'pointer', opacity: submittingReview ? 0.6 : 1 }}>{submittingReview ? 'Отправляем…' : 'Отправить отзыв'}</button>
+                          {reviewMsg && <span style={{ fontSize: 12, color: 'var(--muted)' }}>{reviewMsg}</span>}
+                        </div>
+                      </>
+                    ) : (
+                      <div style={{ fontSize: 12.5, color: 'var(--muted)' }}>Войдите, чтобы оставить отзыв.</div>
+                    )}
+                  </div>
+                </>
               )}
             </div>
           </div>
