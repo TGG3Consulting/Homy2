@@ -150,6 +150,7 @@ function ListingsView({ lang, router, showToast }: any) {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'published' | 'pending' | 'rejected'>('all');
   const [createOpen, setCreateOpen] = useState(false);
+  const [editItem, setEditItem] = useState<any>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -174,8 +175,8 @@ function ListingsView({ lang, router, showToast }: any) {
   };
 
   const rows = [
-    ...props.map((p: any) => ({ key: `p_${p.id}`, id: p.id, kind: 'property', title: loc(p.title, lang), place: [p.address, loc(p.district, lang)].filter(Boolean).join(' · '), img: p.imageUrl || p.images?.[0] || '', status: p.available ? 'published' : 'off', _count: p._count, available: p.available })),
-    ...subs.map((l: any) => ({ key: `l_${l.id}`, id: l.id, kind: 'listing', title: l.location || 'Объявление', place: l.status === 'rejected' ? 'Отклонено модератором' : 'Ожидает проверки', img: (Array.isArray(l.photos) && l.photos[0]) || '', status: l.status })),
+    ...props.map((p: any) => ({ key: `p_${p.id}`, id: p.id, kind: 'property', title: loc(p.title, lang), place: [p.address, loc(p.district, lang)].filter(Boolean).join(' · '), img: p.imageUrl || p.images?.[0] || '', status: p.available ? 'published' : 'off', _count: p._count, available: p.available, _orig: p })),
+    ...subs.map((l: any) => ({ key: `l_${l.id}`, id: l.id, kind: 'listing', title: l.location || 'Объявление', place: l.status === 'rejected' ? 'Отклонено модератором' : 'Ожидает проверки', img: (Array.isArray(l.photos) && l.photos[0]) || '', status: l.status, _orig: l })),
   ];
   const matches = (r: any) => filter === 'all' ? true : filter === 'published' ? (r.status === 'published' || r.status === 'off') : r.status === filter;
   const list = rows.filter(matches);
@@ -205,28 +206,68 @@ function ListingsView({ lang, router, showToast }: any) {
               <div className="ti"><b>{r.title}</b><div className="mt">{r.place}</div></div>
               {r.kind === 'property' && <div className="kv"><span>{r._count?.viewings ?? 0} <b>запр.</b></span><span>{r._count?.leads ?? 0} <b>лид.</b></span></div>}
               <span className={`stat ${b.c}`}>{b.t}</span>
-              {r.kind === 'property' && (
-                <div className="lact">
-                  <button className="sec" onClick={() => router.push(`/properties/${r.id}`)}>Открыть</button>
-                  <button className="sec danger" onClick={() => unpublish(r)}>{r.available ? 'Снять' : 'Вернуть'}</button>
-                </div>
-              )}
+              <div className="lact">
+                {r.kind === 'property' && <button className="sec" onClick={() => router.push(`/properties/${r.id}`)}>Открыть</button>}
+                <button className="sec" onClick={() => setEditItem({ id: r.id, kind: r.kind, data: r._orig })}>Изменить</button>
+                {r.kind === 'property' && <button className="sec danger" onClick={() => unpublish(r)}>{r.available ? 'Снять' : 'Вернуть'}</button>}
+              </div>
             </div>
           );
         })}
       {createOpen && <CreateListingModal lang={lang} onClose={() => setCreateOpen(false)} onDone={() => { setCreateOpen(false); load(); showToast(true, 'Отправлено на модерацию'); }} showToast={showToast} />}
+      {editItem && <CreateListingModal lang={lang} editing={editItem} onClose={() => setEditItem(null)} onDone={() => { setEditItem(null); load(); showToast(true, 'Изменения сохранены'); }} showToast={showToast} />}
     </>
   );
 }
 
 /* ---------------- D3 Create listing modal ---------------- */
-function CreateListingModal({ lang, onClose, onDone, showToast }: any) {
-  const [f, setF] = useState<any>({ dealType: 'long_term_rental', propertyType: 'apartment', district: '', address: '', price: '', rooms: '', area: '', floor: '', description: '' });
-  const [photos, setPhotos] = useState<string[]>([]);
+function CreateListingModal({ lang, onClose, onDone, showToast, editing }: any) {
+  const isEdit = !!editing;
+  const d = editing?.data || {};
+  const [f, setF] = useState<any>(isEdit ? {
+    dealType: d.deal_type || d.dealType || 'long_term_rental',
+    propertyType: d.property_type || d.propertyType || 'apartment',
+    district: (typeof d.district === 'string' ? d.district : loc(d.district, lang)) || '',
+    address: d.address || d.location || '',
+    price: d.price != null ? String(d.price) : '',
+    rooms: d.rooms != null ? String(d.rooms) : '',
+    area: (d.area ?? d.size_sqm) != null ? String(d.area ?? d.size_sqm) : '',
+    floor: d.floor != null ? String(d.floor) : '',
+    description: (typeof d.description === 'string' ? d.description : loc(d.description, lang)) || '',
+  } : { dealType: 'long_term_rental', propertyType: 'apartment', district: '', address: '', price: '', rooms: '', area: '', floor: '', description: '' });
+  const [photos, setPhotos] = useState<string[]>(isEdit ? (d.images || d.photos || []) : []);
   const [uploading, setUploading] = useState(false);
   const [busy, setBusy] = useState(false);
   const fileRef = React.useRef<HTMLInputElement>(null);
   const set = (k: string, v: any) => setF((s: any) => ({ ...s, [k]: v }));
+
+  // The listings feed is trimmed (no rooms/area/floor/description) — on edit, pull the
+  // full record so every field is pre-filled, not just price/district/photos.
+  useEffect(() => {
+    if (!isEdit) return;
+    const url = editing.kind === 'property' ? `/api/properties/${editing.id}` : `/api/properties/listings/${editing.id}`;
+    let alive = true;
+    fetch(url, { credentials: 'include' }).then((r) => r.ok ? r.json() : null).then((res) => {
+      if (!alive || !res) return;
+      const o = res.property || res.listing || res;
+      setF((s: any) => ({
+        ...s,
+        dealType: o.deal_type || o.dealType || s.dealType,
+        propertyType: o.property_type || o.propertyType || s.propertyType,
+        district: (typeof o.district === 'string' ? o.district : loc(o.district, lang)) || s.district,
+        address: o.address || o.location || s.address,
+        price: o.price != null ? String(o.price) : s.price,
+        rooms: o.rooms != null ? String(o.rooms) : s.rooms,
+        area: (o.area ?? o.sizeSqm ?? o.size_sqm) != null ? String(o.area ?? o.sizeSqm ?? o.size_sqm) : s.area,
+        floor: o.floor != null ? String(o.floor) : s.floor,
+        description: (typeof o.description === 'string' ? o.description : loc(o.description, lang)) || s.description,
+      }));
+      const imgs = o.images || o.photos;
+      if (Array.isArray(imgs) && imgs.length) setPhotos(imgs);
+    }).catch(() => {});
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEdit]);
 
   const onFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -243,34 +284,50 @@ function CreateListingModal({ lang, onClose, onDone, showToast }: any) {
   };
 
   const submit = async () => {
-    if (!f.price || !f.district || !f.area || !f.rooms) { showToast(false, 'Укажите район, цену, комнаты и площадь'); return; }
+    if (!f.price || !f.area || !f.rooms || (!isEdit && !f.district)) { showToast(false, 'Укажите цену, комнаты и площадь'); return; }
     setBusy(true);
     try {
-      // New listings go through moderation (PropertyListing pending) — a moderator
-      // approves it and only then it becomes a live catalogue object.
-      const r = await fetch('/api/properties/list', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
-        body: JSON.stringify({
-          property_type: f.propertyType,
-          deal_type: f.dealType,
-          district: f.district,
-          address: f.address,
-          price: Number(f.price),
-          rooms: Number(f.rooms),
-          area: Number(f.area),
-          floor: f.floor ? Number(f.floor) : null,
-          description: f.description,
-          photos,
-        }),
-      });
-      if (!r.ok) { showToast(false, 'Не удалось отправить'); return; }
+      let r: Response;
+      if (isEdit && editing.kind === 'property') {
+        // Live catalogue object → direct owner edit (no re-moderation).
+        r = await fetch(`/api/properties/${editing.id}`, {
+          method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+          body: JSON.stringify({
+            dealType: f.dealType, propertyType: f.propertyType, district: f.district, address: f.address,
+            price: Number(f.price), rooms: Number(f.rooms), area: Number(f.area),
+            floor: f.floor ? Number(f.floor) : null, description: f.description, images: photos,
+          }),
+        });
+      } else if (isEdit) {
+        // Pending/rejected submission → edit the PropertyListing (stays in moderation).
+        r = await fetch(`/api/properties/listings/${editing.id}`, {
+          method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+          body: JSON.stringify({
+            property_type: f.propertyType, location: f.address || f.district,
+            price: Number(f.price), area: Number(f.area), rooms: Number(f.rooms),
+            description: f.description, photos,
+          }),
+        });
+      } else {
+        // New listings go through moderation (PropertyListing pending) — a moderator
+        // approves it and only then it becomes a live catalogue object.
+        r = await fetch('/api/properties/list', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+          body: JSON.stringify({
+            property_type: f.propertyType, deal_type: f.dealType, district: f.district, address: f.address,
+            price: Number(f.price), rooms: Number(f.rooms), area: Number(f.area),
+            floor: f.floor ? Number(f.floor) : null, description: f.description, photos,
+          }),
+        });
+      }
+      if (!r.ok) { showToast(false, isEdit ? 'Не удалось сохранить' : 'Не удалось отправить'); return; }
       onDone();
     } catch { showToast(false, 'Ошибка сети'); } finally { setBusy(false); }
   };
   return (
     <div className="mback" onClick={() => !busy && onClose()}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <h3>Новое объявление</h3>
+        <h3>{isEdit ? 'Редактировать объявление' : 'Новое объявление'}</h3>
 
         <div className="field">
           <label>Фото объекта</label>
@@ -305,7 +362,7 @@ function CreateListingModal({ lang, onClose, onDone, showToast }: any) {
         <div className="field"><label>Описание</label><div className="inp"><textarea rows={3} value={f.description} onChange={(e) => set('description', e.target.value)} placeholder="Тихий двор, свежий ремонт, рядом школа…" /></div></div>
         <div className="mact">
           <button className="sec" onClick={() => !busy && onClose()}>Отмена</button>
-          <button className="em3d" disabled={busy} onClick={submit}>{busy ? 'Отправляем…' : 'Отправить на модерацию'}</button>
+          <button className="em3d" disabled={busy} onClick={submit}>{busy ? 'Сохраняем…' : isEdit ? 'Сохранить' : 'Отправить на модерацию'}</button>
         </div>
       </div>
     </div>
@@ -336,7 +393,7 @@ function ClientsView({ lang, showToast, meId }: any) {
   return (
     <>
       <div className="bhd">
-        <div><h1>Клиенты и лиды</h1><div className="sub">{items.length} всего · {counts.new} новых</div></div>
+        <div><h1>Клиенты и лиды</h1><div className="sub">{items.length} всего · {counts.new} новых заявок</div></div>
         <button className="cta" onClick={() => setAddOpen(true)}>Добавить клиента</button>
       </div>
       <div className="chips">
@@ -352,6 +409,7 @@ function ClientsView({ lang, showToast, meId }: any) {
               <div className="ti"><div className="nm">{name}</div><div className="mt">{[l.interest, last && `контакт: ${last}`].filter(Boolean).join(' · ')}</div></div>
               <span className={`stage ${l.stage}`}>{STAGE_LABEL[l.stage] || l.stage}</span>
               <div className="lact">
+                {l.stage === 'new' && <button className="sec" onClick={() => { setStage(l, 'warm'); showToast(true, 'Заявка взята в работу'); }}>Взять в работу</button>}
                 {l.client_id ? <button className="sec" onClick={() => setChatFor(l)}>Написать</button>
                   : l.client_email ? <a className="sec" href={`mailto:${l.client_email}`}>Написать</a>
                   : <span className="sec" style={{ opacity: .4 }}>Написать</span>}
