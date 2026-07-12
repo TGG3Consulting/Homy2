@@ -419,7 +419,7 @@ function ClientsView({ lang, showToast, meId }: any) {
           );
         })}
       {addOpen && <AddLeadModal onClose={() => setAddOpen(false)} onDone={() => { setAddOpen(false); load(); showToast(true, 'Клиент добавлен'); }} showToast={showToast} />}
-      {open && <LeadModal lead={open} lang={lang} onClose={() => setOpen(null)} onStage={(s: string) => { setStage(open, s); setOpen({ ...open, stage: s }); }} onDeal={() => { setOpen(null); load(); showToast(true, 'Сделка создана'); }} showToast={showToast} />}
+      {open && <LeadModal lead={open} lang={lang} onClose={() => setOpen(null)} onStage={(s: string) => { setStage(open, s); setOpen({ ...open, stage: s }); }} onDeal={() => { setOpen(null); load(); showToast(true, 'Сделка создана'); }} onDelete={() => { setItems((prev) => prev.filter((x) => x.id !== open.id)); setOpen(null); showToast(true, 'Лид удалён'); }} showToast={showToast} />}
       {chatFor && <ChatThread lead={chatFor} meId={meId} onClose={() => setChatFor(null)} showToast={showToast} />}
     </>
   );
@@ -525,9 +525,18 @@ function AddLeadModal({ onClose, onDone, showToast }: any) {
   );
 }
 
-function LeadModal({ lead, lang, onClose, onStage, onDeal, showToast }: any) {
+function LeadModal({ lead, lang, onClose, onStage, onDeal, onDelete, showToast }: any) {
   const [busy, setBusy] = useState(false);
   const name = lead.client_name || [lead.client?.first_name, lead.client?.last_name].filter(Boolean).join(' ') || lead.client_email || 'Клиент';
+  const deleteLead = async () => {
+    if (typeof window !== 'undefined' && !window.confirm('Удалить этого лида? Действие необратимо.')) return;
+    setBusy(true);
+    try {
+      const r = await fetch(`/api/agent/leads/${lead.id}`, { method: 'DELETE', credentials: 'include' });
+      if (!r.ok) { showToast(false, 'Не удалось удалить'); return; }
+      onDelete();
+    } catch { showToast(false, 'Ошибка сети'); } finally { setBusy(false); }
+  };
   const createDeal = async () => {
     setBusy(true);
     try {
@@ -547,7 +556,11 @@ function LeadModal({ lead, lang, onClose, onStage, onDeal, showToast }: any) {
             {(['new', 'warm', 'cold'] as const).map((s) => <span key={s} className={`chip${lead.stage === s ? ' active' : ''}`} onClick={() => onStage(s)}>{STAGE_LABEL[s]}</span>)}
           </div>
         </div>
-        <div className="mact"><button className="sec" onClick={() => !busy && onClose()}>Закрыть</button><button className="em3d" disabled={busy} onClick={createDeal}>{busy ? 'Создаём…' : 'Создать сделку'}</button></div>
+        <div className="mact">
+          <button className="sec danger" style={{ marginRight: 'auto' }} disabled={busy} onClick={deleteLead}>Удалить</button>
+          <button className="sec" onClick={() => !busy && onClose()}>Закрыть</button>
+          <button className="em3d" disabled={busy} onClick={createDeal}>{busy ? 'Создаём…' : 'Создать сделку'}</button>
+        </div>
       </div>
     </div>
   );
@@ -563,6 +576,7 @@ function DealsView({ lang, showToast }: any) {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'negotiation' | 'docs' | 'closed'>('all');
+  const [newOpen, setNewOpen] = useState(false);
   const load = useCallback(async () => {
     try { const r = await fetch('/api/agent/deals', { credentials: 'include' }); if (r.ok) { const d = await r.json(); setItems(d.deals || []); } } catch {} finally { setLoading(false); }
   }, []);
@@ -587,7 +601,7 @@ function DealsView({ lang, showToast }: any) {
 
   return (
     <>
-      <div className="bhd"><div><h1>Сделки</h1><div className="sub">{open.length} в работе · {wonMonth.length} закрыта в этом месяце</div></div></div>
+      <div className="bhd"><div><h1>Сделки</h1><div className="sub">{open.length} в работе · {wonMonth.length} закрыта в этом месяце</div></div><button className="cta" onClick={() => setNewOpen(true)}>Новая сделка</button></div>
       <div className="mrow" style={{ gridTemplateColumns: 'repeat(3,1fr)' }}>
         <div className="mtile"><b>{open.length}</b><div className="lbl">В работе</div></div>
         <div className="mtile"><b>{wonMonth.length}</b><div className="lbl">Закрыто за месяц</div></div>
@@ -625,6 +639,38 @@ function DealsView({ lang, showToast }: any) {
             </div>
           );
         })}
+      {newOpen && <NewDealModal onClose={() => setNewOpen(false)} onDone={() => { setNewOpen(false); load(); showToast(true, 'Сделка создана'); }} showToast={showToast} />}
     </>
+  );
+}
+
+function NewDealModal({ onClose, onDone, showToast }: any) {
+  const [f, setF] = useState<any>({ title: '', clientName: '', value: '' });
+  const [busy, setBusy] = useState(false);
+  const set = (k: string, v: any) => setF((s: any) => ({ ...s, [k]: v }));
+  const submit = async () => {
+    if (!f.title.trim()) { showToast(false, 'Укажите название сделки'); return; }
+    setBusy(true);
+    try {
+      const r = await fetch('/api/agent/deals', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+        body: JSON.stringify({ title: f.title.trim(), clientName: f.clientName.trim() || null, value: f.value ? Number(f.value) : null }),
+      });
+      if (!r.ok) { showToast(false, 'Не удалось создать сделку'); return; }
+      onDone();
+    } catch { showToast(false, 'Ошибка сети'); } finally { setBusy(false); }
+  };
+  return (
+    <div className="mback" onClick={() => !busy && onClose()}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <h3>Новая сделка</h3>
+        <div className="field"><label>Название</label><div className="inp"><input value={f.title} onChange={(e) => set('title', e.target.value)} placeholder="2-комн Кентрон · Аветисян" /></div></div>
+        <div className="frm2">
+          <div className="field"><label>Клиент</label><div className="inp"><input value={f.clientName} onChange={(e) => set('clientName', e.target.value)} placeholder="Имя клиента" /></div></div>
+          <div className="field"><label>Сумма, AMD</label><div className="inp"><input type="number" value={f.value} onChange={(e) => set('value', e.target.value)} placeholder="35000000" /></div></div>
+        </div>
+        <div className="mact"><button className="sec" onClick={() => !busy && onClose()}>Отмена</button><button className="em3d" disabled={busy} onClick={submit}>{busy ? 'Создаём…' : 'Создать'}</button></div>
+      </div>
+    </div>
   );
 }
