@@ -20,7 +20,7 @@ html.dark .homy-broker{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#
 
 /* header */
 .homy-broker .bwrap{max-width:1160px;margin:0 auto;padding:20px 24px 60px}
-.homy-broker .bhd{display:flex;align-items:center;margin-bottom:16px}
+.homy-broker .bhd{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
 .homy-broker .bhd h1{font-size:20px;font-weight:800;letter-spacing:-.02em}
 .homy-broker .bhd .sub{font-size:12.5px;color:var(--muted);margin-top:3px}
 
@@ -93,7 +93,7 @@ html.dark .homy-broker{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#
 .homy-broker .inp:focus-within{border-color:var(--em);box-shadow:0 0 0 3px color-mix(in srgb,var(--em) 18%,transparent)}
 .homy-broker .inp input,.homy-broker .inp textarea,.homy-broker .inp select{flex:1;background:none;border:0;outline:none;font-family:inherit;font-size:13.5px;color:var(--ink);min-width:0}
 .homy-broker .frm2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:640px){.homy-broker .frm2{grid-template-columns:1fr}}
+@media(max-width:640px){.homy-broker .frm2{grid-template-columns:1fr}.homy-broker .lrow{flex-wrap:wrap}.homy-broker .lact{flex:1 1 100%;justify-content:flex-start;margin-top:4px}}
 .homy-broker .drop{border:1.5px dashed var(--hair);border-radius:14px;padding:20px;text-align:center;color:var(--muted);font-size:12.5px;background:var(--surface2);cursor:pointer}
 .homy-broker .drop:hover{border-color:var(--em)}
 .homy-broker .drop .ic{width:40px;height:40px;border-radius:12px;background:color-mix(in srgb,var(--em) 14%,transparent);color:var(--em);display:flex;align-items:center;justify-content:center;margin:0 auto 10px}

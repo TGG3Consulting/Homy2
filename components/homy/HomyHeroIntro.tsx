@@ -29,7 +29,7 @@ const HERO_CSS = `
 .homy-hero .nav .sp{margin-left:auto}
 .homy-hero .nav .cta{color:#fff;font-weight:700;font-size:13px;padding:9px 18px;border-radius:11px;background:radial-gradient(135% 175% at 50% 14%,#2BC091,#0B6E4F);text-decoration:none;box-shadow:0 6px 20px rgba(4,40,28,.4)}
 
-.homy-hero .wm{position:absolute;left:50%;top:24%;transform:translateX(-50%);z-index:5;font-family:'The Naturel Std','M PLUS Rounded 1c',sans-serif;font-weight:normal;letter-spacing:.01em;line-height:.9;font-size:clamp(80px,16vw,250px);color:#fff;user-select:none;will-change:transform;filter:drop-shadow(0 6px 16px rgba(20,28,45,.22))}
+.homy-hero .wm{position:absolute;left:50%;top:24%;transform:translateX(-50%);z-index:5;font-family:'The Naturel Std','M PLUS Rounded 1c',sans-serif;font-weight:normal;letter-spacing:.01em;line-height:.9;white-space:nowrap;font-size:clamp(80px,16vw,250px);color:#fff;user-select:none;will-change:transform;filter:drop-shadow(0 6px 16px rgba(20,28,45,.22))}
 /* до готовности (шрифт + картинки) видно только ровный фон; затем вся сцена проявляется разом */
 .homy-hero>*{opacity:0;transition:opacity .45s ease-out}
 .homy-hero.ready>*{opacity:1}
@@ -58,7 +58,7 @@ const HERO_CSS = `
 .homy-hero .scrollhint .mo{width:18px;height:28px;border:2px solid rgba(255,255,255,.75);border-radius:12px;position:relative}
 .homy-hero .scrollhint .mo::after{content:'';position:absolute;top:5px;left:50%;transform:translateX(-50%);width:3px;height:6px;border-radius:2px;background:#fff;animation:sc 1.4s ease-in-out infinite}
 @keyframes sc{0%,100%{opacity:0;transform:translate(-50%,0)}50%{opacity:1;transform:translate(-50%,7px)}}
-@media(max-width:640px){.homy-hero .nav a{display:none}.homy-hero .nav .cta{display:inline-block}}
+@media(max-width:640px){.homy-hero .nav a{display:none}.homy-hero .nav .cta{display:inline-block}.homy-hero .wm{font-size:clamp(52px,15vw,96px)}.homy-hero .eyes{gap:clamp(34px,9vw,64px)}}
 `;
 
 // Cursor-follow matrix params (MoneyCat "Vl" handler, front layer): each of the 16

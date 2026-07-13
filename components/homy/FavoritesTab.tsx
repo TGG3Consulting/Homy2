@@ -9,7 +9,7 @@ const FAV_CSS = `
 .homy-fav{--bg:#EEF0F3;--surface:#FFFFFF;--surface2:#F4F6F8;--ink:#14181F;--muted:#6A7382;--soft:#39414D;--hair:rgba(20,24,31,.10);--em-hi:#26B083;--em:#0A6045;--card-shadow:0 4px 24px rgba(20,20,26,.08);color:var(--ink);font-family:'Montserrat',sans-serif}
 html.dark .homy-fav{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#F2F4F7;--muted:#8B93A3;--soft:#C5CAD3;--hair:rgba(255,255,255,.10);--em-hi:#2BC091;--em:#0B6E4F;--card-shadow:inset 0 0 0 1px rgba(255,255,255,.06),0 24px 60px rgba(0,0,0,.45)}
 .homy-fav *{box-sizing:border-box}
-.homy-fav .hd{display:flex;align-items:center;gap:12px;padding-bottom:18px;border-bottom:1px solid var(--hair);margin-bottom:20px}
+.homy-fav .hd{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding-bottom:18px;border-bottom:1px solid var(--hair);margin-bottom:20px}
 .homy-fav .hd h2{font-size:20px;font-weight:800;letter-spacing:-.02em}
 .homy-fav .hd .n{font-size:12px;color:var(--muted)}
 .homy-fav .chips{margin-left:auto;display:flex;gap:8px}

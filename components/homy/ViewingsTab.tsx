@@ -10,7 +10,7 @@ const VIEW_CSS = `
 .homy-view{--surface:#FFFFFF;--surface2:#F4F6F8;--ink:#14181F;--muted:#6A7382;--soft:#39414D;--hair:rgba(20,24,31,.10);--em-hi:#26B083;--em:#0A6045;--amber:#B9822A;--danger:#D8434B;color:var(--ink);font-family:'Montserrat',sans-serif}
 html.dark .homy-view{--surface:#0E1218;--surface2:#171C25;--ink:#F2F4F7;--muted:#8B93A3;--soft:#C5CAD3;--hair:rgba(255,255,255,.10);--em-hi:#2BC091;--em:#0B6E4F;--amber:#E0A83B;--danger:#F0616A}
 .homy-view *{box-sizing:border-box}
-.homy-view .hd{display:flex;align-items:center;gap:12px;padding-bottom:18px;border-bottom:1px solid var(--hair);margin-bottom:20px}
+.homy-view .hd{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding-bottom:18px;border-bottom:1px solid var(--hair);margin-bottom:20px}
 .homy-view .hd h2{font-size:20px;font-weight:800;letter-spacing:-.02em}
 .homy-view .chips{margin-left:auto;display:flex;gap:8px}
 .homy-view .chip{font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--hair);background:var(--surface);color:var(--soft);cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
