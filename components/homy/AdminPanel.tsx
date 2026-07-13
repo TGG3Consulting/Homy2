@@ -57,6 +57,7 @@ export default function AdminPanel({ user }: { user: any }) {
   const router = useRouter();
   const params = useSearchParams();
   const tab = params.get('tab') || 'overview';
+  const curTab = TABS.find((t) => t.id === tab) || TABS[0];
   const goTab = useCallback((id: string) => router.push(id === 'overview' ? '/dashboard' : `/dashboard?tab=${id}`, { scroll: false }), [router]);
   const [toast, setToast] = useState<{ ok: boolean; text: string } | null>(null);
   const showToast = useCallback((ok: boolean, text: string) => { setToast({ ok, text }); window.setTimeout(() => setToast(null), 3000); }, []);
@@ -67,6 +68,7 @@ export default function AdminPanel({ user }: { user: any }) {
       <div className="bnav">
         <HomyLogoMenu align="left" />
         <div className="btabs">{TABS.map((t) => <button key={t.id} className={`btab${tab === t.id ? ' on' : ''}`} onClick={() => goTab(t.id)}>{t.label}</button>)}</div>
+        <span className="bcur">· {curTab.label}</span>
         <div className="right">
           <div className="themebtn">
             <button className={`o${theme === 'light' ? ' on' : ''}`} title="Светлая" onClick={() => setTheme('light')}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.4 1.4M17.6 17.6L19 19M5 19l1.4-1.4M17.6 6.4L19 5" /></svg></button>

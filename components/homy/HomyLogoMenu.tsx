@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import {
   ChevronDown, Home, LayoutGrid, Heart, Bookmark, Calendar,
   MessageCircle, User, Settings, LogOut, LogIn,
-  Building2, Users, Sparkles, Briefcase,
+  Building2, Users, Sparkles, Briefcase, ShieldCheck,
 } from 'lucide-react';
 
 const CSS = `
@@ -38,7 +38,8 @@ export default function HomyLogoMenu({ align = 'left', className = '' }: HomyLog
   const wrapRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [logged, setLogged] = useState<boolean | null>(null);
-  const [role, setRole] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);      // user_type
+  const [sysRole, setSysRole] = useState<string | null>(null); // role: admin/moderator/user
 
   useEffect(() => {
     let alive = true;
@@ -46,13 +47,16 @@ export default function HomyLogoMenu({ align = 'left', className = '' }: HomyLog
       .then(async (r) => {
         if (!alive) return;
         setLogged(r.ok);
-        if (r.ok) { try { const d = await r.json(); setRole(d?.user_type || d?.user?.user_type || null); } catch {} }
+        if (r.ok) { try { const d = await r.json(); setRole(d?.user_type || d?.user?.user_type || null); setSysRole(d?.role || d?.user?.role || null); } catch {} }
       })
       .catch(() => alive && setLogged(false));
     return () => {
       alive = false;
     };
   }, []);
+
+  const isAdmin = sysRole === 'admin' || sysRole === 'moderator' || role === 'admin';
+  const isBroker = role === 'agent' || role === 'owner';
 
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
@@ -99,7 +103,17 @@ export default function HomyLogoMenu({ align = 'left', className = '' }: HomyLog
       </button>
       <div className={`lm-pop${align === 'right' ? ' right' : ''}`}>
         {logged !== false ? (
-          (role === 'agent' || role === 'owner') ? (
+          isAdmin ? (
+            <>
+              <div className="lm-head">Администрирование</div>
+              {item(<LayoutGrid size={16} />, 'Обзор', () => go('/dashboard'))}
+              {item(<ShieldCheck size={16} />, 'Модерация', () => go('/dashboard?tab=moderation'))}
+              {item(<Users size={16} />, 'Пользователи', () => go('/dashboard?tab=users'))}
+              <div className="lm-sep" />
+              {item(<Home size={16} />, 'Главная', () => go('/'))}
+              {item(<LogOut size={16} />, 'Выйти', logout)}
+            </>
+          ) : isBroker ? (
             <>
               <div className="lm-head">Кабинет</div>
               {item(<LayoutGrid size={16} />, 'Дашборд', () => go('/dashboard'))}

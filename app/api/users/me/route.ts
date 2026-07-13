@@ -15,6 +15,7 @@ interface UserResponse {
   last_name: string | null;
   patronymic: string | null;
   user_type: string | null;
+  role: string | null;
   language_preference: string | null;
   notifications_enabled: boolean;
   email_verified: boolean;
@@ -46,6 +47,7 @@ async function getHandler(req: AuthenticatedRequest) {
         last_name: true,
         patronymic: true,
         user_type: true,
+        role: true,
         language_preference: true,
         notifications_enabled: true,
         search_preferences: true,
@@ -71,6 +73,7 @@ async function getHandler(req: AuthenticatedRequest) {
       last_name: user.last_name,
       patronymic: user.patronymic,
       user_type: user.user_type,
+      role: user.role,
       language_preference: user.language_preference,
       notifications_enabled: user.notifications_enabled,
       email_verified: user.emailVerified,
@@ -271,6 +274,7 @@ async function patchHandler(req: AuthenticatedRequest) {
         last_name: true,
         patronymic: true,
         user_type: true,
+        role: true,
         language_preference: true,
         notifications_enabled: true,
         search_preferences: true,
@@ -292,6 +296,7 @@ async function patchHandler(req: AuthenticatedRequest) {
       last_name: updatedUser.last_name,
       patronymic: updatedUser.patronymic,
       user_type: updatedUser.user_type,
+      role: updatedUser.role,
       language_preference: updatedUser.language_preference,
       notifications_enabled: updatedUser.notifications_enabled,
       email_verified: updatedUser.emailVerified,
