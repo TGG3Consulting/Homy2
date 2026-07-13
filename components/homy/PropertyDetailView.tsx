@@ -522,8 +522,10 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
                 </div>
               </div>
               {showForm && !hasExistingViewing && (
-                <div className="vformwrap">
-                  <ViewingRequestForm property={property} onSuccess={() => { setShowForm(false); setHasExistingViewing(true); }} onCancel={() => setShowForm(false)} />
+                <div className="vformwrap" onClick={(e) => { if (e.target === e.currentTarget) setShowForm(false); }}>
+                  <div className="vfsheet">
+                    <ViewingRequestForm property={property} onSuccess={() => { setShowForm(false); setHasExistingViewing(true); }} onCancel={() => setShowForm(false)} />
+                  </div>
                 </div>
               )}
             </div>

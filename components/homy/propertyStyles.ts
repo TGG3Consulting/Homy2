@@ -201,5 +201,12 @@ html.dark .homy-property{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink
   .homy-property .mcta .book{flex:1;height:48px;border-radius:12px;border:0;font-family:inherit;font-size:14px;font-weight:700;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;background:radial-gradient(135% 175% at 50% 14%,var(--em-hi),var(--em))}
   .homy-property .mcta .book.done{background:var(--muted);opacity:.7}
   .homy-property .homy-supportfab{display:none!important}
+
+  /* запись на просмотр — bottom-sheet (эскиз A13) */
+  .homy-property .vformwrap{position:fixed;inset:0;z-index:1200;margin:0;padding:0;border-top:0;display:flex;align-items:flex-end;background:rgba(8,10,14,.5);backdrop-filter:blur(2px)}
+  .homy-property .vfsheet{width:100%;max-height:88vh;overflow:auto;background:var(--surface);border:1px solid var(--hair);border-bottom:0;border-radius:22px 22px 0 0;box-shadow:0 -18px 54px rgba(0,0,0,.5);padding-top:18px;position:relative;animation:homysheetup .34s cubic-bezier(.32,.8,.24,1)}
+  .homy-property .vfsheet::-webkit-scrollbar{width:0}
+  .homy-property .vfsheet::before{content:'';position:absolute;top:9px;left:50%;transform:translateX(-50%);width:40px;height:5px;border-radius:999px;background:var(--hair);z-index:2}
 }
+@keyframes homysheetup{from{transform:translateY(100%)}to{transform:translateY(0)}}
 `
