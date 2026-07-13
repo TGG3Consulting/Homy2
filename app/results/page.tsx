@@ -13,6 +13,7 @@ import FocusResultsMap from '@/components/homy/FocusResultsMap';
 import { RESULTS_CSS } from '@/components/homy/resultsStyles';
 import { FavoritesProvider, useFavorites } from '@/contexts/FavoritesContext';
 import { useCompare } from '@/lib/contexts/CompareContext';
+import { useChatWidget } from '@/contexts/ChatWidgetContext';
 import { Heart, Scale } from 'lucide-react';
 import {
   PropertyShowcase, AIInsights, WebSocketMessage, WebSocketPropertyDisplayCommand,
@@ -124,6 +125,7 @@ function ResultsInner() {
   const query = searchParams.get('query') || '';
   const { toggleFavorite } = useFavorites();
   const { addToCompare } = useCompare();
+  const { openSupportChat } = useChatWidget();
   const pendingRef = useRef(false);
 
   const [properties, setProperties] = useState<PropertyShowcase[]>([]);
@@ -136,6 +138,10 @@ function ResultsInner() {
   const [view, setView] = useState<'map' | 'grid'>('map');
   const [composer, setComposer] = useState('');
   const [detailId, setDetailId] = useState<string | null>(null);
+  // mobile stack-sheets state: map (peek) → results (full list) → chat
+  const [mstate, setMstate] = useState<'map' | 'results' | 'chat'>('map');
+  const mStreamRef = useRef<HTMLDivElement>(null);
+  const stepDown = () => setMstate((s) => (s === 'chat' ? 'results' : 'map'));
 
   // ---- save search (logged-in buyers) ----
   const [saveOpen, setSaveOpen] = useState(false);
@@ -439,10 +445,11 @@ function ResultsInner() {
     return () => clearTimeout(timer);
   }, [wsConnected, properties.length, error, fetchFallback]);
 
-  // auto-scroll chat
+  // auto-scroll chat (desktop panel + mobile sheet)
   useEffect(() => {
     if (streamRef.current) streamRef.current.scrollTop = streamRef.current.scrollHeight;
-  }, [chatMessages, isAiTyping]);
+    if (mStreamRef.current) mStreamRef.current.scrollTop = mStreamRef.current.scrollHeight;
+  }, [chatMessages, isAiTyping, mstate]);
 
   const send = useCallback((message: string) => {
     const msg = message.trim();
@@ -674,6 +681,122 @@ function ResultsInner() {
           <button className="rchip" onClick={fetchFallback}>Повторить</button>
         </div>
       )}
+
+      {/* ===== MOBILE — стек-шторки, 1:1 Homy-Prototype-Mobile ===== */}
+      <div className="mroot" data-mstate={mstate}>
+        {/* top command bar */}
+        <div className="m-top">
+          <button className="m-op" type="button" onClick={openSupportChat} title="Связь с консультантом Homy">
+            <span className="av" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop')" }} />
+            <i className="dot" />
+          </button>
+          <div className="m-right">
+            <div className="m-tgl">
+              <span className={`o${theme === 'dark' ? ' on' : ''}`} title="Тёмная" onClick={() => setTheme('dark')}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>
+              </span>
+              <span className={`o${theme === 'light' ? ' on' : ''}`} title="Светлая" onClick={() => setTheme('light')}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.4 1.4M17.6 17.6L19 19M5 19l1.4-1.4M17.6 6.4L19 5" /></svg>
+              </span>
+            </div>
+            <HomyLogoMenu align="right" />
+          </div>
+        </div>
+
+        <div className="mstack">
+          {/* SHEET 1: results */}
+          <div className="msheet ms1">
+            <div className="mgrab" onClick={stepDown}><i /></div>
+            <div className="mbody">
+              <div className="mshead" onClick={() => setMstate('chat')}>
+                <div className="mava"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z" /></svg></div>
+                <div>
+                  <div className="mnm">Homy подобрал {suitable} вариантов</div>
+                  <div className="mst"><i />{selected ? `лучший — ${loc(selected.district || selected.address, lang) || '—'}, ${selected.match_score || 0}%` : statusText}</div>
+                </div>
+                <div className="mup">Открыть чат <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M6 15l6-6 6 6" /></svg></div>
+              </div>
+
+              {selected && (
+                <div className="mpeek" onClick={() => setDetailId(selected.id)}>
+                  <div className="mth" style={{ backgroundImage: `url('${selected.image_url}')` }} />
+                  <div>
+                    <div className="mpt">{loc(selected.title || selected.name, lang)}</div>
+                    <div className="mpl">{[loc(selected.address, lang), loc(selected.district, lang)].filter(Boolean).join(' · ')}</div>
+                    <div className="mpp">{fmtPrice(selected.price)} <span>{selected.currency}</span></div>
+                  </div>
+                  <div className="mmm">{selected.match_score || ''}</div>
+                </div>
+              )}
+
+              {others.length > 0 && <div className="mlh">Ещё совпадения · {others.length}</div>}
+              {others.map((p) => (
+                <div key={p.id} className="mmini" onClick={() => setDetailId(p.id)}>
+                  <div className="mth" style={{ backgroundImage: `url('${p.image_url}')` }} />
+                  <div>
+                    <div className="mmt">{loc(p.title || p.name, lang)}</div>
+                    <div className="mml">{[loc(p.address, lang), loc(p.district, lang)].filter(Boolean).join(' · ')}</div>
+                    <div className="mmp">{fmtPrice(p.price)}</div>
+                  </div>
+                  <div className="mmm">{p.match_score || ''}</div>
+                </div>
+              ))}
+            </div>
+            <div className="maskrow" onClick={() => setMstate('chat')}>
+              <span>Спросите Homy…</span>
+              <div className="mmic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z" /><path d="M19 11a7 7 0 0 1-14 0M12 18v4" /></svg></div>
+            </div>
+          </div>
+
+          {/* SHEET 2: chat */}
+          <div className="msheet ms2">
+            <div className="mgrab" onClick={() => setMstate('results')}><i /></div>
+            <div className="mbody">
+              <div className="mshead mchead" style={{ cursor: 'default' }}>
+                <div className="mava"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z" /></svg></div>
+                <div>
+                  <div className="mnm">Homy</div>
+                  <div className="mst" style={{ color: 'var(--muted)' }}>переписка · онлайн</div>
+                </div>
+                <div className="mmin" title="Свернуть" onClick={() => setMstate('results')}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M6 9l6 6 6-6" /></svg>
+                </div>
+              </div>
+              <div className="mstream" ref={mStreamRef}>
+                {chatMessages.map((m, i) => (
+                  <div key={i} className={`mmsg ${m.role === 'user' ? 'u' : 'a'}`}>{m.content}</div>
+                ))}
+                {selected && insights?.description && (
+                  <div className="mmsg a"><span className="lead">Нашёл сильный вариант.</span> {insights.description}</div>
+                )}
+                {selected && (selected.recommendation_reasons?.length || criteriaChips.length) ? (
+                  <div className="mreason">
+                    <div className="rt">Почему это совпадение {selected.match_score || ''}%</div>
+                    {(selected.recommendation_reasons?.length ? selected.recommendation_reasons.slice(0, 5) : criteriaChips.slice(0, 5)).map((r: string, i: number) => (
+                      <div className="mrr" key={i}>
+                        <span className="k"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2BC091" strokeWidth="2.3"><path d="M5 13l4 4L19 7" /></svg>{loc(r, lang)}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+                {criteriaChips.length > 0 && (
+                  <div className="mchips">
+                    {['Показать дешевле', 'Только с парковкой', 'Ближе к центру'].map((c) => (
+                      <span key={c} className="rchip" onClick={() => send(c)}>{c}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            <form className="mcomposer" onSubmit={(e: FormEvent) => { e.preventDefault(); send(composer); }}>
+              <input placeholder="Спросите Homy…" value={composer} onChange={(e) => setComposer(e.target.value)} />
+              <button className="msend" type="submit" disabled={!composer.trim()} aria-label="Отправить">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" /></svg>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
 
       {/* support live-chat launcher (bottom-right) */}
       <SupportFab />

@@ -48,4 +48,20 @@ html.dark .homy-compare{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:
 .homy-compare .cstate .t{font-size:15px;font-weight:600}
 .homy-compare .cstate .s{font-size:13px;color:var(--muted);max-width:360px}
 .homy-compare .cstate .cbtn{margin-top:4px;font-size:13px;font-weight:700;color:var(--em);background:none;border:0;cursor:pointer;font-family:inherit}
+
+/* hint — только на мобиле */
+.homy-compare .cmphint{display:none}
+
+/* ============================================================
+   MOBILE — сравнение (A11): горизонтальный скролл + sticky-метки
+   ============================================================ */
+@media(max-width:640px){
+  .homy-compare .wnav{padding:11px 16px}
+  .homy-compare .wrap{padding:16px 14px 80px}
+  .homy-compare .hd{margin-bottom:10px}
+  .homy-compare .hd h2{font-size:17px}
+  .homy-compare .cmphint{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted);background:var(--surface2);border:1px solid var(--hair);border-radius:10px;padding:9px 11px;margin-bottom:12px}
+  .homy-compare .cmphint svg{flex:none;color:var(--em)}
+  .homy-compare .homy-supportfab{display:none!important}
+}
 `

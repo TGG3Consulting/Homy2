@@ -143,4 +143,63 @@ html.dark .homy-property{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink
   .homy-property .pright{border-left:0;border-top:1px solid var(--hair)}
   .homy-property .two{grid-template-columns:1fr}
 }
+
+/* sticky mobile CTA bar — hidden on desktop */
+.homy-property .mcta{display:none}
+
+/* ============================================================
+   MOBILE — карточка объекта, 1:1 с эскизом A4/A5 (верх),
+   всё содержимое сохранено ниже
+   ============================================================ */
+@media(max-width:640px){
+  /* full-screen popup */
+  .homy-property.pop .pop-overlay{padding:0;align-items:stretch;overflow-y:auto}
+  .homy-property .pop-win{max-width:100%;margin:0}
+  .homy-property.pop .pgrid{height:auto}
+  .homy-property.pop .pleft{overflow:visible}
+  .homy-property .pcard{border-radius:0;border:0;min-height:100vh}
+  .homy-property .pclose{top:12px;right:12px;width:38px;height:38px;background:rgba(10,13,18,.5);backdrop-filter:blur(8px);color:#fff;border:1px solid rgba(255,255,255,.18);z-index:8}
+  .homy-property .pgrid{grid-template-columns:1fr}
+  .homy-property .pright{border-left:0;border-top:1px solid var(--hair)}
+  .homy-property .two{grid-template-columns:1fr}
+
+  /* page-mode nav compact */
+  .homy-property .wnav{padding:11px 16px}
+  .homy-property .wrap{padding:0}
+
+  /* hero (эскиз: фото сверху 4:3, full-bleed) */
+  .homy-property .pleft{padding:0 16px 104px;gap:16px}
+  .homy-property .gal{margin:0 -16px}
+  .homy-property .gal .main{aspect-ratio:4/3;border-radius:0}
+  .homy-property .gal .badge{top:14px;left:14px}
+  .homy-property .gal .thumbs{margin-top:10px}
+  .homy-property .gal .thumbs div{width:60px;height:46px}
+
+  /* condensed header */
+  .homy-property .phead{margin-top:16px}
+  .homy-property .price{font-size:28px}
+  .homy-property .price span{font-size:12px}
+  .homy-property .dttl{font-size:18px}
+  .homy-property .matchwrap{gap:8px}
+  .homy-property .mring{width:46px;height:46px}
+  .homy-property .matchpct b{font-size:20px}
+  .homy-property .dspecs{gap:14px 16px;padding:12px 14px}
+
+  /* intelligence tabs — горизонтальный скролл (эскиз) */
+  .homy-property .itabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .homy-property .itabs::-webkit-scrollbar{display:none}
+  .homy-property .itab{flex:none}
+
+  /* per-property chat (pright) — статично, фикс. высота (без sticky-дыры) */
+  .homy-property:not(.pop) .pright{position:static;height:auto;top:auto;overflow:visible}
+  .homy-property .pright{min-height:0}
+  .homy-property .aicol{min-height:0;height:480px}
+
+  /* sticky mobile CTA (эскиз: Позвонить + Записаться) */
+  .homy-property .mcta{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;gap:10px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 72%,transparent)}
+  .homy-property .mcta .call{width:52px;height:48px;border-radius:12px;border:1px solid var(--hair);background:var(--surface);color:var(--ink);display:flex;align-items:center;justify-content:center;flex:none;cursor:pointer;text-decoration:none}
+  .homy-property .mcta .book{flex:1;height:48px;border-radius:12px;border:0;font-family:inherit;font-size:14px;font-weight:700;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;background:radial-gradient(135% 175% at 50% 14%,var(--em-hi),var(--em))}
+  .homy-property .mcta .book.done{background:var(--muted);opacity:.7}
+  .homy-property .homy-supportfab{display:none!important}
+}
 `
