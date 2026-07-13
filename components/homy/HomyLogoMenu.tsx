@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import {
   ChevronDown, Home, LayoutGrid, Heart, Bookmark, Calendar,
   MessageCircle, User, Settings, LogOut, LogIn,
+  Building2, Users, Sparkles, Briefcase,
 } from 'lucide-react';
 
 const CSS = `
@@ -37,11 +38,16 @@ export default function HomyLogoMenu({ align = 'left', className = '' }: HomyLog
   const wrapRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [logged, setLogged] = useState<boolean | null>(null);
+  const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
     let alive = true;
     fetch('/api/users/me', { credentials: 'include' })
-      .then((r) => alive && setLogged(r.ok))
+      .then(async (r) => {
+        if (!alive) return;
+        setLogged(r.ok);
+        if (r.ok) { try { const d = await r.json(); setRole(d?.user_type || d?.user?.user_type || null); } catch {} }
+      })
       .catch(() => alive && setLogged(false));
     return () => {
       alive = false;
@@ -93,19 +99,35 @@ export default function HomyLogoMenu({ align = 'left', className = '' }: HomyLog
       </button>
       <div className={`lm-pop${align === 'right' ? ' right' : ''}`}>
         {logged !== false ? (
-          <>
-            <div className="lm-head">Личный кабинет</div>
-            {item(<Home size={16} />, 'Главная', () => go('/'))}
-            {item(<LayoutGrid size={16} />, 'Мой дашборд', () => go('/dashboard'))}
-            {item(<Heart size={16} />, 'Избранное', () => go('/dashboard?tab=favorites'))}
-            {item(<Bookmark size={16} />, 'Сохранённые поиски', () => go('/dashboard?tab=saved'))}
-            {item(<Calendar size={16} />, 'Просмотры', () => go('/dashboard?tab=viewings'))}
-            {item(<MessageCircle size={16} />, 'Сообщения', () => go('/dashboard?tab=messages'))}
-            {item(<User size={16} />, 'Профиль', () => go('/dashboard?tab=settings'))}
-            {item(<Settings size={16} />, 'Настройки', () => go('/dashboard?tab=settings'))}
-            <div className="lm-sep" />
-            {item(<LogOut size={16} />, 'Выйти', logout)}
-          </>
+          (role === 'agent' || role === 'owner') ? (
+            <>
+              <div className="lm-head">Кабинет</div>
+              {item(<LayoutGrid size={16} />, 'Дашборд', () => go('/dashboard'))}
+              {item(<Building2 size={16} />, 'Объявления', () => go('/dashboard?tab=listings'))}
+              {item(<Users size={16} />, 'Клиенты', () => go('/dashboard?tab=clients'))}
+              {item(<Calendar size={16} />, 'Просмотры', () => go('/dashboard?tab=viewings'))}
+              {item(<Briefcase size={16} />, 'Сделки', () => go('/dashboard?tab=deals'))}
+              <div className="lm-sep" />
+              {item(<Home size={16} />, 'Главная', () => go('/'))}
+              {item(<Settings size={16} />, 'Настройки', () => go('/dashboard?tab=settings'))}
+              {item(<LogOut size={16} />, 'Выйти', logout)}
+            </>
+          ) : (
+            <>
+              <div className="lm-head">Личный кабинет</div>
+              {item(<LayoutGrid size={16} />, 'Обзор', () => go('/dashboard'))}
+              {item(<Heart size={16} />, 'Избранное', () => go('/dashboard?tab=favorites'))}
+              {item(<Bookmark size={16} />, 'Поиски', () => go('/dashboard?tab=searches'))}
+              {item(<Calendar size={16} />, 'Просмотры', () => go('/dashboard?tab=viewings'))}
+              {item(<Sparkles size={16} />, 'Рекомендации', () => go('/dashboard?tab=recommendations'))}
+              {item(<MessageCircle size={16} />, 'Сообщения', () => go('/dashboard?tab=messages'))}
+              {item(<User size={16} />, 'Профиль', () => go('/dashboard?tab=settings'))}
+              {item(<Settings size={16} />, 'Настройки', () => go('/dashboard?tab=settings'))}
+              <div className="lm-sep" />
+              {item(<Home size={16} />, 'Главная', () => go('/'))}
+              {item(<LogOut size={16} />, 'Выйти', logout)}
+            </>
+          )
         ) : (
           <>
             {item(<LogIn size={16} />, 'Войти', () => go('/login'), true)}

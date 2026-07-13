@@ -11,16 +11,8 @@ html.dark .homy-broker{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#
 .homy-broker .btabs::-webkit-scrollbar{display:none}
 .homy-broker .btab{font-size:12.5px;font-weight:600;color:var(--muted);padding:7px 11px;border-radius:9px;cursor:pointer;white-space:nowrap;border:0;background:none;font-family:inherit}
 .homy-broker .btab.on{color:var(--em);box-shadow:inset 0 -2.5px 0 0 var(--em);border-radius:0;font-weight:700}
-/* mobile section dropdown (replaces scroll-tabs) */
-.homy-broker .btabsel{display:none;position:relative}
-.homy-broker .btabsel-btn{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:var(--ink);background:none;border:0;font-family:inherit;cursor:pointer;padding:4px 2px}
-.homy-broker .btabsel-btn svg{color:var(--muted)}
-.homy-broker .btabsel-back{position:fixed;inset:0;z-index:40}
-.homy-broker .btabsel-pop{position:absolute;top:calc(100% + 8px);left:0;z-index:50;min-width:190px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.28);padding:8px}
-html.dark .homy-broker .btabsel-pop{box-shadow:0 18px 46px rgba(0,0,0,.55)}
-.homy-broker .btabsel-i{display:block;width:100%;text-align:left;font-size:13.5px;font-weight:500;color:var(--ink);background:none;border:0;font-family:inherit;padding:10px 12px;border-radius:10px;cursor:pointer}
-.homy-broker .btabsel-i:hover{background:color-mix(in srgb,var(--muted) 14%,transparent)}
-.homy-broker .btabsel-i.on{color:var(--em);font-weight:700;background:color-mix(in srgb,var(--em) 10%,transparent)}
+/* mobile: current-section label (навигация — через меню Homy) */
+.homy-broker .bcur{display:none;font-size:14px;font-weight:600;color:var(--muted);white-space:nowrap}
 .homy-broker .bnav .right{margin-left:auto;display:flex;align-items:center;gap:12px}
 .homy-broker .bell{width:34px;height:34px;border-radius:10px;border:1px solid var(--hair);display:flex;align-items:center;justify-content:center;color:var(--muted);position:relative;background:none;cursor:pointer}
 .homy-broker .bell.dot::after{content:'';position:absolute;top:8px;right:9px;width:6px;height:6px;border-radius:50%;background:var(--danger)}
@@ -105,9 +97,9 @@ html.dark .homy-broker .btabsel-pop{box-shadow:0 18px 46px rgba(0,0,0,.55)}
 .homy-broker .frm2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:640px){
   .homy-broker .frm2{grid-template-columns:1fr}
-  /* nav: скролл-табы → дропдаун-меню */
+  /* nav: скролл-табы скрыты; навигация через меню Homy, метка раздела рядом */
   .homy-broker .btabs{display:none}
-  .homy-broker .btabsel{display:block;margin-left:2px}
+  .homy-broker .bcur{display:inline}
   .homy-broker .bnav{gap:8px;padding:11px 14px}
   .homy-broker .bnav .right{gap:8px}
   .homy-broker .bhd{margin-bottom:14px}

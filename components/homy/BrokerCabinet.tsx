@@ -39,7 +39,6 @@ export default function BrokerCabinet({ user }: { user: any }) {
 
   const [toast, setToast] = useState<{ ok: boolean; text: string } | null>(null);
   const showToast = useCallback((ok: boolean, text: string) => { setToast({ ok, text }); window.setTimeout(() => setToast(null), 3000); }, []);
-  const [tabMenuOpen, setTabMenuOpen] = useState(false);
   const curTab = TABS.find((t) => t.id === tab) || TABS[0];
 
   const firstName = user?.first_name || (user?.name ? String(user.name).split(' ')[0] : '') || '';
@@ -54,23 +53,8 @@ export default function BrokerCabinet({ user }: { user: any }) {
         <div className="btabs">
           {TABS.map((t) => <button key={t.id} className={`btab${tab === t.id ? ' on' : ''}`} onClick={() => goTab(t.id)}>{t.label}</button>)}
         </div>
-        {/* mobile: раздел как выпадающее меню (вместо скролл-табов) */}
-        <div className="btabsel">
-          <button className="btabsel-btn" onClick={() => setTabMenuOpen((o) => !o)} aria-haspopup="true" aria-expanded={tabMenuOpen}>
-            {curTab.label}
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
-          </button>
-          {tabMenuOpen && (
-            <>
-              <div className="btabsel-back" onClick={() => setTabMenuOpen(false)} />
-              <div className="btabsel-pop">
-                {TABS.map((t) => (
-                  <button key={t.id} className={`btabsel-i${tab === t.id ? ' on' : ''}`} onClick={() => { goTab(t.id); setTabMenuOpen(false); }}>{t.label}</button>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
+        {/* mobile: метка текущего раздела (навигация — через меню Homy) */}
+        <span className="bcur">· {curTab.label}</span>
         <div className="right">
           <button className="bell" title="Уведомления" onClick={() => router.push('/notifications')}>
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.7 21a2 2 0 0 1-3.4 0" /></svg>

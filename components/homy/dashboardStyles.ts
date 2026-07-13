@@ -18,20 +18,11 @@ html.dark .homy-dash{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#F2
 .homy-dash .tabs .tb{flex:none;padding:13px 6px;margin:0 8px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;background:none;border:0;font-family:inherit;border-bottom:2px solid transparent;white-space:nowrap;display:inline-flex;align-items:center;gap:7px}
 .homy-dash .tabs .tb.on{color:var(--em);border-bottom-color:var(--em);font-weight:700}
 .homy-dash .tabs .tb .cnt{font-size:10.5px;font-weight:700;background:color-mix(in srgb,var(--em) 12%,transparent);color:var(--em);border-radius:999px;padding:1px 6px}
-/* mobile section dropdown (replaces scroll-tabs) */
-.homy-dash .dtabsel{display:none;position:relative}
-.homy-dash .dtabsel-btn{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:var(--ink);background:none;border:0;font-family:inherit;cursor:pointer;padding:4px 2px}
-.homy-dash .dtabsel-btn svg{color:var(--muted)}
-.homy-dash .dtabsel-back{position:fixed;inset:0;z-index:40}
-.homy-dash .dtabsel-pop{position:absolute;top:calc(100% + 8px);left:0;z-index:50;min-width:200px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.28);padding:8px}
-html.dark .homy-dash .dtabsel-pop{box-shadow:0 18px 46px rgba(0,0,0,.55)}
-.homy-dash .dtabsel-i{display:flex;align-items:center;gap:8px;width:100%;text-align:left;font-size:13.5px;font-weight:500;color:var(--ink);background:none;border:0;font-family:inherit;padding:10px 12px;border-radius:10px;cursor:pointer}
-.homy-dash .dtabsel-i:hover{background:color-mix(in srgb,var(--muted) 14%,transparent)}
-.homy-dash .dtabsel-i.on{color:var(--em);font-weight:700;background:color-mix(in srgb,var(--em) 10%,transparent)}
-.homy-dash .dtabsel-i .cnt{font-size:10.5px;font-weight:700;background:color-mix(in srgb,var(--em) 14%,transparent);color:var(--em);border-radius:999px;padding:1px 6px;margin-left:auto}
+/* mobile: current-section label (навигация — через меню Homy) */
+.homy-dash .dcur{display:none;font-size:14px;font-weight:600;color:var(--muted);white-space:nowrap}
 @media(max-width:640px){
   .homy-dash .tabs{display:none}
-  .homy-dash .dtabsel{display:block}
+  .homy-dash .dcur{display:inline}
   .homy-dash .wnav{gap:10px;padding:12px 16px}
 }
 

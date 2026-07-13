@@ -42,7 +42,6 @@ export default function BuyerDashboard({ user }: { user: any }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tab = searchParams.get('tab') || 'overview';
-  const [tabMenuOpen, setTabMenuOpen] = useState(false);
   const curTab = TABS.find((tt) => tt.id === tab) || TABS[0];
 
   const [stats, setStats] = useState<any>(null);
@@ -156,28 +155,8 @@ export default function BuyerDashboard({ user }: { user: any }) {
       <style dangerouslySetInnerHTML={{ __html: DASHBOARD_CSS }} />
       <div className="wnav">
         <HomyLogoMenu align="left" />
-        {/* mobile: раздел как выпадающее меню (вместо скролл-табов) */}
-        <div className="dtabsel">
-          <button className="dtabsel-btn" onClick={() => setTabMenuOpen((o) => !o)} aria-haspopup="true" aria-expanded={tabMenuOpen}>
-            {curTab.label}
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
-          </button>
-          {tabMenuOpen && (
-            <>
-              <div className="dtabsel-back" onClick={() => setTabMenuOpen(false)} />
-              <div className="dtabsel-pop">
-                {TABS.map((tt) => {
-                  const cnt = tt.id === 'favorites' ? favCount : tt.id === 'searches' ? savedCount : tt.id === 'viewings' ? viewCount : 0;
-                  return (
-                    <button key={tt.id} className={`dtabsel-i${tab === tt.id ? ' on' : ''}`} onClick={() => { goTab(tt.id); setTabMenuOpen(false); }}>
-                      {tt.label}{cnt > 0 ? <span className="cnt">{cnt}</span> : null}
-                    </button>
-                  );
-                })}
-              </div>
-            </>
-          )}
-        </div>
+        {/* mobile: метка текущего раздела (навигация — через меню Homy) */}
+        <span className="dcur">· {curTab.label}</span>
         <div className="sp" />
         <div className="themebtn">
           <button className={`o${theme === 'light' ? ' on' : ''}`} onClick={() => setTheme('light')} title="Светлая">
