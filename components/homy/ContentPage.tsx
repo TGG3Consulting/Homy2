@@ -48,11 +48,34 @@ html.dark .homy-content{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:
 .homy-content .tm{text-align:center}.homy-content .tm .av{width:72px;height:72px;border-radius:50%;background-size:cover;background-position:center;margin:0 auto 10px;background-color:var(--surface2)}
 .homy-content .tm b{font-size:13px;font-weight:600;display:block}.homy-content .tm span{font-size:11.5px;color:var(--muted)}
 .homy-content .center{text-align:center;margin-top:26px}
+/* mobile nav dropdown (вместо скролл-полосы ссылок) */
+.homy-content .cmenu{display:none;position:relative}
+.homy-content .cmenu-btn{display:inline-flex;align-items:center;gap:0;font-weight:800;font-size:16px;letter-spacing:-.02em;color:var(--ink);background:none;border:0;font-family:inherit;cursor:pointer;padding:2px}
+.homy-content .cmenu-btn .m{color:var(--em)}
+.homy-content .cmenu-btn svg{color:var(--muted);margin-left:6px}
+.homy-content .cmenu-back{position:fixed;inset:0;z-index:40;display:none}
+.homy-content .cmenu.open .cmenu-back{display:block}
+.homy-content .cmenu-pop{position:absolute;top:calc(100% + 8px);left:0;z-index:50;min-width:210px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.28);padding:8px;display:none}
+html.dark .homy-content .cmenu-pop{box-shadow:0 18px 46px rgba(0,0,0,.55)}
+.homy-content .cmenu.open .cmenu-pop{display:block}
+.homy-content .cmenu-pop a{display:block;font-size:13.5px;font-weight:500;color:var(--ink);text-decoration:none;padding:10px 12px;border-radius:10px}
+.homy-content .cmenu-pop a:hover{background:color-mix(in srgb,var(--muted) 14%,transparent)}
+.homy-content .cmenu-pop a.on{color:var(--em);font-weight:700;background:color-mix(in srgb,var(--em) 10%,transparent)}
+.homy-content .cmenu-pop a.acc{color:var(--em);font-weight:700}
+.homy-content .cmenu-sep{height:1px;background:var(--hair);margin:6px 4px}
+@media(max-width:640px){
+  .homy-content .cnav{padding:11px 16px;gap:10px}
+  .homy-content .cnav .lg,.homy-content .cnav .links,.homy-content .cnav .right{display:none}
+  .homy-content .cmenu{display:inline-block;margin-left:2px}
+  .homy-content .chero h1{font-size:24px}
+  .homy-content .cwrap{padding:24px 16px 40px}
+}
 `;
 
 export default function ContentPage({ active, children }: { active?: 'how' | 'who' | 'about'; children: React.ReactNode }) {
   const router = useRouter();
   const [authed, setAuthed] = useState<boolean | null>(null);
+  const [navOpen, setNavOpen] = useState(false);
   useEffect(() => {
     let alive = true;
     fetch('/api/users/me', { credentials: 'include' }).then((r) => { if (alive) setAuthed(r.ok); }).catch(() => { if (alive) setAuthed(false); });
@@ -70,6 +93,22 @@ export default function ContentPage({ active, children }: { active?: 'how' | 'wh
           <a href="/how-it-works" className={active === 'how' ? 'on' : ''}>Как это работает</a>
           <a href="/for-buyers" className={active === 'who' ? 'on' : ''}>Для кого</a>
           <a href="/about" className={active === 'about' ? 'on' : ''}>О нас</a>
+        </div>
+        {/* mobile: навигация в выпадающем меню Homy (вместо скролл-полосы) */}
+        <div className={`cmenu${navOpen ? ' open' : ''}`}>
+          <button className="cmenu-btn" onClick={() => setNavOpen((o) => !o)} aria-haspopup="true" aria-expanded={navOpen}>
+            Ho<span className="m">m</span>y
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+          </button>
+          <div className="cmenu-back" onClick={() => setNavOpen(false)} />
+          <div className="cmenu-pop">
+            <a href="/how-it-works" className={active === 'how' ? 'on' : ''}>Как это работает</a>
+            <a href="/for-buyers" className={active === 'who' ? 'on' : ''}>Для кого</a>
+            <a href="/about" className={active === 'about' ? 'on' : ''}>О нас</a>
+            <div className="cmenu-sep" />
+            <a href={authed ? '/dashboard' : '/login'} className="acc">{authed ? 'Личный кабинет' : 'Войти'}</a>
+            <a href="/">Главная</a>
+          </div>
         </div>
         <div className="right">
           <a href={authed ? '/dashboard' : '/login'} className="em3d">{authed ? 'Личный кабинет' : 'Войти'}</a>

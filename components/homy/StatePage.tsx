@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 /** 1:1 F5–F7 centered "state" pages (404 / error / coming-soon) from Homy-Batch7. */
 const STATE_CSS = `
@@ -31,6 +31,27 @@ html.dark .homy-state{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#F
 .homy-state .sec{position:relative;background:none;border:0;color:var(--soft);font-weight:700;font-size:14px;padding:11px 4px;cursor:pointer;font-family:inherit;overflow:visible}
 .homy-state .sec::after{content:'';position:absolute;left:3px;bottom:1px;width:0;height:2px;border-radius:2px;background:var(--em);transition:width .28s cubic-bezier(.22,1,.36,1)}
 .homy-state .sec:hover{color:var(--em)}.homy-state .sec:hover::after{width:calc(100% - 6px)}
+/* mobile nav dropdown (вместо скролл-полосы ссылок) */
+.homy-state .cmenu{display:none;position:relative}
+.homy-state .cmenu-btn{display:inline-flex;align-items:center;gap:0;font-weight:800;font-size:16px;letter-spacing:-.02em;color:var(--ink);background:none;border:0;font-family:inherit;cursor:pointer;padding:2px}
+.homy-state .cmenu-btn .m{color:var(--em)}
+.homy-state .cmenu-btn svg{color:var(--muted);margin-left:6px}
+.homy-state .cmenu-back{position:fixed;inset:0;z-index:40;display:none}
+.homy-state .cmenu.open .cmenu-back{display:block}
+.homy-state .cmenu-pop{position:absolute;top:calc(100% + 8px);left:0;z-index:50;min-width:210px;background:var(--surface);border:1px solid var(--hair);border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.28);padding:8px;display:none}
+html.dark .homy-state .cmenu-pop{box-shadow:0 18px 46px rgba(0,0,0,.55)}
+.homy-state .cmenu.open .cmenu-pop{display:block}
+.homy-state .cmenu-pop a{display:block;font-size:13.5px;font-weight:500;color:var(--ink);text-decoration:none;padding:10px 12px;border-radius:10px}
+.homy-state .cmenu-pop a:hover{background:color-mix(in srgb,var(--muted) 14%,transparent)}
+.homy-state .cmenu-pop a.acc{color:var(--em);font-weight:700}
+.homy-state .cmenu-sep{height:1px;background:var(--hair);margin:6px 4px}
+@media(max-width:640px){
+  .homy-state .cnav{padding:11px 16px;gap:10px}
+  .homy-state .cnav .lg,.homy-state .cnav .links,.homy-state .cnav .right{display:none}
+  .homy-state .cmenu{display:inline-block}
+  .homy-state .code{font-size:48px}
+  .homy-state .estate{padding:32px 20px}
+}
 `;
 
 interface Action { label: string; onClick: () => void; kind?: 'primary' | 'sec'; }
@@ -46,6 +67,7 @@ export default function StatePage({
   actions?: Action[];
   children?: React.ReactNode;
 }) {
+  const [navOpen, setNavOpen] = useState(false);
   return (
     <div className="homy-state">
       <style dangerouslySetInnerHTML={{ __html: STATE_CSS }} />
@@ -55,6 +77,22 @@ export default function StatePage({
           <a href="/how-it-works">Как это работает</a>
           <a href="/for-buyers">Для кого</a>
           <a href="/about">О нас</a>
+        </div>
+        {/* mobile: навигация в выпадающем меню Homy */}
+        <div className={`cmenu${navOpen ? ' open' : ''}`}>
+          <button className="cmenu-btn" onClick={() => setNavOpen((o) => !o)} aria-haspopup="true" aria-expanded={navOpen}>
+            Ho<span className="m">m</span>y
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+          </button>
+          <div className="cmenu-back" onClick={() => setNavOpen(false)} />
+          <div className="cmenu-pop">
+            <a href="/how-it-works">Как это работает</a>
+            <a href="/for-buyers">Для кого</a>
+            <a href="/about">О нас</a>
+            <div className="cmenu-sep" />
+            <a href="/login" className="acc">Войти</a>
+            <a href="/">Главная</a>
+          </div>
         </div>
         <div className="right"><a href="/login" className="em3d" style={{ textDecoration: 'none', padding: '8px 16px' }}>Войти</a></div>
       </div>
