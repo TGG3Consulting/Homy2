@@ -18,7 +18,8 @@ const ADMIN_EXTRA = `
 .homy-broker .urow{display:flex;align-items:center;gap:13px;padding:13px 16px;border-bottom:1px solid var(--hair)}
 .homy-broker .urow:last-child{border-bottom:0}
 .homy-broker .urow .av{width:36px;height:36px;border-radius:50%;flex:none;background:radial-gradient(135% 175% at 50% 14%,var(--em-hi),var(--em));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px}
-.homy-broker .urow .nm{font-size:13px;font-weight:600}.homy-broker .urow .em{font-size:11.5px;color:var(--muted)}
+.homy-broker .urow .ui{flex:1;min-width:0}
+.homy-broker .urow .nm{font-size:13px;font-weight:600}.homy-broker .urow .em{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .homy-broker .mod{display:flex;gap:14px;padding:14px;border:1px solid var(--hair);border-radius:14px;background:var(--surface);margin-bottom:11px;align-items:center}
 .homy-broker .mod .ph{width:120px;height:90px;border-radius:11px;background-size:cover;background-position:center;flex:none;background-color:var(--surface2)}
 .homy-broker .mod .mi{flex:1;min-width:0}
@@ -31,7 +32,17 @@ const ADMIN_EXTRA = `
 .homy-broker .macts{display:flex;flex-direction:column;gap:9px;justify-content:center;flex:none}
 .homy-broker .btn-danger{background:none;border:1px solid color-mix(in srgb,var(--danger) 40%,transparent);color:var(--danger);font-weight:700;font-size:12px;padding:8px 14px;border-radius:10px;cursor:pointer;font-family:inherit}
 .homy-broker .btn-danger:hover{background:color-mix(in srgb,var(--danger) 10%,transparent)}
-@media(max-width:640px){.homy-broker .mod{flex-wrap:wrap}.homy-broker .mod .ph{width:100%;height:130px}.homy-broker .macts{flex-direction:row;flex:1 1 100%}}
+@media(max-width:640px){
+  .homy-broker .mod{flex-wrap:wrap}.homy-broker .mod .ph{width:100%;height:130px}.homy-broker .macts{flex-direction:row;flex:1 1 100%}
+  /* каждый пользователь — отдельная карточка (без общего контейнера с разделителями) */
+  .homy-broker .utable{border:0;border-radius:0;overflow:visible;background:none;display:flex;flex-direction:column;gap:10px}
+  .homy-broker .urow{flex-wrap:wrap;gap:8px 10px;padding:14px;border:1px solid var(--hair);border-radius:14px;background:var(--surface);margin:0}
+  .homy-broker .urow:last-child{border:1px solid var(--hair)}
+  .homy-broker .urow .ui{flex:1 1 auto;min-width:130px}
+  .homy-broker .urow .role{order:3}
+  .homy-broker .urow .ust{order:4;width:auto!important;flex:1 1 100%}
+  .homy-broker .urow .lact{order:5;flex:1 1 100%;justify-content:flex-start;gap:16px;margin-top:2px}
+}
 `;
 
 const initials = (s: string) => (s || '?').trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
@@ -271,7 +282,7 @@ function UsersView({ showToast, currentUserId, canRole }: any) {
             return (
               <div key={u.id} className="urow">
                 <div className="av">{initials(name)}</div>
-                <div style={{ flex: 1, minWidth: 0 }}><div className="nm">{name}</div><div className="em">{u.email}</div></div>
+                <div className="ui"><div className="nm">{name}</div><div className="em">{u.email}</div></div>
                 <span className={`role ${ri.cls}`}>{ri.label}</span>
                 <span className={`ust ${u.is_blocked ? 'blocked' : 'active'}`} style={{ width: 96 }}>{u.is_blocked ? 'Заблокирован' : 'Активен'}</span>
                 <div className="lact" style={{ gap: 14 }}>
