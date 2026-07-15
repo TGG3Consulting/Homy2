@@ -198,12 +198,12 @@ export function buildPropertyOpinionPrompt(
 ): string {
   const hasClient = !!(conversationHistory && conversationHistory.trim());
   const intelLines = intel ? [
-    intel.developer_verified !== undefined ? `Застройщик: ${intel.developer_verified ? 'проверен' : 'НЕ подтверждён (риск)'}` : '',
-    intel.double_sale_risk !== undefined ? `Риск двойной продажи: ${intel.double_sale_risk ? 'ЕСТЬ сигналы' : 'нет сигналов'}` : '',
+    intel.developer_verified != null ? `Застройщик: ${intel.developer_verified ? 'проверен' : 'не подтверждён'}` : '',
+    intel.double_sale_risk != null ? `Риск двойной продажи: ${intel.double_sale_risk ? 'ЕСТЬ сигналы' : 'нет сигналов'}` : '',
     intel.ownership_status ? `Собственность: ${intel.ownership_status}` : '',
     intel.title_status ? `Документы: ${intel.title_status}` : '',
     intel.price_vs_market ? `Цена к рынку: ${intel.price_vs_market}` : '',
-    intel.investment_score !== undefined ? `Инвест-оценка Homy: ${intel.investment_score}/100` : '',
+    intel.investment_score != null ? `Инвест-оценка Homy: ${intel.investment_score}/100` : '',
     intel.roi_estimate ? `ROI (оценка): ${intel.roi_estimate}` : '',
     intel.appreciation_forecast ? `Прогноз роста: ${intel.appreciation_forecast}` : '',
     intel.noise_level ? `Уровень шума: ${intel.noise_level}` : '',
@@ -231,7 +231,7 @@ ${intelLines}` : ''}
 - Опирайся ТОЛЬКО на факты выше. Неизвестное помечай «не проверено», ничего не выдумывай.
 ${hasClient
   ? '- Прямо называй И совпадения с запросом, И несовпадения. Если нарушен жёсткий критерий (вне бюджета, не тот район, нет парковки при потребности в авто) — это главный риск в warning.'
-  : '- Честно назови и сильные стороны, и реальные риски объекта (юр. чистота, цена к рынку, шум, парковка).'}
+  : '- Честно назови сильные стороны и реальные риски объекта ПО ФАКТАМ выше (цена, площадь, этаж, год, парковка, балкон, инфраструктура рядом). Юридическую чистоту и доходность/ROI НЕ оценивай и НЕ утверждай — таких данных у нас нет.'}
 - Без воды: никаких «хороший ориентир» / «предпочтения формируются». Только конкретика по фактам.
 
 ОТВЕТЬ СТРОГО JSON (без markdown, только объект):

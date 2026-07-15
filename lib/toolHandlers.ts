@@ -7,6 +7,7 @@ import prisma from '@/lib/db/prisma';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import matchScoreService from '@/lib/services/matchScoreService';
+import { findProvince, findCity } from '@/lib/geo/armenia';
 
 // ============================================
 // TOOL DEFINITIONS (for Claude API)
@@ -19,9 +20,17 @@ export const HOMY_TOOLS = [
     input_schema: {
       type: "object" as const,
       properties: {
+        province: {
+          type: "string",
+          description: "Область (марз) Армении. Можно передать название на рус/арм/англ или ключ: Ереван/yerevan, Ширак/shirak, Лори/lori, Котайк/kotayk, Арарат/ararat, Армавир/armavir, Гегаркуник/gegharkunik, Арагацотн/aragatsotn, Вайоц-Дзор/vayots-dzor, Сюник/syunik, Тавуш/tavush."
+        },
+        city: {
+          type: "string",
+          description: "Город Армении (например: Гюмри, Ванадзор, Дилижан, Капан, Абовян). Можно название на рус/арм/англ. Используй когда пользователь называет город вне Еревана."
+        },
         district: {
           type: "string",
-          description: "Район Еревана: Kentron, Arabkir, Ajapnyak, Davtashen, Nork-Marash, Malatia-Sebastia, Erebuni, Shengavit, Nor Nork, Avan, Nubarashen, Kanaker-Zeytun"
+          description: "Район — ТОЛЬКО для Еревана: Kentron, Arabkir, Ajapnyak, Davtashen, Nork-Marash, Malatia-Sebastia, Erebuni, Shengavit, Nor Nork, Avan, Nubarashen, Kanaker-Zeytun"
         },
         min_price: { type: "number", description: "Минимальная цена" },
         max_price: { type: "number", description: "Максимальная цена" },
@@ -113,6 +122,8 @@ export const HOMY_TOOLS = [
 // ============================================
 
 export interface SearchPropertiesInput {
+  province?: string;
+  city?: string;
   district?: string;
   min_price?: number;
   max_price?: number;
@@ -161,6 +172,17 @@ export interface PropertyShowResult {
 export async function searchProperties(input: SearchPropertiesInput): Promise<any[]> {
   const where: any = {};
 
+  // Гео: область (марз) и город — вся Армения. Район — только Ереван.
+  if (input.province) {
+    const pv = findProvince(input.province);
+    where.province = pv ? pv.key : input.province.toLowerCase();
+  }
+  if (input.city) {
+    const cc = findCity(input.city);
+    where.city = cc ? cc.key : input.city.toLowerCase();
+    // Если область не задана явно, выведем её из города
+    if (cc && !input.province) where.province = cc.province;
+  }
   if (input.district) {
     where.district = input.district;
   }
@@ -229,6 +251,8 @@ export async function searchProperties(input: SearchPropertiesInput): Promise<an
   return properties.map(p => ({
     id: p.id,
     address: p.address,
+    province: p.province,
+    city: p.city,
     district: p.district,
     price: p.price,
     currency: p.currency,

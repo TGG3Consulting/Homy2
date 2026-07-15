@@ -38,7 +38,7 @@ export async function POST(
         appreciation_forecast: raw?.investment?.appreciation_forecast,
         noise_level: raw?.location?.noise_level,
         commute: raw?.location?.commute_am,
-        parking: raw?.location?.parking_available ? 'есть' : 'ограничена',
+        parking: raw?.location?.parking_available == null ? undefined : (raw.location.parking_available ? 'есть' : 'ограничена'),
       };
     } catch { /* intelligence optional */ }
 

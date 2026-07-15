@@ -36,8 +36,12 @@ export async function GET(
         ecology_index: typeof rawIntelligence.location.ecology_index === 'number'
           ? (rawIntelligence.location.ecology_index > 70 ? 'good' : rawIntelligence.location.ecology_index > 50 ? 'medium' : 'low')
           : rawIntelligence.location.ecology_index,
-        parking_available: rawIntelligence.location.parking_available ? 'Available' : 'Limited',
-        playgrounds_nearby: rawIntelligence.location.playgrounds_nearby ? 'Yes, nearby' : 'Not found',
+        parking_available: rawIntelligence.location.parking_available == null
+          ? null
+          : (rawIntelligence.location.parking_available ? 'Available' : 'Limited'),
+        playgrounds_nearby: rawIntelligence.location.playgrounds_nearby == null
+          ? null
+          : (rawIntelligence.location.playgrounds_nearby ? 'Yes, nearby' : 'Not found'),
         parks_nearby: Array.isArray(rawIntelligence.location.parks_nearby)
           ? (rawIntelligence.location.parks_nearby.length > 0
             ? `${rawIntelligence.location.parks_nearby.length} parks (${rawIntelligence.location.parks_nearby[0]?.name || 'nearby'})`

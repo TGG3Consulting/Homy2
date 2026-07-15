@@ -143,6 +143,7 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
         setProperty({
           id: raw.id, name: raw.title || raw.name || 'Объект', title: raw.title,
           address: raw.address || '', district, neighborhood: district,
+          province: raw.province || '', city: raw.city || '',
           price: raw.price || 0, currency: raw.currency || 'AMD',
           area, size_sqm: area, rooms, bedrooms: rooms, bathrooms: raw.bathrooms,
           floor: raw.floor, totalFloors: raw.totalFloors || raw.total_floors,
