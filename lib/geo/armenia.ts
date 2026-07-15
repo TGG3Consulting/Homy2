@@ -201,5 +201,6 @@ export function getCityProvince(cityNameOrKey: string | null | undefined): strin
 /** Localize a GeoName to a language (fallback en → ru → hy). */
 export function localizeGeo(name: GeoName | undefined, lang: string): string {
   if (!name) return '';
-  return (name as Record<string, string>)[lang] || name.en || name.ru || name.hy || '';
+  const key: keyof GeoName = lang === 'ru' ? 'ru' : lang === 'hy' ? 'hy' : 'en';
+  return name[key] || name.en || name.ru || name.hy || '';
 }
