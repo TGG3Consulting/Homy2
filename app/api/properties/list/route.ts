@@ -21,6 +21,8 @@ async function handler(req: AuthenticatedRequest) {
     photos,
     contact,
     deal_type,
+    province,
+    city,
     district,
     neighborhood,
     address,
@@ -28,8 +30,8 @@ async function handler(req: AuthenticatedRequest) {
     title,
   } = body;
 
-  // Build a human location from address/district if not supplied.
-  const loc = location || [address, district].filter(Boolean).join(' · ') || district || null;
+  // Build a human location from address / district (Yerevan) / city if not supplied.
+  const loc = location || [address, district, city].filter(Boolean).join(' · ') || city || district || null;
 
   // Validation (contact defaults to the submitter below)
   if (!property_type || !price || !area || !rooms || !loc) {
@@ -60,6 +62,8 @@ async function handler(req: AuthenticatedRequest) {
       contact: contactValue,
       status: 'pending',
       deal_type: deal_type || null,
+      province: province || null,
+      city: city || null,
       district: district || null,
       neighborhood: neighborhood || district || null,
       address: address || null,

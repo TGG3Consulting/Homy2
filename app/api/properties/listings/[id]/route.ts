@@ -99,6 +99,9 @@ async function patchHandler(
     const {
       property_type,
       location,
+      province,
+      city,
+      district,
       price,
       currency,
       area,
@@ -110,6 +113,9 @@ async function patchHandler(
 
     // Build update data with only provided fields
     const updateData: Record<string, unknown> = {};
+    if (province !== undefined) updateData.province = province || null;
+    if (city !== undefined) updateData.city = city || null;
+    if (district !== undefined) updateData.district = district || null;
 
     if (property_type !== undefined) {
       const validTypes = ['apartment', 'house', 'studio'];

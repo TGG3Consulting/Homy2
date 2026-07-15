@@ -7,6 +7,7 @@ import { useTheme } from '@/components/homy/ThemeProvider';
 import HomyLogoMenu from '@/components/homy/HomyLogoMenu';
 import ViewingsTab from '@/components/homy/ViewingsTab';
 import { BROKER_CSS } from '@/components/homy/brokerStyles';
+import { PROVINCES, getCities, YEREVAN_DISTRICTS, localizeGeo } from '@/lib/geo/armenia';
 
 function fmtPrice(p: any): string { const n = Number(p); return n ? Math.round(n).toLocaleString('ru-RU').replace(/,/g, ' ') : '—'; }
 function loc(v: any, lang: string): string {
@@ -230,6 +231,8 @@ function CreateListingModal({ lang, onClose, onDone, showToast, editing }: any) 
   const [f, setF] = useState<any>(isEdit ? {
     dealType: d.deal_type || d.dealType || 'long_term_rental',
     propertyType: d.property_type || d.propertyType || 'apartment',
+    province: d.province || '',
+    city: d.city || '',
     district: (typeof d.district === 'string' ? d.district : loc(d.district, lang)) || '',
     address: d.address || d.location || '',
     price: d.price != null ? String(d.price) : '',
@@ -237,7 +240,7 @@ function CreateListingModal({ lang, onClose, onDone, showToast, editing }: any) 
     area: (d.area ?? d.size_sqm) != null ? String(d.area ?? d.size_sqm) : '',
     floor: d.floor != null ? String(d.floor) : '',
     description: (typeof d.description === 'string' ? d.description : loc(d.description, lang)) || '',
-  } : { dealType: 'long_term_rental', propertyType: 'apartment', district: '', address: '', price: '', rooms: '', area: '', floor: '', description: '' });
+  } : { dealType: 'long_term_rental', propertyType: 'apartment', province: '', city: '', district: '', address: '', price: '', rooms: '', area: '', floor: '', description: '' });
   const [photos, setPhotos] = useState<string[]>(isEdit ? (d.images || d.photos || []) : []);
   const [uploading, setUploading] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -257,6 +260,8 @@ function CreateListingModal({ lang, onClose, onDone, showToast, editing }: any) 
         ...s,
         dealType: o.deal_type || o.dealType || s.dealType,
         propertyType: o.property_type || o.propertyType || s.propertyType,
+        province: o.province || s.province,
+        city: o.city || s.city,
         district: (typeof o.district === 'string' ? o.district : loc(o.district, lang)) || s.district,
         address: o.address || o.location || s.address,
         price: o.price != null ? String(o.price) : s.price,
@@ -287,7 +292,10 @@ function CreateListingModal({ lang, onClose, onDone, showToast, editing }: any) 
   };
 
   const submit = async () => {
-    if (!f.price || !f.area || !f.rooms || (!isEdit && !f.district)) { showToast(false, 'Укажите цену, комнаты и площадь'); return; }
+    if (!f.price || !f.area || !f.rooms || !f.province || (f.province === 'yerevan' ? !f.district : !f.city)) {
+      showToast(false, f.province === 'yerevan' ? 'Укажите район, цену, комнаты и площадь' : 'Укажите область, город, цену, комнаты и площадь');
+      return;
+    }
     setBusy(true);
     try {
       let r: Response;
@@ -296,7 +304,8 @@ function CreateListingModal({ lang, onClose, onDone, showToast, editing }: any) 
         r = await fetch(`/api/properties/${editing.id}`, {
           method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
           body: JSON.stringify({
-            dealType: f.dealType, propertyType: f.propertyType, district: f.district, address: f.address,
+            dealType: f.dealType, propertyType: f.propertyType,
+            province: f.province, city: f.city, district: f.province === 'yerevan' ? f.district : '', address: f.address,
             price: Number(f.price), rooms: Number(f.rooms), area: Number(f.area),
             floor: f.floor ? Number(f.floor) : null, description: f.description, images: photos,
           }),
@@ -306,7 +315,9 @@ function CreateListingModal({ lang, onClose, onDone, showToast, editing }: any) 
         r = await fetch(`/api/properties/listings/${editing.id}`, {
           method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
           body: JSON.stringify({
-            property_type: f.propertyType, location: f.address || f.district,
+            property_type: f.propertyType,
+            province: f.province, city: f.city, district: f.province === 'yerevan' ? f.district : '',
+            location: [f.address, f.province === 'yerevan' ? f.district : f.city].filter(Boolean).join(' · ') || f.address,
             price: Number(f.price), area: Number(f.area), rooms: Number(f.rooms),
             description: f.description, photos,
           }),
@@ -317,7 +328,8 @@ function CreateListingModal({ lang, onClose, onDone, showToast, editing }: any) 
         r = await fetch('/api/properties/list', {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
           body: JSON.stringify({
-            property_type: f.propertyType, deal_type: f.dealType, district: f.district, address: f.address,
+            property_type: f.propertyType, deal_type: f.dealType,
+            province: f.province, city: f.city, district: f.province === 'yerevan' ? f.district : '', address: f.address,
             price: Number(f.price), rooms: Number(f.rooms), area: Number(f.area),
             floor: f.floor ? Number(f.floor) : null, description: f.description, photos,
           }),
@@ -355,8 +367,13 @@ function CreateListingModal({ lang, onClose, onDone, showToast, editing }: any) 
         <div className="frm2">
           <div className="field"><label>Тип сделки</label><div className="inp"><select value={f.dealType} onChange={(e) => set('dealType', e.target.value)}><option value="long_term_rental">Аренда</option><option value="sale">Продажа</option></select></div></div>
           <div className="field"><label>Тип жилья</label><div className="inp"><select value={f.propertyType} onChange={(e) => set('propertyType', e.target.value)}><option value="apartment">Квартира</option><option value="house">Дом</option><option value="studio">Студия</option></select></div></div>
-          <div className="field"><label>Район</label><div className="inp"><input value={f.district} onChange={(e) => set('district', e.target.value)} placeholder="Кентрон" /></div></div>
-          <div className="field"><label>Адрес</label><div className="inp"><input value={f.address} onChange={(e) => set('address', e.target.value)} placeholder="Северный проспект" /></div></div>
+          <div className="field"><label>Область</label><div className="inp"><select value={f.province} onChange={(e) => { const pv = e.target.value; setF((s: any) => ({ ...s, province: pv, city: pv === 'yerevan' ? 'yerevan' : '', district: '' })); }}><option value="">Выберите область</option>{PROVINCES.map((p) => <option key={p.key} value={p.key}>{localizeGeo(p.name, lang)}</option>)}</select></div></div>
+          {f.province === 'yerevan' ? (
+            <div className="field"><label>Район (Ереван)</label><div className="inp"><select value={f.district} onChange={(e) => set('district', e.target.value)}><option value="">Выберите район</option>{YEREVAN_DISTRICTS.map((dd) => <option key={dd.key} value={dd.key}>{localizeGeo(dd.name, lang)}</option>)}</select></div></div>
+          ) : (
+            <div className="field"><label>Город</label><div className="inp"><select value={f.city} onChange={(e) => set('city', e.target.value)} disabled={!f.province}><option value="">{f.province ? 'Выберите город' : 'Сначала область'}</option>{getCities(f.province || undefined).map((c) => <option key={c.key} value={c.key}>{localizeGeo(c.name, lang)}</option>)}</select></div></div>
+          )}
+          <div className="field"><label>Адрес</label><div className="inp"><input value={f.address} onChange={(e) => set('address', e.target.value)} placeholder="Северный проспект 15" /></div></div>
           <div className="field"><label>Цена, AMD</label><div className="inp"><input type="number" value={f.price} onChange={(e) => set('price', e.target.value)} placeholder="350000" /></div></div>
           <div className="field"><label>Комнаты</label><div className="inp"><input type="number" value={f.rooms} onChange={(e) => set('rooms', e.target.value)} placeholder="2" /></div></div>
           <div className="field"><label>Площадь, м²</label><div className="inp"><input type="number" value={f.area} onChange={(e) => set('area', e.target.value)} placeholder="85" /></div></div>

@@ -39,6 +39,8 @@ async function approveListing(
         title: JSON.stringify({ ru: titleText, en: titleText, hy: titleText }),
         owner: { connect: { id: listing.owner_id } },
         address: listing.address || listing.location || null,
+        province: listing.province || null,
+        city: listing.city || null,
         district: listing.district || null,
         neighborhood: listing.neighborhood ? JSON.stringify({ ru: listing.neighborhood, en: listing.neighborhood, hy: listing.neighborhood }) : null,
         price: listing.price,

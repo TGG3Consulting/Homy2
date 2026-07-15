@@ -57,7 +57,7 @@ export const PATCH = withAuth(async (req: AuthenticatedRequest) => {
 
     const b = await req.json().catch(() => ({} as any));
     const data: Record<string, unknown> = {};
-    const str = ['address', 'district', 'description', 'imageUrl', 'dealType', 'propertyType'];
+    const str = ['address', 'province', 'city', 'district', 'description', 'imageUrl', 'dealType', 'propertyType'];
     for (const k of str) if (b[k] !== undefined) data[k] = b[k];
     if (b.title !== undefined) data.title = typeof b.title === 'object' ? JSON.stringify(b.title) : b.title;
     if (b.neighborhood !== undefined) data.neighborhood = typeof b.neighborhood === 'object' ? JSON.stringify(b.neighborhood) : b.neighborhood;

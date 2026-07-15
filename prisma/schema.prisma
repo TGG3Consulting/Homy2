@@ -339,7 +339,9 @@ model PropertyListing {
 
   // Extra fields carried through moderation to build the live Property on approve
   deal_type     String?  // long_term_rental | short_term_rental | sale
-  district      String?
+  province      String?  // марз/область (вся Армения)
+  city          String?  // город/община
+  district      String?  // район — только Ереван
   neighborhood  String?
   address       String?
   floor         Int?
