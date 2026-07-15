@@ -129,6 +129,11 @@ export async function GET(req: NextRequest) {
     if (criteria.min_rooms) where.rooms = { ...where.rooms, gte: criteria.min_rooms };
     if (criteria.max_rooms) where.rooms = { ...where.rooms, lte: criteria.max_rooms };
     if (criteria.districts?.length) where.district = { in: criteria.districts };
+    // Geo filters (вся Армения): область (марз) и город. Район — только Ереван.
+    const provinceFilter = searchParams.get('province') || undefined;
+    const cityFilter = searchParams.get('city') || undefined;
+    if (provinceFilter) where.province = provinceFilter;
+    if (cityFilter) where.city = cityFilter;
     if (criteria.property_type) where.propertyType = criteria.property_type;
     if (criteria.deal_type) where.dealType = criteria.deal_type;
     if (criteria.pets_allowed) where.petsAllowed = true;

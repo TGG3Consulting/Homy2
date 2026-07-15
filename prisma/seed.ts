@@ -1229,7 +1229,9 @@ async function main() {
       owner: { connect: { id: ownerUserId } },
       title: JSON.stringify(prop.title), // Store as JSON string for localization
       address: prop.address,
-      district: prop.district,
+      province: 'yerevan', // все сид-объекты — Ереван
+      city: 'yerevan',
+      district: prop.district, // район Еревана
       neighborhood: JSON.stringify(prop.neighborhood),
       price: new Prisma.Decimal(prop.price),
       currency: 'AMD',
