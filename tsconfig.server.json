@@ -14,6 +14,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["server.ts", "lib/*.ts", "lib/chat/*.ts", "lib/pty/*.ts"],
+  "include": ["server.ts", "lib/*.ts", "lib/chat/*.ts", "lib/pty/*.ts", "scripts/*.ts"],
   "exclude": ["node_modules", ".next"]
 }

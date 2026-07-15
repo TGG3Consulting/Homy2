@@ -13,7 +13,7 @@
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:seed": "ts-node prisma/seed.ts",
-    "backfill:geo": "ts-node --compiler-options {\"module\":\"CommonJS\"} scripts/backfill-geo.ts",
+    "backfill:geo": "ts-node -r tsconfig-paths/register --project tsconfig.server.json scripts/backfill-geo.ts",
     "db:studio": "prisma studio"
   },
   "prisma": {
