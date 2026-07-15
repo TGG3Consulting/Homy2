@@ -2,7 +2,7 @@
   "Arabkir": {
     "name_en": "Arabkir",
     "name_ru": "Арабкир",
-    "name_hy": "Delays",
+    "name_hy": "Արաբկիր",
     "lat": 40.205,
     "lng": 44.505,
     "radius": 1800,
@@ -13,7 +13,7 @@
   "Kentron": {
     "name_en": "Kentron",
     "name_ru": "Кентрон",
-    "name_hy": "Կdelays",
+    "name_hy": "Կենտրոն",
     "lat": 40.179,
     "lng": 44.515,
     "radius": 1400,
@@ -24,7 +24,7 @@
   "Kanaker-Zeytun": {
     "name_en": "Kanaker-Zeytun",
     "name_ru": "Канакер-Зейтун",
-    "name_hy": "Քdelays-Զdelays",
+    "name_hy": "Քանաքեռ-Զեյթուն",
     "lat": 40.215,
     "lng": 44.535,
     "radius": 1600,
@@ -35,7 +35,7 @@
   "Davtashen": {
     "name_en": "Davtashen",
     "name_ru": "Давташен",
-    "name_hy": "Delays",
+    "name_hy": "Դավթաշեն",
     "lat": 40.215,
     "lng": 44.465,
     "radius": 1500,
@@ -46,7 +46,7 @@
   "Avan": {
     "name_en": "Avan",
     "name_ru": "Аван",
-    "name_hy": "Аван",
+    "name_hy": "Ավան",
     "lat": 40.185,
     "lng": 44.555,
     "radius": 1400,
@@ -57,7 +57,7 @@
   "Erebuni": {
     "name_en": "Erebuni",
     "name_ru": "Эребуни",
-    "name_hy": "Delays",
+    "name_hy": "Էրեբունի",
     "lat": 40.125,
     "lng": 44.505,
     "radius": 2000,
@@ -68,7 +68,7 @@
   "Malatia-Sebastia": {
     "name_en": "Malatia-Sebastia",
     "name_ru": "Малатия-Себастия",
-    "name_hy": "Delays-Սdelays",
+    "name_hy": "Մալաթիա-Սեբաստիա",
     "lat": 40.155,
     "lng": 44.475,
     "radius": 2200,
@@ -79,7 +79,7 @@
   "Nor-Nork": {
     "name_en": "Nor-Nork",
     "name_ru": "Нор-Норк",
-    "name_hy": "Նdelays Նdelays",
+    "name_hy": "Նոր Նորք",
     "lat": 40.195,
     "lng": 44.565,
     "radius": 1800,
@@ -90,7 +90,7 @@
   "Nork-Marash": {
     "name_en": "Nork-Marash",
     "name_ru": "Норк-Мараш",
-    "name_hy": "Նdelays-Մdelays",
+    "name_hy": "Նորք-Մարաշ",
     "lat": 40.185,
     "lng": 44.535,
     "radius": 1200,
@@ -101,7 +101,7 @@
   "Shengavit": {
     "name_en": "Shengavit",
     "name_ru": "Шенгавит",
-    "name_hy": "Շdelays",
+    "name_hy": "Շենգավիթ",
     "lat": 40.155,
     "lng": 44.505,
     "radius": 1600,
@@ -112,7 +112,7 @@
   "Ajapnyak": {
     "name_en": "Ajapnyak",
     "name_ru": "Аджапняк",
-    "name_hy": "Аdelays",
+    "name_hy": "Աջափնյակ",
     "lat": 40.205,
     "lng": 44.465,
     "radius": 2000,
@@ -123,7 +123,7 @@
   "Nubarashen": {
     "name_en": "Nubarashen",
     "name_ru": "Нубарашен",
-    "name_hy": "Նdelays",
+    "name_hy": "Նուբարաշեն",
     "lat": 40.095,
     "lng": 44.545,
     "radius": 1200,

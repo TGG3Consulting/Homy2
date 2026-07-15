@@ -154,7 +154,9 @@ model Property {
   owner_id              String?  @db.Uuid
   title                 String   @db.VarChar(500)
   address               String?  @db.VarChar(500)
-  district              String?  @db.VarChar(100)
+  province              String?  @db.VarChar(100) // марз/область (вся Армения); для столицы = "Yerevan"
+  city                  String?  @db.VarChar(120) // город/община
+  district              String?  @db.VarChar(100) // район — ТОЛЬКО для Еревана (12 районов)
   neighborhood          String?  @db.VarChar(100)
   price                 Decimal? @db.Decimal(12, 2)
   currency              String   @default("AMD") @db.VarChar(10)
