@@ -6,9 +6,12 @@
  * province = city = 'yerevan' wherever province is missing but a district is present.
  * Non-Yerevan data (no district) is left untouched.
  *
- * Run once:  npx ts-node -r tsconfig-paths/register scripts/backfill-geo.ts
+ * Run once:
+ *   npx ts-node --compiler-options "{\"module\":\"CommonJS\"}" scripts/backfill-geo.ts
  */
-import { prisma } from '../lib/db/prisma';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 async function main() {
   const props = await prisma.property.updateMany({
