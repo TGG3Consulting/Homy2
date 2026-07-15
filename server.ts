@@ -5,7 +5,6 @@
  */
 
 import { createServer, IncomingMessage, ServerResponse } from 'http';
-import { parse } from 'url';
 import next from 'next';
 import { WebSocketServer, WebSocket } from 'ws';
 import { Server as SocketIOServer } from 'socket.io';
@@ -37,8 +36,8 @@ function parseCookies(cookieHeader: string | undefined): Record<string, string> 
 app.prepare().then(() => {
   // Create HTTP server
   const server = createServer((req: IncomingMessage, res: ServerResponse) => {
-    const parsedUrl = parse(req.url || '', true);
-    handle(req, res, parsedUrl);
+    // Let Next parse the URL internally (avoids the deprecated node:url `url.parse`).
+    handle(req, res);
   });
 
   // ============================================
@@ -358,7 +357,7 @@ app.prepare().then(() => {
 
   // Handle WebSocket upgrade manually (only for /ws/chat)
   server.on('upgrade', (request, socket, head) => {
-    const { pathname } = parse(request.url || '', true);
+    const pathname = new URL(request.url || '', `http://${request.headers.host || 'localhost'}`).pathname;
 
     if (pathname === '/ws/chat') {
       // Best-effort auth: attach userId if a valid access-token cookie is present.

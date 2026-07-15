@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
   // Enable standalone output for Docker deployments
   output: 'standalone',
 
+  // Pin the file-tracing/watch root to this project so the dev watcher does not
+  // scan the whole drive (C:\) — fixes Watchpack EINVAL errors on Windows system files.
+  outputFileTracingRoot: __dirname,
+
   // Strict mode for better development experience
   reactStrictMode: true,
 
