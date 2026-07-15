@@ -277,11 +277,19 @@ export interface WebSocketConnected {
   type: 'connected';
 }
 
+/** Sent by /ws/chat when an anonymous visitor exceeds the free AI allowance
+ *  and must sign in to continue (C2). */
+export interface WebSocketAuthRequired {
+  type: 'auth_required';
+  error?: string;
+}
+
 export type WebSocketMessage =
   | WebSocketChatMessage
   | WebSocketPropertiesUpdate
   | WebSocketError
-  | WebSocketConnected;
+  | WebSocketConnected
+  | WebSocketAuthRequired;
 
 // Reviews System Types
 export interface Review {

@@ -142,6 +142,12 @@ function ResultsInner() {
   const [mstate, setMstate] = useState<'map' | 'results' | 'chat'>('map');
   const mStreamRef = useRef<HTMLDivElement>(null);
   const stepDown = () => setMstate((s) => (s === 'chat' ? 'results' : 'map'));
+  // C2: anonymous visitors get a small free AI allowance, then must sign in.
+  const [authRequired, setAuthRequired] = useState(false);
+  const goLogin = useCallback(() => {
+    const back = window.location.pathname + window.location.search;
+    router.push(`/login?redirect=${encodeURIComponent(back)}`);
+  }, [router]);
 
   // ---- save search (logged-in buyers) ----
   const [saveOpen, setSaveOpen] = useState(false);
@@ -391,6 +397,12 @@ function ResultsInner() {
             setError(data.error || 'Произошла ошибка');
             setIsAiTyping(false);
             break;
+          case 'auth_required':
+            setIsAiTyping(false);
+            setIsLoading(false);
+            setAuthRequired(true);
+            setChatMessages((prev) => [...prev, { role: 'assistant', content: data.error || 'Войдите или зарегистрируйтесь, чтобы продолжить поиск с Homy.' }]);
+            break;
         }
       } catch {}
     };
@@ -454,6 +466,7 @@ function ResultsInner() {
   const send = useCallback((message: string) => {
     const msg = message.trim();
     if (!msg) return;
+    if (authRequired) { goLogin(); return; }
     setChatMessages((prev) => [...prev, { role: 'user', content: msg }]);
     setComposer('');
     if (ws && ws.readyState === WebSocket.OPEN) {
@@ -462,7 +475,7 @@ function ResultsInner() {
     } else {
       setError('Соединение потеряно. Обновите страницу.');
     }
-  }, [ws]);
+  }, [ws, authRequired, goLogin]);
 
   const selected = useMemo(
     () => properties.find((p) => p.id === selectedId) || properties.find((p) => p.is_top_choice) || properties[0] || null,
@@ -567,12 +580,15 @@ function ResultsInner() {
             </div>
           ) : null}
 
-          {criteriaChips.length > 0 && (
+          {criteriaChips.length > 0 && !authRequired && (
             <div className="chipset">
               {['Показать дешевле', 'Только с парковкой', 'Ближе к центру'].map((c) => (
                 <span key={c} className="rchip" onClick={() => send(c)}>{c}</span>
               ))}
             </div>
+          )}
+          {authRequired && (
+            <button type="button" className="rchip" onClick={goLogin} style={{ alignSelf: 'flex-start', fontWeight: 700, color: 'var(--em)', borderColor: 'var(--em)' }}>Войти / Регистрация →</button>
           )}
         </div>
 
@@ -779,12 +795,15 @@ function ResultsInner() {
                     ))}
                   </div>
                 ) : null}
-                {criteriaChips.length > 0 && (
+                {criteriaChips.length > 0 && !authRequired && (
                   <div className="mchips">
                     {['Показать дешевле', 'Только с парковкой', 'Ближе к центру'].map((c) => (
                       <span key={c} className="rchip" onClick={() => send(c)}>{c}</span>
                     ))}
                   </div>
+                )}
+                {authRequired && (
+                  <div className="mchips"><span className="rchip" onClick={goLogin} style={{ fontWeight: 700, color: 'var(--em)', borderColor: 'var(--em)' }}>Войти / Регистрация →</span></div>
                 )}
               </div>
             </div>

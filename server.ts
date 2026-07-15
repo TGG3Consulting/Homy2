@@ -327,12 +327,49 @@ app.prepare().then(() => {
 
   const wssAI = new WebSocketServer({ noServer: true });
 
+  // ---- AI abuse protection (C2) ----
+  // /ws/chat drives the paid Anthropic API. It is a PUBLIC funnel (landing search),
+  // so we don't hard-require auth; instead anonymous visitors get a small free
+  // allowance per IP, then must sign in. Logged-in users are attributed by userId.
+  type AiWs = WebSocket & { userId?: string | null; clientIp?: string };
+  const ANON_AI_MESSAGE_LIMIT = 2;                 // free AI messages for anonymous, then auth
+  const ANON_AI_WINDOW_MS = 24 * 60 * 60 * 1000;   // rolling reset window per IP
+  const anonAiUsage = new Map<string, { count: number; resetAt: number }>();
+  // Returns true if the anonymous message is allowed (and counts it), false if over the limit.
+  function anonAiConsume(ip: string): boolean {
+    const now = Date.now();
+    let rec = anonAiUsage.get(ip);
+    if (!rec || now >= rec.resetAt) { rec = { count: 0, resetAt: now + ANON_AI_WINDOW_MS }; anonAiUsage.set(ip, rec); }
+    if (rec.count >= ANON_AI_MESSAGE_LIMIT) return false;
+    rec.count++;
+    return true;
+  }
+  // Prevent unbounded growth of the in-memory map.
+  const anonCleanup = setInterval(() => {
+    const now = Date.now();
+    for (const [ip, rec] of anonAiUsage) if (now >= rec.resetAt) anonAiUsage.delete(ip);
+  }, ANON_AI_WINDOW_MS);
+  if (typeof anonCleanup.unref === 'function') anonCleanup.unref();
+  function clientIpOf(request: IncomingMessage): string {
+    const xff = request.headers['x-forwarded-for'];
+    if (typeof xff === 'string' && xff.length) return xff.split(',')[0].trim();
+    return request.socket.remoteAddress || 'unknown';
+  }
+
   // Handle WebSocket upgrade manually (only for /ws/chat)
   server.on('upgrade', (request, socket, head) => {
     const { pathname } = parse(request.url || '', true);
 
     if (pathname === '/ws/chat') {
+      // Best-effort auth: attach userId if a valid access-token cookie is present.
+      const cookies = parseCookies(request.headers.cookie);
+      const token = cookies['homy_access_token'];
+      let userId: string | null = null;
+      if (token) { try { const p = jwtService.verifyAccessToken(token); if (p) userId = p.userId; } catch { /* anonymous */ } }
+      const ip = clientIpOf(request);
       wssAI.handleUpgrade(request, socket, head, (ws) => {
+        (ws as AiWs).userId = userId;
+        (ws as AiWs).clientIp = ip;
         wssAI.emit('connection', ws, request);
       });
     } else if (!pathname?.startsWith('/socket.io')) {
@@ -341,9 +378,9 @@ app.prepare().then(() => {
     }
   });
 
-  wssAI.on('connection', (ws: WebSocket) => {
+  wssAI.on('connection', (ws: AiWs) => {
     const sessionId = uuidv4();
-    console.log(`[WebSocket] New AI connection, sessionId: ${sessionId}`);
+    console.log(`[WebSocket] New AI connection, sessionId: ${sessionId}, user: ${ws.userId || 'anon'}`);
 
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'ready' }));
@@ -354,6 +391,13 @@ app.prepare().then(() => {
         const message = JSON.parse(data.toString());
 
         if (message.type === 'message' && message.content) {
+          // C2: anonymous visitors get a small free allowance per IP, then must sign in.
+          if (!ws.userId && !anonAiConsume(ws.clientIp || 'unknown')) {
+            if (ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ type: 'auth_required', error: 'Войдите или зарегистрируйтесь, чтобы продолжить поиск с Homy.' }));
+            }
+            return;
+          }
           try {
             const response = await anthropicSessionManager.sendMessage(
               sessionId,

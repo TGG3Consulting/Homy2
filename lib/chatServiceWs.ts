@@ -21,10 +21,12 @@ export interface ChatCallbacks {
   onComplete?: () => void;
   onError?: (error: string) => void;
   onConnectionChange?: (state: 'connecting' | 'connected' | 'disconnected') => void;
+  /** Anonymous free AI allowance exceeded — user must sign in (C2). */
+  onAuthRequired?: (message: string) => void;
 }
 
 interface WebSocketMessage {
-  type: 'ready' | 'message' | 'done' | 'error' | 'properties_update';
+  type: 'ready' | 'message' | 'done' | 'error' | 'properties_update' | 'auth_required';
   content?: string;
   error?: string;
   data?: PropertyDisplayData;
@@ -120,6 +122,12 @@ export class ChatServiceWs {
         case 'error':
           this.callbacks.onError?.(data.error || 'Unknown error');
           break;
+        case 'auth_required': {
+          const msg = data.error || 'Войдите или зарегистрируйтесь, чтобы продолжить.';
+          if (this.callbacks.onAuthRequired) this.callbacks.onAuthRequired(msg);
+          else this.callbacks.onError?.(msg);
+          break;
+        }
         default:
           console.warn('Unknown WebSocket message type:', data.type);
       }
