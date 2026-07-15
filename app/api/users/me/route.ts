@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 import prisma from '@/lib/db/prisma';
 import bcrypt from 'bcrypt';
+import { SELF_ASSIGNABLE_USER_TYPES, isSelfAssignableUserType } from '@/lib/auth/userTypes';
 
 // User data shape returned from API
 interface UserResponse {
@@ -115,8 +116,9 @@ function validatePhone(phone: string | null | undefined): boolean {
 
 function validateUserType(userType: string | null | undefined): boolean {
   if (userType === null || userType === undefined) return true;
-  const validTypes = ['buyer', 'renter', 'owner', 'agent', 'admin', 'consultant'];
-  return validTypes.includes(userType);
+  // Only non-privileged personas are self-assignable. 'admin'/'consultant'
+  // are granted by admin tooling/seed only — see lib/auth/userTypes.ts.
+  return isSelfAssignableUserType(userType);
 }
 
 function validateLanguage(lang: string | null | undefined): boolean {
@@ -188,7 +190,7 @@ async function patchHandler(req: AuthenticatedRequest) {
     // Validate and add user_type
     if (user_type !== undefined) {
       if (!validateUserType(user_type)) {
-        errors.user_type = 'Invalid user type. Must be one of: buyer, renter, owner, agent, consultant';
+        errors.user_type = `Invalid user type. Must be one of: ${SELF_ASSIGNABLE_USER_TYPES.join(', ')}`;
       } else {
         updateData.user_type = user_type;
       }
