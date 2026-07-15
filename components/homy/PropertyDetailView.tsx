@@ -12,6 +12,7 @@ import ViewingRequestForm from '@/components/homly/ViewingRequestForm';
 import VirtualTour from '@/components/homly/VirtualTour';
 import { PROPERTY_CSS } from '@/components/homy/propertyStyles';
 import { PropertyShowcase } from '@/lib/types';
+import { findProvince, findCity, isYerevan, YEREVAN_DISTRICTS, localizeGeo } from '@/lib/geo/armenia';
 import {
   ArrowLeft, Check, X, Star, ShieldCheck, Home, Bed, Maximize2, Building,
   Sparkles, AlertTriangle, Loader2, Receipt, MessageSquare, CalendarPlus, Video, Info,
@@ -20,6 +21,8 @@ import {
 } from 'lucide-react';
 
 const RING_C = 2 * Math.PI * 22;
+// 1.1: honest placeholder for fields we cannot verify from a real source yet.
+const NEEDS_SOURCE = 'Источник в подключении';
 
 function fmtPrice(p: number): string {
   if (!p) return '—';
@@ -285,7 +288,21 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
       .map((r: any) => loc(r, lang)).filter(Boolean);
     const warning = opinion?.warning || loc(property.warning, lang);
     const summary = opinion?.summary || '';
-    const displayLoc = [loc(property.address, lang), loc(property.district, lang)].filter(Boolean).join(' · ');
+    // Localized location: Address · District(Yerevan) · City · Province — from geo keys.
+    const geoParts: string[] = [];
+    if (property.district) {
+      const yd = YEREVAN_DISTRICTS.find((x) => x.key === property.district || x.name.en === property.district);
+      geoParts.push(yd ? localizeGeo(yd.name, lang) : loc(property.district, lang));
+    }
+    if (property.city && !isYerevan(property.city)) {
+      const cc = findCity(property.city);
+      geoParts.push(cc ? localizeGeo(cc.name, lang) : loc(property.city, lang));
+    }
+    if (property.province) {
+      const pp = findProvince(property.province);
+      geoParts.push(pp ? localizeGeo(pp.name, lang) : loc(property.province, lang));
+    }
+    const displayLoc = [loc(property.address, lang), ...geoParts].filter(Boolean).join(' · ');
     const ownerName = property.owner ? `${property.owner.first_name || ''} ${property.owner.last_name || ''}`.trim() : '';
     const ownerRole = property.owner?.user_type === 'agent' ? 'агент' : 'собственник';
     const verified = property.contact?.verified;
@@ -336,7 +353,7 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
             <div className="badges">
               {property.is_top_choice && <span className="bdg"><Star size={12} />Топ-выбор Homy</span>}
               <span className="bdg"><ShieldCheck size={12} />Проверенный листинг</span>
-              {loc(property.district, lang) && <span className="bdg n"><Home size={12} />{loc(property.district, lang)}</span>}
+              {geoParts[0] && <span className="bdg n"><Home size={12} />{geoParts[0]}</span>}
             </div>
 
             <div>
@@ -419,43 +436,40 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
                 </div>
                 {tab === 'legal' && (
                   <div className="ipanel">
-                    {iRow(<Building2 size={16} />, 'Репутация застройщика', intel.legal.developer_verified ? 'проверена' : 'не подтверждена', intel.legal.developer_verified ? undefined : 'warn')}
-                    {iRow(<Scale size={16} />, 'Активные юр. споры', intel.legal.claims_count === 0 ? 'не найдено' : `${intel.legal.claims_count}`, intel.legal.claims_count === 0 ? undefined : 'warn')}
-                    {iRow(<AlertTriangle size={16} />, 'Риск двойной продажи', intel.legal.double_sale_risk ? 'есть сигналы' : 'нет сигналов', intel.legal.double_sale_risk ? 'warn' : undefined)}
-                    {iRow(<ShieldCheck size={16} />, 'Регистрация собственности', intel.legal.ownership_status === 'single_owner' ? 'единственный владелец' : intel.legal.ownership_status === 'pending_verification' ? 'на проверке' : (intel.legal.ownership_status || '—'), intel.legal.ownership_status === 'single_owner' ? undefined : 'warn')}
-                    {iRow(<FileCheck size={16} />, 'Документы', intel.legal.title_status === 'complete' ? 'полные' : 'нужна проверка', intel.legal.title_status === 'complete' ? undefined : 'warn')}
-                    <div className="isrc">Источник: публичный реестр, данные застройщика{intel.legal.developer_name ? ` · ${intel.legal.developer_name}` : ''}</div>
+                    {iRow(<ShieldCheck size={16} />, 'Проверка модератором Homy', verified ? 'листинг проверен' : 'не проверен', verified ? undefined : 'mut')}
+                    {iRow(<Building2 size={16} />, 'Застройщик', intel.legal.developer_name || NEEDS_SOURCE, intel.legal.developer_name ? undefined : 'mut')}
+                    {iRow(<FileCheck size={16} />, 'Юр. чистота (титул, собственность, споры)', NEEDS_SOURCE, 'mut')}
+                    <div className="isrc">Юридическую чистоту (реестр/нотариус) уточняйте до сделки — Homy пока не проверяет её автоматически.</div>
                   </div>
                 )}
                 {tab === 'location' && (
                   <div className="ipanel">
-                    {iRow(<Volume2 size={16} />, 'Шум', intel.location.noise_level || '—', intel.location.noise_level && /high|высок/i.test(intel.location.noise_level) ? 'warn' : undefined)}
-                    {iRow(<Leaf size={16} />, 'Экология', intel.location.ecology_index === 'good' ? 'высокая' : intel.location.ecology_index === 'medium' ? 'средняя' : intel.location.ecology_index === 'low' ? 'низкая' : (intel.location.ecology_index || '—'))}
-                    {iRow(<TreePine size={16} />, 'Парки', intel.location.parks_nearby || '—')}
-                    {iRow(<Baby size={16} />, 'Детские площадки', intel.location.playgrounds_nearby || '—')}
-                    {iRow(<ParkingCircle size={16} />, 'Парковка', intel.location.parking_available === 'Available' ? 'есть' : 'ограничена', intel.location.parking_available === 'Available' ? undefined : 'warn')}
-                    {iRow(<Bus size={16} />, 'Дорога (утро/вечер)', [intel.location.commute_am, intel.location.commute_pm].filter(Boolean).join(' / ') || '—', 'mut')}
-                    <div className="isrc">Источник: данные района · neighborhoods.json</div>
+                    {iRow(<TreePine size={16} />, 'Парки рядом', intel.location.parks_nearby && intel.location.parks_nearby !== 'None nearby' ? String(intel.location.parks_nearby) : NEEDS_SOURCE, intel.location.parks_nearby && intel.location.parks_nearby !== 'None nearby' ? undefined : 'mut')}
+                    {iRow(<ParkingCircle size={16} />, 'Парковка', intel.location.parking_available === 'Available' ? 'есть' : intel.location.parking_available === 'Limited' ? 'ограничена' : NEEDS_SOURCE, intel.location.parking_available ? undefined : 'mut')}
+                    {iRow(<Volume2 size={16} />, 'Шум', NEEDS_SOURCE, 'mut')}
+                    {iRow(<Leaf size={16} />, 'Экология', NEEDS_SOURCE, 'mut')}
+                    {iRow(<Bus size={16} />, 'Время в пути', NEEDS_SOURCE, 'mut')}
+                    <div className="isrc">Парки и парковка — по реальным данным; остальное — источник в подключении.</div>
                   </div>
                 )}
                 {tab === 'infra' && (
                   <div className="ipanel">
-                    {iRow(<GraduationCap size={16} />, 'Школы', String(intel.infrastructure.schools || '—'))}
-                    {iRow(<Bus size={16} />, 'Транспорт', String(intel.infrastructure.transport || '—'))}
-                    {iRow(<ShoppingCart size={16} />, 'Супермаркеты', `${intel.infrastructure.supermarkets} рядом`)}
-                    {iRow(<Pill size={16} />, 'Аптеки', `${intel.infrastructure.pharmacies} рядом`)}
-                    {iRow(<Landmark size={16} />, 'Банки', `${intel.infrastructure.banks} рядом`)}
-                    <div className="isrc">Источник: POI-данные объекта</div>
+                    {iRow(<GraduationCap size={16} />, 'Школы и сады', intel.infrastructure.schools && intel.infrastructure.schools !== 'None nearby' ? String(intel.infrastructure.schools) : 'рядом не найдено')}
+                    {iRow(<Bus size={16} />, 'Транспорт', intel.infrastructure.transport && intel.infrastructure.transport !== 'Limited' ? String(intel.infrastructure.transport) : 'рядом не найдено')}
+                    {iRow(<ShoppingCart size={16} />, 'Супермаркеты', Number(intel.infrastructure.supermarkets) > 0 ? `${intel.infrastructure.supermarkets} рядом` : 'рядом не найдено')}
+                    {iRow(<Pill size={16} />, 'Аптеки', NEEDS_SOURCE, 'mut')}
+                    {iRow(<Landmark size={16} />, 'Банки', NEEDS_SOURCE, 'mut')}
+                    <div className="isrc">Школы, транспорт и магазины — по реальным POI (OpenStreetMap). Аптеки/банки — источник в подключении.</div>
                   </div>
                 )}
                 {tab === 'invest' && (
                   <div className="ipanel">
-                    {iRow(<TrendingUp size={16} />, 'Оценка Homy', intel.investment.score ? `${intel.investment.score} / 100` : '—')}
-                    {iRow(<Coins size={16} />, 'Цена к рынку', String(intel.investment.price_vs_market || '—'), intel.investment.price_vs_market && /\+/.test(String(intel.investment.price_vs_market)) ? 'warn' : undefined)}
-                    {iRow(<LineChart size={16} />, 'Сигналы спроса', `${intel.investment.demand_signals}`)}
-                    {iRow(<Coins size={16} />, 'ROI (оценка)', String(intel.investment.roi_estimate || '—'))}
-                    {iRow(<TrendingUp size={16} />, 'Прогноз роста', String(intel.investment.appreciation_forecast || '—'), 'mut')}
-                    <div className="isrc">Оценка Homy, не гарантия доходности</div>
+                    {iRow(<LineChart size={16} />, 'Сигналы спроса', Number(intel.investment.demand_signals) > 0 ? `${intel.investment.demand_signals} по фактам рядом` : 'нет явных сигналов')}
+                    {iRow(<Coins size={16} />, 'Цена к рынку', NEEDS_SOURCE, 'mut')}
+                    {iRow(<TrendingUp size={16} />, 'Оценка Homy', NEEDS_SOURCE, 'mut')}
+                    {iRow(<Coins size={16} />, 'ROI (оценка)', NEEDS_SOURCE, 'mut')}
+                    {iRow(<TrendingUp size={16} />, 'Прогноз роста', NEEDS_SOURCE, 'mut')}
+                    <div className="isrc">Сигналы спроса — по реальным данным рядом. Инвест-оценки — источник в подключении, не гарантия.</div>
                   </div>
                 )}
               </div>

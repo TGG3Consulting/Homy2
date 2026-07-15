@@ -71,6 +71,8 @@ export const propertyAdapter = {
       name: dbProperty.title,
       title: dbProperty.title,
       address: dbProperty.address || '',
+      province: dbProperty.province || '',
+      city: dbProperty.city || '',
       district: dbProperty.district || '',
       neighborhood: dbProperty.neighborhood || dbProperty.district || '',
       price,

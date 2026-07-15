@@ -118,7 +118,9 @@ export interface PropertyShowcase {
   name: string;           // Название ЖК
   title?: string;         // Alternative name field
   address: string;        // Адрес
-  district: string;       // Район
+  province?: string;      // Марз/область (вся Армения)
+  city?: string;          // Город/община
+  district: string;       // Район (только Ереван)
   price: number;          // Цена в USD
   currency?: string;      // Currency code
   pricePerSqm?: number;   // Цена за м²
