@@ -46,6 +46,8 @@ async function getUsers(req: AdminAuthenticatedRequest) {
           id: true,
           email: true,
           name: true,
+          first_name: true,
+          last_name: true,
           phone: true,
           user_type: true,
           role: true,
@@ -170,6 +172,27 @@ async function updateUser(req: AdminAuthenticatedRequest) {
         actionType = 'role_change';
         break;
 
+      case 'update_profile': {
+        // Edit basic profile fields (name/phone) through the panel.
+        const data: Record<string, unknown> = {};
+        if (typeof body.first_name === 'string') data.first_name = body.first_name.trim();
+        if (typeof body.last_name === 'string') data.last_name = body.last_name.trim();
+        if (typeof body.phone === 'string') data.phone = body.phone.trim() || null;
+        if (Object.keys(data).length === 0) {
+          return NextResponse.json({ error: 'Нет полей для обновления' }, { status: 400 });
+        }
+        updateData = data;
+        actionType = 'user_profile_update';
+        break;
+      }
+
+      case 'verify_email': {
+        // Manually confirm a user's email from the panel.
+        updateData = { emailVerified: true };
+        actionType = 'user_verify_email';
+        break;
+      }
+
       case 'set_user_type': {
         // Product persona (buyer/renter/owner/agent/consultant) — set through the
         // admin panel instead of hand-editing the DB/API (closes the C1 workaround,
@@ -189,7 +212,7 @@ async function updateUser(req: AdminAuthenticatedRequest) {
 
       default:
         return NextResponse.json(
-          { error: 'Invalid action. Use: block, unblock, change_role, or set_user_type' },
+          { error: 'Invalid action. Use: block, unblock, change_role, set_user_type, update_profile, or verify_email' },
           { status: 400 }
         );
     }
@@ -202,6 +225,10 @@ async function updateUser(req: AdminAuthenticatedRequest) {
         select: {
           id: true,
           email: true,
+          first_name: true,
+          last_name: true,
+          phone: true,
+          emailVerified: true,
           role: true,
           user_type: true,
           is_blocked: true,

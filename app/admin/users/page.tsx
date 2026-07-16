@@ -9,11 +9,16 @@ import {
   ChevronRight,
   AlertCircle,
   X,
+  Pencil,
+  MailCheck,
 } from 'lucide-react';
 
 interface User {
   id: string;
   email: string;
+  name: string | null;
+  first_name: string | null;
+  last_name: string | null;
   phone: string | null;
   user_type: string | null;
   role: string | null;
@@ -54,6 +59,8 @@ export default function UsersPage() {
   const [actionModal, setActionModal] = useState<{ user: User; action: string } | null>(null);
   const [actionReason, setActionReason] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editModal, setEditModal] = useState<User | null>(null);
+  const [editForm, setEditForm] = useState({ first_name: '', last_name: '', phone: '' });
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
@@ -140,6 +147,60 @@ export default function UsersPage() {
       fetchUsers();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Не удалось изменить тип пользователя');
+    }
+  };
+
+  const openEdit = (user: User) => {
+    setEditForm({ first_name: user.first_name || '', last_name: user.last_name || '', phone: user.phone || '' });
+    setEditModal(user);
+  };
+
+  const saveProfile = async () => {
+    if (!editModal) return;
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          user_id: editModal.id,
+          action: 'update_profile',
+          first_name: editForm.first_name,
+          last_name: editForm.last_name,
+          phone: editForm.phone,
+        }),
+      });
+      if (!response.ok) {
+        const d = await response.json();
+        throw new Error(d.error || 'Не удалось сохранить профиль');
+      }
+      setEditModal(null);
+      fetchUsers();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Не удалось сохранить профиль');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const verifyEmail = async (userId: string) => {
+    setError(null);
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ user_id: userId, action: 'verify_email' }),
+      });
+      if (!response.ok) {
+        const d = await response.json();
+        throw new Error(d.error || 'Не удалось подтвердить email');
+      }
+      fetchUsers();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Не удалось подтвердить email');
     }
   };
 
@@ -285,27 +346,41 @@ export default function UsersPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
-                      {user.role !== 'admin' && (
-                        <div className="flex items-center justify-end gap-2">
-                          {user.is_blocked ? (
-                            <button
-                              onClick={() => setActionModal({ user, action: 'unblock' })}
-                              className="p-2 rounded-lg hover:bg-green-500/20 transition-colors"
-                              title="Unblock user"
-                            >
-                              <UserCheck size={16} className="text-green-400" />
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => setActionModal({ user, action: 'block' })}
-                              className="p-2 rounded-lg hover:bg-red-500/20 transition-colors"
-                              title="Block user"
-                            >
-                              <UserX size={16} className="text-red-400" />
-                            </button>
-                          )}
-                        </div>
-                      )}
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => openEdit(user)}
+                          className="p-2 rounded-lg hover:bg-blue-500/20 transition-colors"
+                          title="Редактировать профиль"
+                        >
+                          <Pencil size={16} className="text-blue-400" />
+                        </button>
+                        {!user.emailVerified && (
+                          <button
+                            onClick={() => verifyEmail(user.id)}
+                            className="p-2 rounded-lg hover:bg-green-500/20 transition-colors"
+                            title="Подтвердить email"
+                          >
+                            <MailCheck size={16} className="text-green-400" />
+                          </button>
+                        )}
+                        {user.role !== 'admin' && (user.is_blocked ? (
+                          <button
+                            onClick={() => setActionModal({ user, action: 'unblock' })}
+                            className="p-2 rounded-lg hover:bg-green-500/20 transition-colors"
+                            title="Unblock user"
+                          >
+                            <UserCheck size={16} className="text-green-400" />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => setActionModal({ user, action: 'block' })}
+                            className="p-2 rounded-lg hover:bg-red-500/20 transition-colors"
+                            title="Block user"
+                          >
+                            <UserX size={16} className="text-red-400" />
+                          </button>
+                        ))}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -382,6 +457,51 @@ export default function UsersPage() {
                 } disabled:opacity-50`}
               >
                 {isSubmitting ? 'Processing...' : actionModal.action === 'block' ? 'Block' : 'Unblock'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Profile Modal */}
+      {editModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="rounded-xl p-6 w-full max-w-md mx-4" style={glassStyle}>
+            <h3 className="text-lg font-semibold text-white mb-1">Редактировать профиль</h3>
+            <p className="text-gray-400 text-sm mb-4">{editModal.email}</p>
+            <div className="space-y-3">
+              <input
+                placeholder="Имя"
+                value={editForm.first_name}
+                onChange={(e) => setEditForm((f) => ({ ...f, first_name: e.target.value }))}
+                className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#0A6045]"
+              />
+              <input
+                placeholder="Фамилия"
+                value={editForm.last_name}
+                onChange={(e) => setEditForm((f) => ({ ...f, last_name: e.target.value }))}
+                className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#0A6045]"
+              />
+              <input
+                placeholder="Телефон"
+                value={editForm.phone}
+                onChange={(e) => setEditForm((f) => ({ ...f, phone: e.target.value }))}
+                className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#0A6045]"
+              />
+            </div>
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                onClick={() => setEditModal(null)}
+                className="px-4 py-2 rounded-lg text-gray-400 hover:bg-white/10 transition-colors"
+              >
+                Отмена
+              </button>
+              <button
+                onClick={saveProfile}
+                disabled={isSubmitting}
+                className="px-4 py-2 rounded-lg text-white bg-[#0A6045] hover:bg-[#0B6E4F] disabled:opacity-50 transition-colors"
+              >
+                {isSubmitting ? 'Сохраняем…' : 'Сохранить'}
               </button>
             </div>
           </div>
