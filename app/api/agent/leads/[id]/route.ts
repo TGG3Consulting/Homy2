@@ -24,7 +24,12 @@ export const PATCH = withAuth(async (req: AuthenticatedRequest) => {
 
     const body = await req.json().catch(() => ({} as any));
     const data: Record<string, unknown> = {};
-    if (body.stage && ['new', 'warm', 'cold'].includes(body.stage)) data.stage = body.stage;
+    if (body.stage && ['new', 'warm', 'cold'].includes(body.stage)) {
+      data.stage = body.stage;
+      // B6: manually moving a lead to an active stage must reset recency, otherwise
+      // effectiveStage() re-surfaces it as "cold" on the next read (sticky stage).
+      if (body.stage === 'new' || body.stage === 'warm') data.last_contact_at = new Date();
+    }
     if (body.notes !== undefined) data.notes = body.notes || null;
     if (body.interest !== undefined) data.interest = body.interest || null;
     if (body.budget !== undefined) data.budget = body.budget != null ? Math.round(Number(body.budget)) : null;
