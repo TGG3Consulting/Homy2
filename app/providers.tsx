@@ -36,10 +36,11 @@ function SocketInitializer() {
     }
 
     try {
-      const res = await fetch('/api/users/me', { credentials: 'include' });
-      if (res.ok) {
+      // Soft session check (always 200) — no 401 noise for logged-out visitors.
+      const res = await fetch('/api/auth/session', { credentials: 'include' });
+      const data = await res.json().catch(() => ({ authenticated: false }));
+      if (data.authenticated) {
         // User is authenticated - connect socket
-        console.log('[SocketInitializer] Auth confirmed, connecting socket');
         socketClient.connect();
 
         // Stop checking after successful connect attempt
@@ -57,11 +58,11 @@ function SocketInitializer() {
     if (initializedRef.current) return;
     initializedRef.current = true;
 
-    // Try to connect immediately
-    socketClient.connect();
-
-    // Start polling for auth status (handles post-login connection)
-    authCheckIntervalRef.current = setInterval(checkAuthAndConnect, 2000);
+    // Connect the socket only after auth is confirmed (avoids the endless
+    // "[SocketClient] Unauthorized: No token provided" spam for logged-out visitors).
+    // Single check on mount — login is a full-page navigation, so a later login
+    // remounts this component and re-checks; no polling needed (that spammed 401s).
+    checkAuthAndConnect();
 
     // Listen for socket connection changes
     const unsubConnection = socketClient.onConnectionChange((connected) => {

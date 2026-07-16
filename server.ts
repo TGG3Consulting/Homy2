@@ -355,6 +355,9 @@ app.prepare().then(() => {
     return request.socket.remoteAddress || 'unknown';
   }
 
+  // Next dev HMR websocket handler (must be obtained AFTER app.prepare()).
+  const upgradeHandler = app.getUpgradeHandler();
+
   // Handle WebSocket upgrade manually (only for /ws/chat)
   server.on('upgrade', (request, socket, head) => {
     const pathname = new URL(request.url || '', `http://${request.headers.host || 'localhost'}`).pathname;
@@ -371,6 +374,10 @@ app.prepare().then(() => {
         (ws as AiWs).clientIp = ip;
         wssAI.emit('connection', ws, request);
       });
+    } else if (pathname.startsWith('/_next')) {
+      // Next.js dev HMR websocket (/_next/webpack-hmr) — forward to Next, otherwise
+      // the custom server would kill it and hot-reload dies (also over ngrok).
+      upgradeHandler(request, socket, head);
     } else if (!pathname?.startsWith('/socket.io')) {
       // Socket.io handles its own upgrades, only destroy non-matching paths
       socket.destroy();

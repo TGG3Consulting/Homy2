@@ -70,9 +70,22 @@ const DEF = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 const MMAX = [0.975, 0, -0.221, 0, -0.018, 0.996, -0.08, 0, 0.221, 0.08, 0.974, 0, 76.72, 28.08, 0, 1];
 const MMIN = [0.975, 0, 0.221, 0, 0.018, 0.996, 0.08, 0, -0.221, -0.08, 0.974, 0, -76.72, -28.08, 0, 1];
 
-export default function HomyHeroIntro() {
+/** Search box with its own state — isolated so typing doesn't re-render the hero
+ *  and make the animated "Homy" wordmark flicker on every keystroke. */
+function SearchMouth() {
   const router = useRouter();
   const [q, setQ] = useState('');
+  const go = () => { const v = q.trim(); router.push(v ? `/results?query=${encodeURIComponent(v)}` : '/results'); };
+  return (
+    <form className="mouth" onSubmit={(e) => { e.preventDefault(); go(); }}>
+      <span className="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z" /></svg></span>
+      <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Опишите, какой дом ищете…" />
+      <button className="go" type="submit" aria-label="Искать"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
+    </form>
+  );
+}
+
+export default function HomyHeroIntro() {
   const [authed, setAuthed] = useState<boolean | null>(null);
   const [ready, setReady] = useState(false); // reveal wordmark + start intro only once the font is loaded (no FOUT)
   const rootRef = useRef<HTMLDivElement>(null);
@@ -97,7 +110,7 @@ export default function HomyHeroIntro() {
 
   useEffect(() => {
     let alive = true;
-    fetch('/api/users/me', { credentials: 'include' }).then((r) => { if (alive) setAuthed(r.ok); }).catch(() => { if (alive) setAuthed(false); });
+    fetch('/api/auth/session', { credentials: 'include' }).then((r) => r.json()).then((d) => { if (alive) setAuthed(!!d.authenticated); }).catch(() => { if (alive) setAuthed(false); });
     return () => { alive = false; };
   }, []);
 
@@ -294,8 +307,6 @@ export default function HomyHeroIntro() {
     return () => window.removeEventListener('deviceorientation', onTilt);
   }, []);
 
-  const go = () => { const v = q.trim(); router.push(v ? `/results?query=${encodeURIComponent(v)}` : '/results'); };
-
   return (
     <div className={`homy-hero${ready ? ' ready' : ''}`} ref={rootRef}
       onMouseMove={(e) => onMove(e.clientX, e.clientY)}
@@ -330,11 +341,7 @@ export default function HomyHeroIntro() {
         <div className="eye"><div className="pupil" ref={pupilR} /><div className="lid" ref={lidR} /></div>
       </div>
 
-      <form className="mouth" onSubmit={(e) => { e.preventDefault(); go(); }}>
-        <span className="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z" /></svg></span>
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Опишите, какой дом ищете…" />
-        <button className="go" type="submit" aria-label="Искать"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
-      </form>
+      <SearchMouth />
       <div className="sub">Homy разбирает каждый объект по фактам — честно о плюсах и рисках.</div>
       <div className="scrollhint"><div className="mo" />SCROLL</div>
     </div>

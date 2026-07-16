@@ -8,6 +8,16 @@ const nextConfig: NextConfig = {
   // scan the whole drive (C:\) — fixes Watchpack EINVAL errors on Windows system files.
   outputFileTracingRoot: __dirname,
 
+  // Allow the dev server to accept requests proxied from an ngrok tunnel
+  // (external access to the local site). Add your exact ngrok host too if a
+  // wildcard is not honored by your Next version.
+  allowedDevOrigins: [
+    '*.ngrok-free.app',
+    '*.ngrok.io',
+    '*.ngrok.app',
+    '*.ngrok-free.dev',
+  ],
+
   // Strict mode for better development experience
   reactStrictMode: true,
 
