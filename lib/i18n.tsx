@@ -188,6 +188,22 @@ export function getLocalized(obj: LocalizedObject | string | null | undefined, l
   return firstKey ? (obj[firstKey] as string) : '';
 }
 
+/**
+ * Localize a value that may be a plain string, a localized object, or a JSON
+ * string holding a localized object. Canonical shared helper — replaces the
+ * per-file `loc()` copies that used to live in each page/component.
+ */
+export function loc(v: any, lang: string): string {
+  if (v == null) return '';
+  if (typeof v === 'object') return v[lang] || v.ru || v.en || '';
+  if (typeof v !== 'string') return String(v);
+  const s = v.trim();
+  if (s.startsWith('{') && s.includes('"')) {
+    try { const o = JSON.parse(s); return o[lang] || o.ru || o.en || s; } catch { return v; }
+  }
+  return v;
+}
+
 // Export translations for backward compatibility
 export { translations };
 

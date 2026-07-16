@@ -71,10 +71,8 @@ export async function findNewMatchIds(
   if (!criteria) return [];
   const where: any = { available: true };
   if (criteria.districts && criteria.districts.length) {
-    where.OR = [
-      { district: { in: criteria.districts } },
-      { neighborhood: { in: criteria.districts } },
-    ];
+    // district is the canonical scalar key; neighborhood holds localized JSON (not filterable).
+    where.district = { in: criteria.districts };
   }
   if (criteria.maxPrice) where.price = { lte: criteria.maxPrice };
   if (criteria.minRooms) where.rooms = { gte: criteria.minRooms };

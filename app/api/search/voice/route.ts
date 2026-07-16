@@ -31,10 +31,9 @@ export async function POST(req: NextRequest) {
     ];
   }
   if (criteria.districts && criteria.districts.length > 0) {
-    where.OR = [
-      { district: { in: criteria.districts, mode: 'insensitive' } },
-      { neighborhood: { in: criteria.districts, mode: 'insensitive' } }
-    ];
+    // district is the canonical scalar key (neighborhood holds localized JSON, not filterable).
+    // Direct AND condition — must not clobber a where.OR set by another filter (e.g. min_rooms).
+    where.district = { in: criteria.districts, mode: 'insensitive' };
   }
   if (criteria.property_type) {
     where.propertyType = criteria.property_type;

@@ -329,7 +329,7 @@ model PropertyListing {
   property_type String   // apartment, house, studio
   location      String
   price         Float
-  currency      String   @default("USD")
+  currency      String   @default("AMD") // выровнено с Property (каталог в AMD); форма шлёт AMD
   area          Float
   rooms         Int
   description   String?

@@ -46,7 +46,7 @@ export const matchScoreService = {
     // District match (20 points)
     if (criteria.districts && criteria.districts.length > 0) {
       maxScore += 20;
-      const district = property.neighborhood || property.district || '';
+      const district = property.district || property.neighborhood || '';
       if (criteria.districts.some(d => d.toLowerCase() === district.toLowerCase())) {
         score += 20;
       }
@@ -71,7 +71,7 @@ export const matchScoreService = {
     // Safety score (10 points) - also triggered by family/quiet keywords
     if (criteria.safety_level || hasFamilyKeyword || hasQuietKeyword) {
       maxScore += 10;
-      const district = property.neighborhood || property.district || '';
+      const district = property.district || property.neighborhood || '';
       const safety = getSafetyScore(district);
       const level = criteria.safety_level || 'medium';
       const thresholds = { low: 60, medium: 75, high: 85 };
@@ -120,7 +120,7 @@ export const matchScoreService = {
     }
 
     // Safety
-    const district = property.neighborhood || property.district || '';
+    const district = property.district || property.neighborhood || '';
     const safety = getSafetyScore(district);
     if (safety >= 85) {
       reasons.push('{"en":"Very safe neighborhood","ru":"Очень безопасный район","hy":"Delays delays"}');
@@ -164,7 +164,7 @@ export const matchScoreService = {
     }
 
     // Low safety
-    const district = property.neighborhood || property.district || '';
+    const district = property.district || property.neighborhood || '';
     const safety = getSafetyScore(district);
     if (safety < 75) {
       warnings.push('{"en":"Area safety rating below average","ru":"Рейтинг безопасности района ниже среднего","hy":"Delays"}');
