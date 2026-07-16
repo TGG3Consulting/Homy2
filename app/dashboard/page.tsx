@@ -596,19 +596,21 @@ function DashboardContent() {
     );
   }
 
-  // Buyer/renter get the new 1:1 dashboard (C1). Owner/agent/consultant keep the existing UI.
-  if (user && (user.user_type === 'buyer' || user.user_type === 'renter' || !user.user_type)) {
-    return <BuyerDashboard user={user} />;
-  }
-
-  // Admin/moderator get the new 1:1 admin panel (E1–E3).
+  // Authorization axis is `role` (admin/moderator/user) — check it FIRST so an admin
+  // with a default/unset product persona (user_type) still gets the admin panel and
+  // never falls through into the buyer cabinet. (B1/B2)
   if (user && (user.role === 'admin' || user.role === 'moderator' || user.user_type === 'admin')) {
     return <AdminPanel user={user} />;
   }
 
-  // Agent/owner get the new 1:1 broker cabinet (D1–D5).
+  // Product persona (user_type): agent/owner get the 1:1 broker cabinet (D1–D5).
   if (user && (user.user_type === 'agent' || user.user_type === 'owner')) {
     return <BrokerCabinet user={user} />;
+  }
+
+  // Everyone else (buyer/renter, or unset persona) gets the 1:1 buyer dashboard (C1).
+  if (user && (user.user_type === 'buyer' || user.user_type === 'renter' || !user.user_type)) {
+    return <BuyerDashboard user={user} />;
   }
 
   // Render overview content (default tab)
