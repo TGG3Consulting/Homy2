@@ -156,7 +156,7 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
           warning: raw.warning,
           match_score: raw.matchScore || raw.match_score || 0,
           latitude: raw.latitude || 0, longitude: raw.longitude || 0,
-          owner: raw.owner, contact: raw.contact,
+          owner: raw.owner, contact: raw.contact, verified: raw.verified,
           utilities_estimate: raw.utilities_estimate || raw.utilitiesEstimate,
           deposit_months: raw.deposit_months || raw.depositMonths,
           has_virtual_tour: raw.has_virtual_tour || raw.hasVirtualTour || false,
@@ -306,7 +306,9 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
     const displayLoc = [loc(property.address, lang), ...geoParts].filter(Boolean).join(' · ');
     const ownerName = property.owner ? `${property.owner.first_name || ''} ${property.owner.last_name || ''}`.trim() : '';
     const ownerRole = property.owner?.user_type === 'agent' ? 'агент' : 'собственник';
-    const verified = property.contact?.verified;
+    // Prefer the authoritative moderation flag (Property.verified, set true on approve);
+    // fall back to a legacy contact.verified flag if present.
+    const verified = property.verified || Boolean(property.contact?.verified);
 
     return (
       <div className="pcard">
