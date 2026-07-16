@@ -170,9 +170,26 @@ async function updateUser(req: AdminAuthenticatedRequest) {
         actionType = 'role_change';
         break;
 
+      case 'set_user_type': {
+        // Product persona (buyer/renter/owner/agent/consultant) — set through the
+        // admin panel instead of hand-editing the DB/API (closes the C1 workaround,
+        // e.g. provisioning a consultant).
+        const ALLOWED_USER_TYPES = ['buyer', 'renter', 'owner', 'agent', 'consultant'];
+        const nextType = body.user_type;
+        if (!nextType || !ALLOWED_USER_TYPES.includes(nextType)) {
+          return NextResponse.json(
+            { error: `Invalid user_type. Use one of: ${ALLOWED_USER_TYPES.join(', ')}` },
+            { status: 400 }
+          );
+        }
+        updateData = { user_type: nextType };
+        actionType = 'user_type_change';
+        break;
+      }
+
       default:
         return NextResponse.json(
-          { error: 'Invalid action. Use: block, unblock, or change_role' },
+          { error: 'Invalid action. Use: block, unblock, change_role, or set_user_type' },
           { status: 400 }
         );
     }
@@ -186,6 +203,7 @@ async function updateUser(req: AdminAuthenticatedRequest) {
           id: true,
           email: true,
           role: true,
+          user_type: true,
           is_blocked: true,
           blocked_at: true,
           block_reason: true,
@@ -197,7 +215,7 @@ async function updateUser(req: AdminAuthenticatedRequest) {
           action_type: actionType,
           target_type: 'user',
           target_id: user_id,
-          details: { reason, new_role, previous_role: targetRole },
+          details: { reason, new_role, previous_role: targetRole, user_type: body.user_type },
         },
       }),
     ]);

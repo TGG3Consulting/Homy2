@@ -123,6 +123,26 @@ export default function UsersPage() {
     }
   };
 
+  // Change a user's product persona (buyer/renter/owner/agent/consultant) through the panel.
+  const changeUserType = async (userId: string, userType: string) => {
+    setError(null);
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ user_id: userId, action: 'set_user_type', user_type: userType }),
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Не удалось изменить тип пользователя');
+      }
+      fetchUsers();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Не удалось изменить тип пользователя');
+    }
+  };
+
   const getRoleBadgeColor = (role: string | null) => {
     switch (role) {
       case 'admin': return 'bg-emerald-500/20 text-emerald-400';
@@ -223,7 +243,16 @@ export default function UsersPage() {
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-gray-300 text-sm capitalize">{user.user_type || 'buyer'}</span>
+                      <select
+                        value={user.user_type || 'buyer'}
+                        onChange={(e) => changeUserType(user.id, e.target.value)}
+                        className="bg-gray-800 text-gray-200 text-sm rounded px-2 py-1 border border-gray-700 capitalize"
+                        title="Тип пользователя (персона)"
+                      >
+                        {['buyer', 'renter', 'owner', 'agent', 'consultant'].map((t) => (
+                          <option key={t} value={t}>{t}</option>
+                        ))}
+                      </select>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`text-xs px-2 py-1 rounded ${getRoleBadgeColor(user.role)}`}>
