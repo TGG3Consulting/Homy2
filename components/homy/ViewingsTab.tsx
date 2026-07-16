@@ -160,7 +160,7 @@ export default function ViewingsTab() {
           <span className={`chip${tab === 'active' ? ' active' : ''}`} onClick={() => setTab('active')}>Активные{active.length > 0 && <span className="c">{active.length}</span>}</span>
           <span className={`chip${tab === 'done' ? ' active' : ''}`} onClick={() => setTab('done')}>Завершённые{done.length > 0 && <span className="c">{done.length}</span>}</span>
         </div>
-        <button onClick={() => setShowCreate(true)} style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: '#fff', background: 'radial-gradient(135% 175% at 50% 14%,#2BC091,#0B6E4F)', border: 0, borderRadius: 11, padding: '9px 14px', cursor: 'pointer', fontFamily: 'inherit' }}>+ Запросить просмотр</button>
+        {/* Ручное создание просмотра агентом временно скрыто на фронте (бэкенд и ViewingCreateForm сохранены — могут пригодиться позже). */}
       </div>
 
       {loading ? (
