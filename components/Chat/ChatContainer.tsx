@@ -105,7 +105,7 @@ export default function ChatContainer({ onPropertiesFound, onLanguageChange, com
             totalFloors: p.totalFloors,
             images: p.images || [],
             image_url: p.image_url || (Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : '/placeholder.jpg'),
-            match_score: p.match_score || 85,
+            match_score: p.match_score ?? 0,
             recommendation_reasons: p.recommendation_reasons || [],
             is_top_choice: p.id === data.top_choice,
             hasParking: p.hasParking,

@@ -139,42 +139,45 @@ export async function GET(req: NextRequest) {
     if (criteria.pets_allowed) where.petsAllowed = true;
     if (criteria.has_parking) where.hasParking = true;
 
-    // Build orderBy
+    const ownerInclude = {
+      owner: { select: { id: true, first_name: true, last_name: true, user_type: true } },
+    };
+
+    // match_score is a per-request DERIVED value (not a stable DB column). When the
+    // client ranks by it, we must score the WHOLE matching set BEFORE paginating —
+    // otherwise pagination/ranking would run on stale seed values in Property.matchScore.
+    if (sortBy === 'match_score') {
+      const allMatching = await prisma.property.findMany({ where, include: ownerInclude });
+      const scored = allMatching
+        .map(p => propertyAdapter.toFrontendFormat(p))
+        .map(p => propertyAdapter.enrichWithAI(p, criteria));
+      scored.sort((a, b) => sortOrder === 'asc' ? a.match_score - b.match_score : b.match_score - a.match_score);
+      if (scored.length > 0) scored[0].is_top_choice = true; // top of the ranked set (appears on page 1)
+      const total = scored.length;
+      const pageItems = scored.slice(skip, skip + limit);
+      return NextResponse.json({ properties: pageItems, total, page, pages: Math.ceil(total / limit), limit });
+    }
+
+    // Stable DB columns (price/date/created): sort + paginate in the DB, then attach
+    // derived scores for display WITHOUT reordering the DB result.
     const orderByMap: Record<string, string> = {
       price: 'price',
-      match_score: 'matchScore',
       created_at: 'createdAt',
       listing_date: 'listingDate',
     };
     const orderBy = { [orderByMap[sortBy] || 'listingDate']: sortOrder };
 
-    // Query database
     const [properties, total] = await Promise.all([
-      prisma.property.findMany({
-        where,
-        orderBy,
-        skip,
-        take: limit,
-        include: {
-          owner: {
-            select: {
-              id: true,
-              first_name: true,
-              last_name: true,
-              user_type: true,
-            }
-          }
-        }
-      }),
+      prisma.property.findMany({ where, orderBy, skip, take: limit, include: ownerInclude }),
       prisma.property.count({ where }),
     ]);
 
-    // Convert to frontend format and enrich with AI
-    const frontendProperties = properties.map(p => propertyAdapter.toFrontendFormat(p));
-    const enrichedProperties = propertyAdapter.enrichArrayWithAI(frontendProperties, criteria);
+    const scoredPage = properties
+      .map(p => propertyAdapter.toFrontendFormat(p))
+      .map(p => propertyAdapter.enrichWithAI(p, criteria));
 
     return NextResponse.json({
-      properties: enrichedProperties,
+      properties: scoredPage,
       total,
       page,
       pages: Math.ceil(total / limit),

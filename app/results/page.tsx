@@ -123,6 +123,7 @@ function ResultsInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const query = searchParams.get('query') || '';
+  const savedId = searchParams.get('savedId') || '';
   const { toggleFavorite } = useFavorites();
   const { addToCompare } = useCompare();
   const { openSupportChat } = useChatWidget();
@@ -194,9 +195,36 @@ function ResultsInner() {
     router.replace(`${window.location.pathname}${sp.toString() ? `?${sp.toString()}` : ''}`, { scroll: false });
   }, [searchParams, properties, toggleFavorite, addToCompare, router]);
 
+  // ---- open a SAVED search from its stored snapshot (freezes AI scores) ----
+  // Renders the persisted snapshot as-is (frozen match_score); does NOT re-run
+  // the AI. Scores only change if the user continues the dialogue (AI re-picks).
+  useEffect(() => {
+    if (typeof window === 'undefined' || !savedId) return;
+    isRestoredRef.current = true; // sync: block WS auto-query before the socket opens
+    let alive = true;
+    (async () => {
+      try {
+        const r = await fetch(`/api/users/me/saved-searches/${savedId}`, { credentials: 'include' });
+        if (!r.ok) { if (alive) setIsLoading(false); return; }
+        const d = await r.json();
+        const s = d.search || d.savedSearch || d;
+        if (!alive || !s) return;
+        if (Array.isArray(s.properties)) setProperties(s.properties);
+        if (Array.isArray(s.chatMessages)) setChatMessages(s.chatMessages);
+        if (Array.isArray(s.criteriaChips)) setCriteriaChips(s.criteriaChips);
+        if (s.insights) setInsights(s.insights);
+        if (s.topChoiceId !== undefined) setTopChoiceId(s.topChoiceId);
+        setSelectedId(s.topChoiceId || s.properties?.[0]?.id || null);
+        setIsLoading(false);
+      } catch { if (alive) setIsLoading(false); }
+    })();
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [savedId]);
+
   // ---- restore from sessionStorage (fast back-nav) ----
   useEffect(() => {
-    if (typeof window === 'undefined' || !query) return;
+    if (typeof window === 'undefined' || !query || savedId) return; // savedId path wins
     try {
       const saved = sessionStorage.getItem(storageKey(query));
       if (saved) {

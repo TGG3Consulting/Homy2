@@ -167,6 +167,8 @@ export const propertyAdapter = {
       match_score: matchScoreService.calculateMatchScore(property, criteria, criteria.search_context),
       recommendation_reasons: matchScoreService.generateRecommendationReasons(property, criteria),
       warning: matchScoreService.generateWarning(property) || undefined,
+      // "top choice" is a ranking artifact set by the ranker (not the stale DB seed column).
+      is_top_choice: false,
     };
   },
 

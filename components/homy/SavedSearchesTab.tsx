@@ -105,7 +105,9 @@ export default function SavedSearchesTab() {
         });
       } catch {}
     }
-    router.push(`/results?query=${encodeURIComponent(loc(s.query, lang) || s.name || '')}`);
+    // Open FROM the saved snapshot (savedId) — keeps the frozen AI scores.
+    // Scores change only if the user continues the dialogue (AI re-picks).
+    router.push(`/results?savedId=${s.id}&query=${encodeURIComponent(loc(s.query, lang) || s.name || '')}`);
   }, [router, lang]);
 
   const remove = useCallback(async (id: string) => {
