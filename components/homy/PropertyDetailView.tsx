@@ -112,6 +112,7 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
   const [myComment, setMyComment] = useState('');
   const [submittingReview, setSubmittingReview] = useState(false);
   const [reviewMsg, setReviewMsg] = useState<string | null>(null);
+  const [showBrokerReview, setShowBrokerReview] = useState(false);
 
   const close = useCallback(() => { if (onClose) onClose(); else router.back(); }, [onClose, router]);
 
@@ -213,27 +214,30 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
   }, [propertyId]);
   useEffect(() => { loadNearby(); }, [loadNearby]);
 
-  // reviews
-  const loadReviews = useCallback(async () => {
-    if (!propertyId) return;
+  // Broker reviews — отзывы/рейтинг относятся к БРОКЕРУ (агенту), не к объекту.
+  const brokerId = (property?.owner as any)?.id || '';
+  const loadReviews = useCallback(async (agentId: string) => {
+    if (!agentId) return;
     setReviewsLoading(true); setReviewsError(false);
     try {
-      const r = await fetch(`/api/properties/${propertyId}/reviews`);
+      const r = await fetch(`/api/agents/${agentId}/reviews`);
       if (r.ok) setReviews(await r.json()); else setReviewsError(true);
     } catch { setReviewsError(true); } finally { setReviewsLoading(false); }
-  }, [propertyId]);
-  useEffect(() => { loadReviews(); }, [loadReviews]);
+  }, []);
+  useEffect(() => { if (brokerId) loadReviews(brokerId); }, [brokerId, loadReviews]);
 
   const submitReview = async () => {
+    if (!brokerId) return;
     if (!myRating) { setReviewMsg('Поставьте оценку'); return; }
     setSubmittingReview(true); setReviewMsg(null);
     try {
-      const r = await fetch(`/api/properties/${propertyId}/reviews`, {
+      const r = await fetch(`/api/agents/${brokerId}/reviews`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
         body: JSON.stringify({ rating: myRating, comment: myComment.trim() || undefined }),
       });
-      if (r.ok) { setMyRating(0); setMyComment(''); setReviewMsg('Спасибо за отзыв!'); loadReviews(); }
-      else if (r.status === 409) setReviewMsg('Вы уже оставили отзыв на этот объект');
+      if (r.ok) { setMyRating(0); setMyComment(''); setReviewMsg('Спасибо за отзыв!'); loadReviews(brokerId); }
+      else if (r.status === 409) setReviewMsg('Вы уже оставили отзыв об этом брокере');
+      else if (r.status === 400) setReviewMsg('Нельзя оценить самого себя');
       else if (r.status === 401) setReviewMsg('Войдите, чтобы оставить отзыв');
       else setReviewMsg('Не удалось отправить отзыв');
     } catch { setReviewMsg('Ошибка сети'); } finally { setSubmittingReview(false); }
@@ -529,6 +533,15 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
                   <div>
                     <div className="nm">{ownerName || (property.owner?.user_type === 'agent' ? 'Агент' : 'Собственник')}</div>
                     <div className="rl">{verified && <span className="vf">Проверен</span>}{verified ? ' · ' : ''}{ownerRole}</div>
+                    {reviews?.stats && (reviews.stats.totalReviews > 0 ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
+                        {stars(reviews.stats.averageRating, 12)}
+                        <b style={{ fontSize: 12.5, color: 'var(--ink)' }}>{Number(reviews.stats.averageRating).toFixed(1)}</b>
+                        <span style={{ fontSize: 11.5, color: 'var(--muted)' }}>· {reviews.stats.totalReviews} {plur(reviews.stats.totalReviews, ['отзыв', 'отзыва', 'отзывов'])}</span>
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: 11.5, color: 'var(--muted)', marginTop: 4 }}>Пока нет отзывов о брокере</div>
+                    ))}
                   </div>
                 </div>
                 <div className="abtns">
@@ -537,6 +550,24 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
                     <CalendarPlus size={14} />{hasExistingViewing ? 'Просмотр запланирован' : 'Записаться на просмотр'}
                   </button>
                 </div>
+                {isLoggedIn && brokerId && (
+                  <div style={{ marginTop: 12, borderTop: '1px solid var(--hair)', paddingTop: 10 }}>
+                    {!showBrokerReview ? (
+                      <button onClick={() => setShowBrokerReview(true)} style={{ background: 'none', border: 0, color: 'var(--em)', fontWeight: 700, fontSize: 12.5, cursor: 'pointer', padding: 0, fontFamily: 'inherit' }}>Оценить брокера</button>
+                    ) : (
+                      <div>
+                        <div style={{ display: 'inline-flex', gap: 3, marginBottom: 8 }}>
+                          {[1, 2, 3, 4, 5].map((i) => <Star key={i} size={22} style={{ cursor: 'pointer' }} fill={i <= myRating ? 'var(--em)' : 'none'} stroke={i <= myRating ? 'var(--em)' : 'var(--muted)'} onClick={() => setMyRating(i)} />)}
+                        </div>
+                        <textarea value={myComment} onChange={(e) => setMyComment(e.target.value)} rows={2} placeholder="Ваш опыт работы с брокером…" style={{ width: '100%', resize: 'vertical', borderRadius: 10, border: '1px solid var(--hair)', background: 'var(--surface)', color: 'var(--ink)', padding: '8px 10px', fontSize: 13, fontFamily: 'inherit', outline: 'none' }} />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8 }}>
+                          <button disabled={submittingReview} onClick={submitReview} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: '#fff', background: 'var(--em)', border: 0, borderRadius: 10, padding: '8px 14px', cursor: 'pointer', opacity: submittingReview ? 0.6 : 1 }}>{submittingReview ? 'Отправляем…' : 'Отправить'}</button>
+                          {reviewMsg && <span style={{ fontSize: 12, color: 'var(--muted)' }}>{reviewMsg}</span>}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               {showForm && !hasExistingViewing && (
                 <div className="vformwrap" onClick={(e) => { if (e.target === e.currentTarget) setShowForm(false); }}>
@@ -547,63 +578,7 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
               )}
             </div>
 
-            {/* Отзывы */}
-            <div className="sec">
-              <div className="sh"><Star size={13} />Отзывы</div>
-              {reviewsLoading ? (
-                <div className="loadrow"><Loader2 size={14} className="animate-spin" />Загружаем отзывы…</div>
-              ) : reviewsError ? (
-                <div style={{ fontSize: 13, color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: 10 }}>
-                  Не удалось загрузить отзывы.<button className="itab" onClick={loadReviews}>Повторить</button>
-                </div>
-              ) : (
-                <>
-                  {reviews?.stats?.totalReviews > 0 ? (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                      <b style={{ fontSize: 22, color: 'var(--ink)' }}>{Number(reviews.stats.averageRating).toFixed(1)}</b>
-                      {stars(reviews.stats.averageRating, 16)}
-                      <span style={{ fontSize: 12.5, color: 'var(--muted)' }}>{reviews.stats.totalReviews} {plur(reviews.stats.totalReviews, ['отзыв', 'отзыва', 'отзывов'])}</span>
-                    </div>
-                  ) : (
-                    <p style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 12 }}>Пока нет отзывов. Будьте первым.</p>
-                  )}
-                  <div style={{ display: 'grid', gap: 10 }}>
-                    {(reviews?.reviews || []).slice(0, 5).map((rv: any) => {
-                      const author = rv.user?.name || [rv.user?.first_name, rv.user?.last_name].filter(Boolean).join(' ') || rv.author_name || 'Пользователь';
-                      const dt = rv.created_at || rv.createdAt;
-                      const date = dt ? new Date(dt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
-                      return (
-                        <div key={rv.id} style={{ background: 'var(--surface2)', border: '1px solid var(--hair)', borderRadius: 12, padding: '10px 12px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: rv.comment ? 4 : 0 }}>
-                            <b style={{ fontSize: 13, color: 'var(--ink)' }}>{author}</b>
-                            {stars(rv.rating, 12)}
-                            {date && <span style={{ fontSize: 11, color: 'var(--muted)', marginLeft: 'auto' }}>{date}</span>}
-                          </div>
-                          {rv.comment && <div style={{ fontSize: 12.5, color: 'var(--muted)', lineHeight: 1.5 }}>{rv.comment}</div>}
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div style={{ marginTop: 14, borderTop: '1px solid var(--hair)', paddingTop: 12 }}>
-                    {isLoggedIn ? (
-                      <>
-                        <div style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>Оставить отзыв</div>
-                        <div style={{ display: 'inline-flex', gap: 3, marginBottom: 8 }}>
-                          {[1, 2, 3, 4, 5].map((i) => <Star key={i} size={24} style={{ cursor: 'pointer' }} fill={i <= myRating ? 'var(--em)' : 'none'} stroke={i <= myRating ? 'var(--em)' : 'var(--muted)'} onClick={() => setMyRating(i)} />)}
-                        </div>
-                        <textarea value={myComment} onChange={(e) => setMyComment(e.target.value)} rows={2} placeholder="Ваш опыт: район, дом, сделка…" style={{ width: '100%', resize: 'vertical', borderRadius: 10, border: '1px solid var(--hair)', background: 'var(--surface)', color: 'var(--ink)', padding: '8px 10px', fontSize: 13, fontFamily: 'inherit', outline: 'none' }} />
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8 }}>
-                          <button disabled={submittingReview} onClick={submitReview} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: '#fff', background: 'var(--em)', border: 0, borderRadius: 10, padding: '9px 16px', cursor: 'pointer', opacity: submittingReview ? 0.6 : 1 }}>{submittingReview ? 'Отправляем…' : 'Отправить отзыв'}</button>
-                          {reviewMsg && <span style={{ fontSize: 12, color: 'var(--muted)' }}>{reviewMsg}</span>}
-                        </div>
-                      </>
-                    ) : (
-                      <div style={{ fontSize: 12.5, color: 'var(--muted)' }}>Войдите, чтобы оставить отзыв.</div>
-                    )}
-                  </div>
-                </>
-              )}
-            </div>
+            {/* Отзывы объекта удалены: отзывы/рейтинг относятся к БРОКЕРУ, не к недвижимости. */}
           </div>
 
           {/* RIGHT: per-property AI chat */}

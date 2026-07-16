@@ -59,7 +59,8 @@ model User {
   viewing_slots       ViewingSlot[]
   admin_actions       AdminActionLog[] @relation("AdminActor")
   notifications       Notification[]
-  reviews             Review[]
+  reviewsReceived     Review[]         @relation("AgentReviews")  // отзывы о брокере (как об агенте)
+  reviewsWritten      Review[]         @relation("ReviewAuthor")  // отзывы, которые он оставил
   savedSearches       SavedSearch[]
 
   // CRM relations (broker cabinet)
@@ -209,7 +210,6 @@ model Property {
   viewings           Viewing[]
   virtual_tour_rooms VirtualTourRoom[]
   viewing_slots      ViewingSlot[]
-  reviews            Review[]
   conversations      Conversation[]
   leads              Lead[]
   deals              Deal[]
@@ -422,17 +422,17 @@ model Notification {
 // ============================================
 model Review {
   id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  property_id String   @db.Uuid
-  property    Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
-  user_id     String   @db.Uuid
-  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  agent_id    String   @db.Uuid                                                                 // брокер, которого оценивают
+  agent       User     @relation("AgentReviews", fields: [agent_id], references: [id], onDelete: Cascade)
+  user_id     String   @db.Uuid                                                                 // автор отзыва
+  user        User     @relation("ReviewAuthor", fields: [user_id], references: [id], onDelete: Cascade)
   rating      Int      // 1-5 stars
   comment     String?  @db.Text
   created_at  DateTime @default(now())
   updated_at  DateTime @default(now()) @updatedAt
 
-  @@unique([property_id, user_id])  // One review per user per property
-  @@index([property_id])
+  @@unique([agent_id, user_id])  // One review per user per broker
+  @@index([agent_id])
   @@index([user_id])
   @@index([rating])
   @@map("reviews")
