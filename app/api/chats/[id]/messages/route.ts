@@ -6,6 +6,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rateLimiter';
 
 /**
  * Extract conversation ID from URL
@@ -25,6 +26,12 @@ async function postHandler(req: AuthenticatedRequest) {
   const userId = req.user?.id;
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  // Rate-limit message sending per user (VULN-015).
+  const rl = checkRateLimit(`chat-msg:${userId}`, RATE_LIMITS.api);
+  if (!rl.success) {
+    return NextResponse.json({ error: 'Слишком много сообщений, притормозите' }, { status: 429 });
   }
 
   try {

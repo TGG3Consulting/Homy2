@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
+import { checkRateLimit, getClientIP, RATE_LIMITS } from '@/lib/rateLimiter';
 
 /**
  * POST /api/waitlist  { email }
@@ -7,6 +8,12 @@ import prisma from '@/lib/db/prisma';
  */
 export async function POST(req: NextRequest) {
   try {
+    // Rate-limit public signups per IP to curb spam (VULN-016).
+    const rl = checkRateLimit(`waitlist:${getClientIP(req)}`, RATE_LIMITS.contactAgent);
+    if (!rl.success) {
+      return NextResponse.json({ error: 'Too many requests', success: false }, { status: 429 });
+    }
+
     const { email } = await req.json();
     const v = typeof email === 'string' ? email.trim().toLowerCase() : '';
     if (!/.+@.+\..+/.test(v)) {

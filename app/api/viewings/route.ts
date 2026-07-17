@@ -19,6 +19,12 @@ async function createViewingHandler(req: AuthenticatedRequest) {
     return NextResponse.json({ error: 'User not found' }, { status: 401 });
   }
 
+  // Rate-limit viewing creation per user (VULN-014).
+  const rl = checkRateLimit(`viewing-create:${userId}`, RATE_LIMITS.api);
+  if (!rl.success) {
+    return NextResponse.json({ error: 'Слишком много запросов, попробуйте позже' }, { status: 429 });
+  }
+
   try {
     const body = await req.json();
     const { propertyId, clientEmail, clientId, scheduledAt, message } = body;
