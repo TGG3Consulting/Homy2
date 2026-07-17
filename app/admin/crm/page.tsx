@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Trash2 } from 'lucide-react';
 import { loc } from '@/lib/i18n';
 
 const glassStyle = {
@@ -82,6 +82,21 @@ export default function AdminCrmPage() {
     }
   };
 
+  const removeLead = async (leadId: string, who: string) => {
+    if (!confirm(`Удалить лид «${who}»? Действие необратимо.`)) return;
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/leads?lead_id=${encodeURIComponent(leadId)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!res.ok) { const d = await res.json().catch(() => ({})); throw new Error(d.error || 'Не удалось удалить лид'); }
+      setLeads((prev) => prev.filter((l) => l.id !== leadId));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Ошибка');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -123,6 +138,7 @@ export default function AdminCrmPage() {
                   <th className="px-4 py-3">Интерес</th>
                   <th className="px-4 py-3">Стадия</th>
                   <th className="px-4 py-3">Агент</th>
+                  <th className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody>
@@ -146,6 +162,15 @@ export default function AdminCrmPage() {
                             <option key={a.id} value={a.id}>→ {fullName(a)}</option>
                           ))}
                         </select>
+                      </td>
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={() => removeLead(l.id, fullName(l.client) !== '—' ? fullName(l.client) : (l.client_name || l.interest || 'без имени'))}
+                          className="text-gray-500 hover:text-red-400 transition-colors"
+                          title="Удалить лид"
+                        >
+                          <Trash2 size={16} />
+                        </button>
                       </td>
                     </tr>
                   );

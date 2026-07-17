@@ -5,8 +5,9 @@ import { effectiveStage } from '@/lib/services/crmService';
 
 /**
  * Admin overview of CRM leads (agent-scoped in the cabinet; global here).
- * GET   — list all leads (agent + client + property + effective stage).
- * PATCH — reassign a lead to another agent. Body: { lead_id, action:'reassign', agent_id }.
+ * GET    — list all leads (agent + client + property + effective stage).
+ * PATCH  — reassign a lead to another agent. Body: { lead_id, action:'reassign', agent_id }.
+ * DELETE — remove a lead (e.g. junk/test). Query: ?lead_id=...  (linked deals keep, lead_id→null).
  */
 
 const PERSON = { select: { id: true, first_name: true, last_name: true, email: true } };
@@ -69,6 +70,29 @@ export async function PATCH(req: NextRequest) {
         },
       }),
     ]);
+
+    return NextResponse.json({ success: true });
+  })(req);
+}
+
+export async function DELETE(req: NextRequest) {
+  return withModerator(async (r: AdminAuthenticatedRequest) => {
+    const lead_id = new URL(r.url).searchParams.get('lead_id');
+    if (!lead_id) return NextResponse.json({ error: 'lead_id обязателен' }, { status: 400 });
+
+    const lead = await prisma.lead.findUnique({ where: { id: lead_id }, select: { id: true, agent_id: true } });
+    if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
+
+    await prisma.lead.delete({ where: { id: lead_id } });
+    await prisma.adminActionLog.create({
+      data: {
+        admin_id: r.user!.id,
+        action_type: 'lead_delete',
+        target_type: 'lead',
+        target_id: lead_id,
+        details: { agent_id: lead.agent_id },
+      },
+    });
 
     return NextResponse.json({ success: true });
   })(req);
