@@ -3,6 +3,7 @@ import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 import emailService from '@/lib/services/emailService';
 import { captureLead } from '@/lib/services/crmService';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rateLimiter';
 import { viewingInclude, formatViewing, ViewingWithRelations } from './types';
 
 /**
@@ -172,39 +173,53 @@ async function createViewingHandler(req: AuthenticatedRequest) {
       finalClientId = currentUser.id;
     }
 
-    // Check if there's already an active viewing for this property by this client
-    const existingViewing = await prisma.viewing.findFirst({
-      where: {
-        propertyId,
-        clientId: finalClientId,
-        status: { notIn: ['cancelled', 'completed'] },
-      },
-    });
-
-    if (existingViewing) {
-      return NextResponse.json(
-        { error: 'An active viewing request already exists for this client and property' },
-        { status: 409 }
-      );
-    }
-
     // Determine initial status based on who creates
     const initialStatus = isAgentCreating ? 'pending_client' : 'pending_agent';
 
-    // Create the viewing
-    const viewing = await prisma.viewing.create({
-      data: {
-        propertyId,
-        clientId: finalClientId,
-        agentId,
-        createdById: currentUser.id,
-        lastProposedById: currentUser.id,
-        scheduledAt: scheduledDate,
-        message: message || null,
-        status: initialStatus,
-      },
-      include: viewingInclude,
-    });
+    // Atomic dup-check + create under Serializable isolation to prevent the
+    // TOCTOU double-booking race (VULN-013): two concurrent identical requests
+    // conflict at commit and one is rejected instead of both inserting.
+    let viewing;
+    try {
+      viewing = await prisma.$transaction(async (tx) => {
+        const existing = await tx.viewing.findFirst({
+          where: {
+            propertyId,
+            clientId: finalClientId,
+            status: { notIn: ['cancelled', 'completed'] },
+          },
+        });
+        if (existing) {
+          throw Object.assign(new Error('DUPLICATE_VIEWING'), { code: 'DUPLICATE_VIEWING' });
+        }
+        return tx.viewing.create({
+          data: {
+            propertyId,
+            clientId: finalClientId,
+            agentId,
+            createdById: currentUser.id,
+            lastProposedById: currentUser.id,
+            scheduledAt: scheduledDate,
+            message: message || null,
+            status: initialStatus,
+          },
+          include: viewingInclude,
+        });
+      }, { isolationLevel: 'Serializable' });
+    } catch (e: unknown) {
+      const code = (e as { code?: string })?.code;
+      if (code === 'DUPLICATE_VIEWING') {
+        return NextResponse.json(
+          { error: 'An active viewing request already exists for this client and property' },
+          { status: 409 }
+        );
+      }
+      // Prisma P2034 = write conflict / serialization failure → ask client to retry.
+      if (code === 'P2034') {
+        return NextResponse.json({ error: 'Concurrent request, please try again' }, { status: 409 });
+      }
+      throw e;
+    }
 
     // When a CLIENT requests a viewing, capture/refresh a CRM lead for the agent
     // (buyer engaged with their property). Consolidated here (3.2) so both client
