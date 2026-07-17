@@ -93,6 +93,9 @@ export const RATE_LIMITS = {
   // API endpoints - moderate limits
   api: { windowMs: 60 * 1000, maxRequests: 60 },  // 60 per minute
 
+  // Expensive AI endpoints (denial-of-wallet protection) - strict
+  ai: { windowMs: 60 * 1000, maxRequests: 15 },  // 15 per minute
+
   // Strict endpoints
   contactAgent: { windowMs: 60 * 60 * 1000, maxRequests: 10 },  // 10 per hour
 };

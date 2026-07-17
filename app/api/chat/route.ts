@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { sessionManager } from '@/lib/sessionManager';
+import { checkRateLimit, getClientIP, RATE_LIMITS, rateLimitResponse } from '@/lib/rateLimiter';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -18,6 +19,11 @@ interface ChatRequest {
 
 export async function POST(request: NextRequest) {
   try {
+    // Denial-of-wallet protection: this endpoint drives an expensive AI session.
+    // Rate-limit per client IP (VULN-004).
+    const rl = checkRateLimit(`chat:${getClientIP(request)}`, RATE_LIMITS.ai);
+    if (!rl.success) return rateLimitResponse(rl);
+
     const body: ChatRequest = await request.json();
     const { messages, sessionId } = body;
 
@@ -107,6 +113,10 @@ export async function POST(request: NextRequest) {
 // DELETE endpoint to cleanup session when client closes
 export async function DELETE(request: NextRequest) {
   try {
+    // Rate-limit session cleanup too (VULN-017).
+    const rl = checkRateLimit(`chat-del:${getClientIP(request)}`, RATE_LIMITS.api);
+    if (!rl.success) return rateLimitResponse(rl);
+
     const { searchParams } = new URL(request.url);
     const sessionId = searchParams.get('sessionId');
 

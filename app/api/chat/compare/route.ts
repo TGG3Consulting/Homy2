@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { simpleChat } from '@/lib/anthropicClient';
+import { checkRateLimit, getClientIP, RATE_LIMITS, rateLimitResponse } from '@/lib/rateLimiter';
 
 // Compare chat endpoint - provides AI comparison of selected properties
 export async function POST(request: NextRequest) {
   try {
+    // Denial-of-wallet protection on this AI endpoint (VULN-006).
+    const rl = checkRateLimit(`chat-compare:${getClientIP(request)}`, RATE_LIMITS.ai);
+    if (!rl.success) return rateLimitResponse(rl);
+
     const body = await request.json();
     const { message, systemContext, properties, searchContext } = body;
 
