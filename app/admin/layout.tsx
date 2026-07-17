@@ -11,6 +11,7 @@ import {
   Star,
   CalendarCheck,
   Briefcase,
+  Building2,
   LogOut,
   Menu,
   X,
@@ -35,6 +36,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { id: 'dashboard', label: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={20} /> },
   { id: 'users', label: 'Users', href: '/admin/users', icon: <Users size={20} />, requiredRole: 'admin' },
+  { id: 'properties', label: 'Properties', href: '/admin/properties', icon: <Building2 size={20} /> },
   { id: 'moderation', label: 'Moderation', href: '/admin/moderation', icon: <FileText size={20} /> },
   { id: 'reviews', label: 'Reviews', href: '/admin/reviews', icon: <Star size={20} /> },
   { id: 'viewings', label: 'Viewings', href: '/admin/viewings', icon: <CalendarCheck size={20} /> },

@@ -239,8 +239,11 @@ function CreateListingModal({ lang, onClose, onDone, showToast, editing }: any) 
     rooms: d.rooms != null ? String(d.rooms) : '',
     area: (d.area ?? d.size_sqm) != null ? String(d.area ?? d.size_sqm) : '',
     floor: d.floor != null ? String(d.floor) : '',
+    deposit: (d.deposit_months ?? d.depositMonths) != null ? String(d.deposit_months ?? d.depositMonths) : '',
+    utilities: (d.utilities_estimate ?? d.utilitiesEstimate) != null ? String(d.utilities_estimate ?? d.utilitiesEstimate) : '',
+    lease: (d.minimum_lease_months ?? d.minimumLeaseMonths) != null ? String(d.minimum_lease_months ?? d.minimumLeaseMonths) : '',
     description: (typeof d.description === 'string' ? d.description : loc(d.description, lang)) || '',
-  } : { dealType: 'long_term_rental', propertyType: 'apartment', province: '', city: '', district: '', address: '', price: '', rooms: '', area: '', floor: '', description: '' });
+  } : { dealType: 'long_term_rental', propertyType: 'apartment', province: '', city: '', district: '', address: '', price: '', rooms: '', area: '', floor: '', deposit: '', utilities: '', lease: '', description: '' });
   const [photos, setPhotos] = useState<string[]>(isEdit ? (d.images || d.photos || []) : []);
   const [uploading, setUploading] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -307,7 +310,7 @@ function CreateListingModal({ lang, onClose, onDone, showToast, editing }: any) 
             dealType: f.dealType, propertyType: f.propertyType,
             province: f.province, city: f.city, district: f.province === 'yerevan' ? f.district : '', address: f.address,
             price: Number(f.price), rooms: Number(f.rooms), area: Number(f.area),
-            floor: f.floor ? Number(f.floor) : null, description: f.description, images: photos,
+            floor: f.floor ? Number(f.floor) : null, depositMonths: f.deposit ? Number(f.deposit) : null, utilitiesEstimate: f.utilities ? Number(f.utilities) : null, minimumLeaseMonths: f.lease ? Number(f.lease) : null, description: f.description, images: photos,
           }),
         });
       } else if (isEdit) {
@@ -319,6 +322,7 @@ function CreateListingModal({ lang, onClose, onDone, showToast, editing }: any) 
             province: f.province, city: f.city, district: f.province === 'yerevan' ? f.district : '',
             location: [f.address, f.province === 'yerevan' ? f.district : f.city].filter(Boolean).join(' · ') || f.address,
             price: Number(f.price), area: Number(f.area), rooms: Number(f.rooms),
+            deposit_months: f.deposit, utilities_estimate: f.utilities, minimum_lease_months: f.lease,
             description: f.description, photos,
           }),
         });
@@ -331,7 +335,8 @@ function CreateListingModal({ lang, onClose, onDone, showToast, editing }: any) 
             property_type: f.propertyType, deal_type: f.dealType,
             province: f.province, city: f.city, district: f.province === 'yerevan' ? f.district : '', address: f.address,
             price: Number(f.price), rooms: Number(f.rooms), area: Number(f.area),
-            floor: f.floor ? Number(f.floor) : null, description: f.description, photos,
+            floor: f.floor ? Number(f.floor) : null, deposit_months: f.deposit, utilities_estimate: f.utilities, minimum_lease_months: f.lease,
+            description: f.description, photos,
           }),
         });
       }
@@ -378,6 +383,11 @@ function CreateListingModal({ lang, onClose, onDone, showToast, editing }: any) 
           <div className="field"><label>Комнаты</label><div className="inp"><input type="number" value={f.rooms} onChange={(e) => set('rooms', e.target.value)} placeholder="2" /></div></div>
           <div className="field"><label>Площадь, м²</label><div className="inp"><input type="number" value={f.area} onChange={(e) => set('area', e.target.value)} placeholder="85" /></div></div>
           <div className="field"><label>Этаж</label><div className="inp"><input type="number" value={f.floor} onChange={(e) => set('floor', e.target.value)} placeholder="7" /></div></div>
+          {f.dealType !== 'sale' && (<>
+            <div className="field"><label>Депозит, мес.</label><div className="inp"><input type="number" value={f.deposit} onChange={(e) => set('deposit', e.target.value)} placeholder="1" /></div></div>
+            <div className="field"><label>Коммуналка, AMD/мес.</label><div className="inp"><input type="number" value={f.utilities} onChange={(e) => set('utilities', e.target.value)} placeholder="15000" /></div></div>
+            <div className="field"><label>Мин. срок аренды, мес.</label><div className="inp"><input type="number" value={f.lease} onChange={(e) => set('lease', e.target.value)} placeholder="6" /></div></div>
+          </>)}
         </div>
         <div className="field"><label>Описание</label><div className="inp"><textarea rows={3} value={f.description} onChange={(e) => set('description', e.target.value)} placeholder="Тихий двор, свежий ремонт, рядом школа…" /></div></div>
         <div className="mact">

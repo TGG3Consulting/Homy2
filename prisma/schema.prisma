@@ -346,6 +346,10 @@ model PropertyListing {
   address       String?
   floor         Int?
   title         String?
+  // Rental terms carried through moderation into the live Property on approve (A5)
+  deposit_months       Int?   @map("deposit_months")
+  utilities_estimate   Float? @map("utilities_estimate")
+  minimum_lease_months Int?   @map("minimum_lease_months")
   published_property_id String? @db.Uuid @map("published_property_id") // set once approved
 
   created_at    DateTime @default(now())

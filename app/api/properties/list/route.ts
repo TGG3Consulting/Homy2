@@ -28,6 +28,9 @@ async function handler(req: AuthenticatedRequest) {
     address,
     floor,
     title,
+    deposit_months,
+    utilities_estimate,
+    minimum_lease_months,
   } = body;
 
   // Build a human location from address / district (Yerevan) / city if not supplied.
@@ -69,6 +72,9 @@ async function handler(req: AuthenticatedRequest) {
       address: address || null,
       floor: floor != null ? parseInt(floor) : null,
       title: title || null,
+      deposit_months: deposit_months != null && deposit_months !== '' ? parseInt(deposit_months) : null,
+      utilities_estimate: utilities_estimate != null && utilities_estimate !== '' ? parseFloat(utilities_estimate) : null,
+      minimum_lease_months: minimum_lease_months != null && minimum_lease_months !== '' ? parseInt(minimum_lease_months) : null,
     }
   });
 

@@ -41,9 +41,15 @@ export async function GET(
   }
 }
 
+/** Admins/moderators may manage any live property (2.2), not just their own. */
+async function isAdminUser(userId: string): Promise<boolean> {
+  const u = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+  return u?.role === 'admin' || u?.role === 'moderator';
+}
+
 /**
  * PATCH /api/properties/[id]
- * Owner/agent edit or unpublish (available:false). Owner-scoped.
+ * Owner/agent edit or unpublish (available:false). Owner-scoped (admins may edit any).
  * Body: partial { title, address, district, neighborhood, price, rooms, bedrooms,
  *   area, sizeSqm, floor, totalFloors, description, images, imageUrl, dealType,
  *   propertyType, available }
@@ -56,7 +62,7 @@ export const PATCH = withAuth(async (req: AuthenticatedRequest) => {
 
     const existing = await prisma.property.findUnique({ where: { id }, select: { owner_id: true } });
     if (!existing) return NextResponse.json({ error: 'Property not found', success: false }, { status: 404 });
-    if (existing.owner_id !== userId) return NextResponse.json({ error: 'Access denied', success: false }, { status: 403 });
+    if (existing.owner_id !== userId && !(await isAdminUser(userId))) return NextResponse.json({ error: 'Access denied', success: false }, { status: 403 });
 
     const b = await req.json().catch(() => ({} as any));
     const data: Record<string, unknown> = {};
@@ -73,6 +79,9 @@ export const PATCH = withAuth(async (req: AuthenticatedRequest) => {
     if (b.totalFloors !== undefined) data.totalFloors = b.totalFloors != null ? Number(b.totalFloors) : null;
     if (Array.isArray(b.images)) data.images = b.images;
     if (typeof b.available === 'boolean') data.available = b.available;
+    if (b.depositMonths !== undefined) data.depositMonths = b.depositMonths != null && b.depositMonths !== '' ? Number(b.depositMonths) : null;
+    if (b.utilitiesEstimate !== undefined) data.utilitiesEstimate = b.utilitiesEstimate != null && b.utilitiesEstimate !== '' ? Number(b.utilitiesEstimate) : null;
+    if (b.minimumLeaseMonths !== undefined) data.minimumLeaseMonths = b.minimumLeaseMonths != null && b.minimumLeaseMonths !== '' ? Number(b.minimumLeaseMonths) : null;
 
     const property = await prisma.property.update({ where: { id }, data });
     return NextResponse.json({ success: true, property: propertyAdapter.toFrontendFormat(property) });
@@ -93,7 +102,7 @@ export const DELETE = withAuth(async (req: AuthenticatedRequest) => {
 
     const existing = await prisma.property.findUnique({ where: { id }, select: { owner_id: true } });
     if (!existing) return NextResponse.json({ error: 'Property not found', success: false }, { status: 404 });
-    if (existing.owner_id !== userId) return NextResponse.json({ error: 'Access denied', success: false }, { status: 403 });
+    if (existing.owner_id !== userId && !(await isAdminUser(userId))) return NextResponse.json({ error: 'Access denied', success: false }, { status: 403 });
 
     await prisma.property.delete({ where: { id } });
     return NextResponse.json({ success: true });

@@ -109,10 +109,16 @@ async function patchHandler(
       description,
       photos,
       contact,
+      deposit_months,
+      utilities_estimate,
+      minimum_lease_months,
     } = body;
 
     // Build update data with only provided fields
     const updateData: Record<string, unknown> = {};
+    if (deposit_months !== undefined) updateData.deposit_months = deposit_months === '' || deposit_months == null ? null : parseInt(deposit_months);
+    if (utilities_estimate !== undefined) updateData.utilities_estimate = utilities_estimate === '' || utilities_estimate == null ? null : parseFloat(utilities_estimate);
+    if (minimum_lease_months !== undefined) updateData.minimum_lease_months = minimum_lease_months === '' || minimum_lease_months == null ? null : parseInt(minimum_lease_months);
     if (province !== undefined) updateData.province = province || null;
     if (city !== undefined) updateData.city = city || null;
     if (district !== undefined) updateData.district = district || null;
