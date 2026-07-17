@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { notificationCategory } from '@/lib/constants/notifications';
 
 const N_CSS = `
 .homy-notif{--bg:#EEF0F3;--surface:#FFFFFF;--surface2:#F4F6F8;--ink:#14181F;--muted:#6A7382;--soft:#39414D;--hair:rgba(20,24,31,.10);--em-hi:#26B083;--em:#0A6045;--amber:#B9822A;--danger:#D8434B;
@@ -32,14 +33,29 @@ html.dark .homy-notif{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#F
 @keyframes homynspin{to{transform:rotate(360deg)}}
 `;
 
+// Icons keyed off the canonical notification category (lib/constants/notifications.ts),
+// so every real Notification.type gets a correct icon (incl. all chat_* and viewing_*).
 function iconFor(type: string): { tone: string; svg: React.ReactNode } {
   const s = (p: React.ReactNode) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{p}</svg>;
-  if (type === 'saved_search_match') return { tone: '', svg: s(<><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></>) };
-  if (type?.startsWith('viewing')) return { tone: '', svg: s(<><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></>) };
-  if (type === 'listing_approved') return { tone: '', svg: s(<path d="M20 6 9 17l-5-5" />) };
-  if (type === 'listing_rejected') return { tone: 'danger', svg: s(<><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" /></>) };
-  if (type === 'message') return { tone: '', svg: s(<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />) };
-  return { tone: '', svg: s(<><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.7 21a2 2 0 0 1-3.4 0" /></>) };
+  const calBase = <><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></>;
+  switch (notificationCategory(type)) {
+    case 'search':
+      return { tone: '', svg: s(<><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></>) };
+    case 'viewing':
+      return { tone: '', svg: s(calBase) };
+    case 'viewing_good':
+      return { tone: '', svg: s(<>{calBase}<path d="m8.5 16 2 2 4-4" /></>) };
+    case 'viewing_bad':
+      return { tone: 'danger', svg: s(<>{calBase}<path d="m10 14 4 4M14 14l-4 4" /></>) };
+    case 'listing_good':
+      return { tone: '', svg: s(<path d="M20 6 9 17l-5-5" />) };
+    case 'listing_bad':
+      return { tone: 'danger', svg: s(<><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" /></>) };
+    case 'chat':
+      return { tone: '', svg: s(<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />) };
+    default: // system / fallback → bell
+      return { tone: '', svg: s(<><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.7 21a2 2 0 0 1-3.4 0" /></>) };
+  }
 }
 
 // Some older notifications embed a raw i18n-JSON title in the body — show the ru value.

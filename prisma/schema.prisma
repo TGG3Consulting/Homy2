@@ -400,7 +400,7 @@ model Notification {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId    String   @map("user_id") @db.Uuid
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type      String   @db.VarChar(50) // viewing_request, viewing_approved, listing_approved, message, system
+  type      String   @db.VarChar(50) // canonical set in lib/constants/notifications.ts: viewing_request|viewing_proposed|viewing_confirmed|viewing_cancelled|listing_approved|listing_rejected|chat_new|chat_message|chat_assigned|saved_search_match|system
   title     String   @db.VarChar(255)
   body      String   @db.Text
   data      Json?    @db.JsonB // Additional payload: { propertyId, viewingId, listingId, etc. }
