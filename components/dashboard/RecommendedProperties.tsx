@@ -485,7 +485,7 @@ export default function RecommendedProperties({
   // Fetch saved properties to show saved state
   const fetchSavedIds = useCallback(async () => {
     try {
-      const response = await fetch('/api/favorites', {
+      const response = await fetch('/api/users/me/favorites', {
         credentials: 'include',
       });
 
@@ -508,14 +508,14 @@ export default function RecommendedProperties({
   const handleSave = async (propertyId: string) => {
     try {
       const isSaved = savedIds.has(propertyId);
-      const url = isSaved ? `/api/favorites/${propertyId}` : '/api/favorites';
       const method = isSaved ? 'DELETE' : 'POST';
 
-      const response = await fetch(url, {
+      // Canonical favorites endpoint (3.2 — /api/favorites deduped away).
+      const response = await fetch('/api/users/me/favorites', {
         method,
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: method === 'POST' ? JSON.stringify({ property_id: propertyId }) : undefined,
+        body: JSON.stringify({ propertyId }),
       });
 
       // If unauthorized, redirect to login
