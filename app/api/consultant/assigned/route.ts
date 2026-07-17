@@ -1,34 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { withOptionalAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { NextResponse } from 'next/server';
+import { withOptionalAuth } from '@/lib/middleware/authMiddleware';
 
-// Default consultant (as shown in frontend)
-const DEFAULT_CONSULTANT = {
-  id: 'default-consultant',
-  name: 'Anna Hakobyan',
-  role: 'Personal consultant',
-  avatar: '/images/consultant-avatar.jpg',
-  verified: true,
-  languages: ['English', 'Russian', 'Armenian'],
-  specialization: 'Residential properties in Yerevan',
-  contact_available: true,
-};
-
-export const GET = withOptionalAuth(async (req: AuthenticatedRequest) => {
-  try {
-    // In a real app, you'd look up assigned consultant based on user
-    // const assignedConsultant = await prisma.userConsultant.findFirst({
-    //   where: { userId: req.user?.id },
-    //   include: { consultant: true },
-    // });
-
-    // For now, return default consultant
-    return NextResponse.json({
-      consultant: DEFAULT_CONSULTANT,
-    });
-  } catch (error) {
-    console.error('Get consultant error:', error);
-    return NextResponse.json({
-      consultant: DEFAULT_CONSULTANT,
-    });
-  }
+/**
+ * GET /api/consultant/assigned
+ * Returns the consultant assigned to the current user.
+ *
+ * 3.4: there is no user↔consultant assignment mechanism yet, so this must NOT
+ * fabricate a person. It returns { consultant: null } honestly. When an
+ * assignment model exists, look it up here and return the real consultant.
+ */
+export const GET = withOptionalAuth(async () => {
+  return NextResponse.json({ consultant: null });
 });
