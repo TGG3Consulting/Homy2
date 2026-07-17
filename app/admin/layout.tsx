@@ -9,6 +9,7 @@ import {
   FileText,
   Settings,
   Star,
+  CalendarCheck,
   LogOut,
   Menu,
   X,
@@ -35,6 +36,7 @@ const navItems: NavItem[] = [
   { id: 'users', label: 'Users', href: '/admin/users', icon: <Users size={20} />, requiredRole: 'admin' },
   { id: 'moderation', label: 'Moderation', href: '/admin/moderation', icon: <FileText size={20} /> },
   { id: 'reviews', label: 'Reviews', href: '/admin/reviews', icon: <Star size={20} /> },
+  { id: 'viewings', label: 'Viewings', href: '/admin/viewings', icon: <CalendarCheck size={20} /> },
   { id: 'settings', label: 'Settings', href: '/admin/settings', icon: <Settings size={20} />, requiredRole: 'admin' },
 ];
 
