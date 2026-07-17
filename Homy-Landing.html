@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homy — AI-эксперт по недвижимости Армении · Слой доверия</title>
+<meta name="description" content="Homy находит, разбирает и честно оценивает недвижимость в Армении: AI-подбор, юридическая чистота, 360°-туры, проверенные брокеры и собственная CRM.">
+<meta property="og:title" content="Homy — не доска объявлений, а слой доверия.">
+<meta property="og:description" content="AI-разбор каждого объекта в Армении. Честно о плюсах и рисках.">
+<meta name="theme-color" content="#EAF2EE">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --ink:#141A20; --muted:#5E6976; --soft:#39414D;
+    --em:#0A6045; --em-hi:#12A574; --em-deep:#074A34; --em-soft:#E4F4EC;
+    --hair:rgba(20,24,31,.10); --card:rgba(255,255,255,.72);
+    --shadow:0 20px 50px rgba(10,60,42,.10);
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Montserrat',system-ui,sans-serif;color:var(--ink);
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+    background:
+      radial-gradient(90% 60% at 50% -10%, #E4F4EC 0%, transparent 55%),
+      linear-gradient(180deg,#F7F9FA 0%, #EDF4F0 60%, #E6F1EB 100%);
+  }
+  ::selection{background:rgba(18,165,116,.25)}
+
+  /* ---------- ambient layers ---------- */
+  .blob{position:fixed;z-index:0;pointer-events:none;border-radius:50%;filter:blur(70px);opacity:.45;will-change:transform}
+  .blob.a{width:560px;height:560px;left:-140px;top:-100px;background:radial-gradient(circle,#63D6AE,transparent 70%);animation:float1 16s ease-in-out infinite}
+  .blob.b{width:480px;height:480px;right:-120px;top:30vh;background:radial-gradient(circle,#8FE6C6,transparent 70%);animation:float2 19s ease-in-out infinite}
+  .blob.c{width:420px;height:420px;left:8vw;top:110vh;background:radial-gradient(circle,#A9EDD3,transparent 70%);animation:float1 22s ease-in-out infinite reverse}
+  @keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(44px,32px)}}
+  @keyframes float2{0%,100%{transform:translate(0,0)}50%{transform:translate(-38px,-30px)}}
+  #fall{position:fixed;inset:0;z-index:1;pointer-events:none}
+  .layer{position:relative;z-index:3}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,52px)}
+
+  /* ---------- nav ---------- */
+  nav{position:fixed;top:0;left:0;right:0;z-index:50;transition:.35s var(--ease)}
+  nav .bar{max-width:1180px;margin:14px auto 0;padding:12px clamp(14px,2.5vw,24px);display:flex;align-items:center;gap:26px;
+    border-radius:999px;border:1px solid transparent;transition:.35s var(--ease)}
+  nav.scrolled .bar{background:rgba(255,255,255,.75);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-color:var(--hair);box-shadow:0 10px 30px rgba(20,40,30,.08);margin-top:10px}
+  .logo{font-size:26px;font-weight:900;letter-spacing:-.035em;display:inline-flex;align-items:flex-start;line-height:1;text-decoration:none;color:var(--ink)}
+  .logo .m{color:var(--em)}
+  .logo .dot{width:8px;height:8px;border-radius:50%;background:var(--em-hi);margin-left:8px;margin-top:2px;
+    box-shadow:0 0 12px rgba(18,165,116,.85);animation:pulse 2.2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.5;transform:scale(.85)}50%{opacity:1;transform:scale(1.25)}}
+  nav .links{display:flex;gap:4px;margin-left:auto}
+  nav .links a{font-size:13.5px;font-weight:600;color:var(--soft);text-decoration:none;padding:9px 14px;border-radius:999px;transition:.25s}
+  nav .links a:hover{color:var(--em);background:rgba(18,165,116,.08)}
+  .btn{display:inline-flex;align-items:center;gap:9px;font-family:inherit;font-size:14px;font-weight:700;letter-spacing:.01em;
+    color:#fff;background:linear-gradient(180deg,var(--em-hi),var(--em));border:0;border-radius:999px;padding:13px 26px;cursor:pointer;
+    text-decoration:none;box-shadow:0 10px 26px rgba(10,96,69,.35), inset 0 1px 0 rgba(255,255,255,.25);
+    transition:transform .25s var(--ease), box-shadow .25s var(--ease);position:relative;overflow:hidden}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(10,96,69,.42), inset 0 1px 0 rgba(255,255,255,.25)}
+  .btn:active{transform:translateY(0)}
+  .btn::after{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;transform:skewX(-20deg);
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:btnsweep 3.8s ease-in-out infinite}
+  @keyframes btnsweep{0%,55%{left:-60%}100%{left:140%}}
+  .btn.ghost{color:var(--em-deep);background:rgba(255,255,255,.8);box-shadow:0 8px 22px rgba(20,40,30,.10);border:1px solid var(--hair)}
+  .btn.ghost::after{display:none}
+  .btn.small{padding:10px 20px;font-size:13px}
+  nav .btn.small{margin-left:6px}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:130px 0 240px}
+  .hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(30px,5vw,70px);align-items:center}
+  .kicker{position:relative;isolation:isolate;overflow:hidden;display:inline-flex;align-items:center;gap:11px;
+    font-size:12.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--em-deep);
+    border-radius:999px;padding:13px 26px;box-shadow:0 14px 34px rgba(10,96,69,.16)}
+  .kicker::before{content:'';position:absolute;inset:0;z-index:-2;border-radius:inherit;
+    background:conic-gradient(from 0deg, transparent 0deg, rgba(18,165,116,0) 55deg, var(--em-hi) 120deg, #8FEBCB 148deg, var(--em-hi) 176deg, rgba(18,165,116,0) 250deg, transparent 360deg);
+    animation:spin 4.5s linear infinite}
+  .kicker::after{content:'';position:absolute;inset:1.7px;z-index:-1;border-radius:inherit;
+    background:linear-gradient(180deg,#FFFFFF,#EFF8F3);box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
+  @keyframes spin{to{transform:rotate(1turn)}}
+  .kicker i{width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#5FE3BB,var(--em-hi));
+    animation:ring 1.9s ease-out infinite}
+  @keyframes ring{0%{box-shadow:0 0 0 0 rgba(18,165,116,.5)}70%{box-shadow:0 0 0 9px rgba(18,165,116,0)}100%{box-shadow:0 0 0 0 rgba(18,165,116,0)}}
+  h1{font-size:clamp(34px,5.4vw,68px);font-weight:900;letter-spacing:-.035em;line-height:1.05;margin-top:26px;color:#111820}
+  .grad{background:linear-gradient(100deg,var(--em),#18B37D 55%,var(--em));
+    -webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% auto;animation:shine 6s linear infinite}
+  @keyframes shine{to{background-position:200% center}}
+  .lede{margin-top:22px;max-width:560px;font-size:clamp(14.5px,1.6vw,17px);line-height:1.75;color:var(--soft)}
+  .hero-cta{margin-top:34px;display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+  .hero-note{margin-top:18px;display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+  .hero-note svg{color:var(--em);flex:0 0 auto}
+
+  /* chat mockup */
+  .chat{position:relative;border-radius:26px;background:var(--card);border:1px solid var(--hair);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:var(--shadow);overflow:hidden;
+    transform:perspective(1200px) rotateY(-4deg) rotateX(2deg);transition:transform .6s var(--ease)}
+  .chat:hover{transform:perspective(1200px) rotateY(0) rotateX(0)}
+  .chat .head{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--hair);background:rgba(255,255,255,.5)}
+  .chat .ava{width:34px;height:34px;border-radius:12px;background:linear-gradient(140deg,var(--em-hi),var(--em));display:grid;place-items:center;color:#fff;font-weight:900;font-size:15px;box-shadow:0 6px 14px rgba(10,96,69,.35)}
+  .chat .head b{font-size:14px}
+  .chat .head span{display:block;font-size:11px;color:var(--em);font-weight:600}
+  .chat .head .on{width:7px;height:7px;border-radius:50%;background:var(--em-hi);margin-left:auto;animation:pulse 2s infinite}
+  .chat .body{padding:20px;display:flex;flex-direction:column;gap:12px;min-height:360px}
+  .msg{max-width:86%;padding:12px 16px;border-radius:18px;font-size:13.5px;line-height:1.55;opacity:0;transform:translateY(14px) scale(.97)}
+  .msg.show{opacity:1;transform:none;transition:.55s var(--ease)}
+  .msg.user{align-self:flex-end;background:linear-gradient(140deg,var(--em-hi),var(--em));color:#fff;border-bottom-right-radius:6px;box-shadow:0 8px 20px rgba(10,96,69,.25)}
+  .msg.ai{align-self:flex-start;background:rgba(255,255,255,.9);border:1px solid var(--hair);border-bottom-left-radius:6px;color:var(--soft)}
+  .msg.ai b{color:var(--ink)}
+  .typing{align-self:flex-start;display:none;gap:5px;padding:14px 18px;background:rgba(255,255,255,.9);border:1px solid var(--hair);border-radius:18px;border-bottom-left-radius:6px}
+  .typing.show{display:inline-flex}
+  .typing i{width:7px;height:7px;border-radius:50%;background:var(--em-hi);animation:tdot 1.2s ease-in-out infinite}
+  .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+  @keyframes tdot{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-4px)}}
+  .prop-mini{display:flex;gap:12px;align-items:center;margin-top:10px;padding:10px;border-radius:14px;background:var(--em-soft)}
+  .prop-mini .ph{width:56px;height:56px;border-radius:11px;flex:0 0 auto;background:linear-gradient(140deg,#BFE9D6,#8FD9BC);position:relative;overflow:hidden}
+  .prop-mini .ph::after{content:'';position:absolute;inset:0;background:
+    linear-gradient(transparent 60%, rgba(10,96,69,.35) 60%),
+    linear-gradient(90deg, transparent 46%, rgba(255,255,255,.5) 48%, transparent 52%)}
+  .prop-mini b{display:block;font-size:12.5px;color:var(--ink)}
+  .prop-mini span{font-size:11.5px;color:var(--muted)}
+  .match-pill{margin-left:auto;font-size:12px;font-weight:800;color:var(--em-deep);background:#fff;border-radius:999px;padding:6px 11px;box-shadow:0 4px 10px rgba(10,96,69,.15)}
+  .chat .input{display:flex;gap:10px;align-items:center;margin:0 20px 20px;padding:6px 6px 6px 18px;border-radius:999px;background:rgba(255,255,255,.95);border:1px solid var(--hair);box-shadow:0 8px 20px rgba(20,40,30,.07)}
+  .chat .input span{font-size:13px;color:var(--muted);flex:1;white-space:nowrap;overflow:hidden}
+  .chat .input span::after{content:'';display:inline-block;width:2px;height:14px;background:var(--em);vertical-align:-2px;margin-left:2px;animation:caret 1s steps(1) infinite}
+  @keyframes caret{50%{opacity:0}}
+  .chat .input .send{width:38px;height:38px;flex:0 0 auto;border-radius:50%;border:0;background:linear-gradient(180deg,var(--em-hi),var(--em));color:#fff;display:grid;place-items:center;box-shadow:0 8px 18px rgba(10,96,69,.35)}
+
+  /* skyline */
+  #city{position:absolute;left:0;right:0;bottom:0;z-index:1;display:block;pointer-events:none}
+  .hero .wrap{position:relative;z-index:3}
+
+  /* ---------- shared section styling ---------- */
+  section{position:relative;padding:clamp(70px,9vw,120px) 0}
+  .sec-kicker{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--em);
+    background:rgba(18,165,116,.10);border:1px solid rgba(18,165,116,.18);border-radius:999px;padding:9px 18px}
+  .sec-kicker i{width:6px;height:6px;border-radius:50%;background:var(--em-hi)}
+  h2{font-size:clamp(26px,3.6vw,44px);font-weight:900;letter-spacing:-.03em;line-height:1.12;margin-top:20px}
+  .sec-lede{margin-top:16px;max-width:640px;font-size:15px;line-height:1.75;color:var(--soft)}
+  .center{text-align:center}
+  .center .sec-lede{margin-left:auto;margin-right:auto}
+
+  /* reveal on scroll */
+  .rv{opacity:0;transform:translateY(30px)}
+  .rv.in{opacity:1;transform:none;transition:.9s var(--ease)}
+  .rv.d1{transition-delay:.08s}.rv.d2{transition-delay:.18s}.rv.d3{transition-delay:.28s}.rv.d4{transition-delay:.38s}
+
+  /* ---------- stats ---------- */
+  .stats{margin-top:-120px;padding-bottom:0}
+  .stats .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .stat{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--hair);border-radius:22px;padding:26px 22px;text-align:center;box-shadow:var(--shadow)}
+  .stat b{font-size:clamp(26px,3vw,36px);font-weight:900;letter-spacing:-.02em;color:var(--em-deep)}
+  .stat span{display:block;font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.45}
+
+  /* ---------- steps ---------- */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:50px}
+  .step{position:relative;background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--hair);border-radius:24px;padding:30px 26px;box-shadow:var(--shadow);
+    transition:transform .4s var(--ease), box-shadow .4s var(--ease)}
+  .step:hover{transform:translateY(-6px);box-shadow:0 28px 60px rgba(10,60,42,.16)}
+  .step .num{position:absolute;top:22px;right:24px;font-size:44px;font-weight:900;letter-spacing:-.04em;color:rgba(18,165,116,.14)}
+  .icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;color:#fff;
+    background:linear-gradient(140deg,var(--em-hi),var(--em));box-shadow:0 10px 22px rgba(10,96,69,.3)}
+  .step h3{font-size:17px;font-weight:800;letter-spacing:-.01em;margin-top:20px}
+  .step p{font-size:13.5px;line-height:1.7;color:var(--soft);margin-top:10px}
+
+  /* ---------- analysis (разбор) ---------- */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,5vw,70px);align-items:center;margin-top:50px}
+  .an-card{background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--hair);border-radius:26px;box-shadow:var(--shadow);overflow:hidden}
+  .an-card .top{display:flex;align-items:center;gap:16px;padding:22px 24px;border-bottom:1px solid var(--hair);background:rgba(255,255,255,.5)}
+  .ring{position:relative;width:86px;height:86px;flex:0 0 auto}
+  .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+  .ring .bg{fill:none;stroke:rgba(18,165,116,.14);stroke-width:8}
+  .ring .fg{fill:none;stroke:url(#ringGrad);stroke-width:8;stroke-linecap:round;stroke-dasharray:239.4;stroke-dashoffset:239.4}
+  .ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:20px;font-weight:900;color:var(--em-deep)}
+  .an-card .top h4{font-size:15.5px;font-weight:800}
+  .an-card .top p{font-size:12.5px;color:var(--muted);margin-top:4px}
+  .an-list{padding:18px 24px 24px;display:flex;flex-direction:column;gap:12px}
+  .an-item{display:flex;gap:12px;align-items:flex-start;font-size:13.5px;line-height:1.55;color:var(--soft)}
+  .an-item .tick{width:22px;height:22px;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;margin-top:1px}
+  .an-item.good .tick{background:rgba(18,165,116,.14);color:var(--em)}
+  .an-item.risk .tick{background:rgba(220,140,40,.14);color:#B4711E}
+  .an-item b{color:var(--ink)}
+  .bar-row{margin-top:4px}
+  .bar-row span{font-size:11.5px;font-weight:700;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:6px}
+  .bar{height:7px;border-radius:99px;background:rgba(18,165,116,.12);overflow:hidden}
+  .bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--em-hi),var(--em));transition:width 1.4s var(--ease)}
+  .feature-list{display:flex;flex-direction:column;gap:16px;margin-top:30px}
+  .feature-line{display:flex;gap:16px;align-items:flex-start}
+  .feature-line .icon{width:44px;height:44px;border-radius:14px;flex:0 0 auto}
+  .feature-line h4{font-size:15.5px;font-weight:800}
+  .feature-line p{font-size:13.5px;line-height:1.65;color:var(--soft);margin-top:6px;max-width:440px}
+
+  /* ---------- features grid ---------- */
+  .fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:50px}
+  .fcard{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--hair);border-radius:24px;padding:28px 26px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;transition:transform .4s var(--ease), box-shadow .4s var(--ease)}
+  .fcard::before{content:'';position:absolute;top:-40%;right:-30%;width:70%;height:90%;border-radius:50%;
+    background:radial-gradient(circle,rgba(18,165,116,.10),transparent 70%);transition:.5s var(--ease)}
+  .fcard:hover{transform:translateY(-6px);box-shadow:0 28px 60px rgba(10,60,42,.16)}
+  .fcard:hover::before{transform:scale(1.4)}
+  .fcard h3{font-size:16.5px;font-weight:800;margin-top:18px;letter-spacing:-.01em}
+  .fcard p{font-size:13.5px;line-height:1.7;color:var(--soft);margin-top:10px}
+
+  /* ---------- CRM dark section ---------- */
+  .crm{padding:0}
+  .crm .panel{position:relative;border-radius:34px;overflow:hidden;padding:clamp(40px,6vw,80px) clamp(24px,5vw,80px);
+    background:linear-gradient(150deg,#0B3B2B 0%, #074A34 45%, #0A6045 100%);box-shadow:0 40px 90px rgba(7,58,41,.45)}
+  .crm .panel::before{content:'';position:absolute;top:-160px;right:-120px;width:480px;height:480px;border-radius:50%;
+    background:radial-gradient(circle,rgba(18,165,116,.4),transparent 70%);filter:blur(30px)}
+  .crm .panel::after{content:'';position:absolute;inset:0;pointer-events:none;
+    background-image:radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px);background-size:26px 26px}
+  .crm .inner{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,5vw,70px);align-items:center}
+  .crm .sec-kicker{color:#8FEBCB;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14)}
+  .crm h2{color:#fff}
+  .crm .sec-lede{color:rgba(255,255,255,.75)}
+  .crm ul{list-style:none;margin-top:24px;display:flex;flex-direction:column;gap:13px}
+  .crm ul li{display:flex;gap:11px;align-items:flex-start;font-size:14px;line-height:1.6;color:rgba(255,255,255,.85)}
+  .crm ul li svg{flex:0 0 auto;margin-top:3px;color:#5FE3BB}
+  .crm .btn.light{background:#fff;color:var(--em-deep);box-shadow:0 14px 30px rgba(0,0,0,.25);margin-top:30px}
+  .crm-mock{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:24px;backdrop-filter:blur(8px);padding:22px;box-shadow:0 30px 60px rgba(0,0,0,.25)}
+  .crm-mock .row{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:14px;background:rgba(255,255,255,.07);margin-bottom:10px;
+    opacity:0;transform:translateX(24px)}
+  .crm-mock .row.in{opacity:1;transform:none;transition:.7s var(--ease)}
+  .crm-mock .row:last-child{margin-bottom:0}
+  .crm-mock .avatar{width:36px;height:36px;border-radius:12px;flex:0 0 auto;display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff}
+  .crm-mock b{display:block;font-size:13px;color:#fff}
+  .crm-mock span{font-size:11.5px;color:rgba(255,255,255,.6)}
+  .stage{margin-left:auto;font-size:11px;font-weight:800;letter-spacing:.05em;padding:6px 12px;border-radius:999px}
+  .stage.hot{background:rgba(95,227,187,.18);color:#5FE3BB}
+  .stage.warm{background:rgba(255,200,90,.16);color:#FFD98A}
+  .stage.deal{background:rgba(255,255,255,.14);color:#fff}
+
+  /* ---------- reviews marquee ---------- */
+  .reviews{overflow:hidden}
+  .marquee{margin-top:50px;display:flex;gap:20px;width:max-content;animation:mq 46s linear infinite}
+  .reviews:hover .marquee{animation-play-state:paused}
+  @keyframes mq{to{transform:translateX(-50%)}}
+  .rev{width:330px;flex:0 0 auto;background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--hair);border-radius:22px;padding:24px;box-shadow:var(--shadow)}
+  .rev .stars{color:#EFB63C;font-size:14px;letter-spacing:2px}
+  .rev p{font-size:13.5px;line-height:1.7;color:var(--soft);margin-top:12px}
+  .rev .who{display:flex;align-items:center;gap:11px;margin-top:16px}
+  .rev .who .avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff}
+  .rev .who b{font-size:13px;display:block}
+  .rev .who span{font-size:11.5px;color:var(--muted)}
+
+  /* ---------- CTA ---------- */
+  .cta .panel{position:relative;text-align:center;border-radius:34px;padding:clamp(50px,7vw,90px) clamp(24px,5vw,80px);
+    background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--hair);box-shadow:var(--shadow);overflow:hidden}
+  .cta .panel::before{content:'';position:absolute;left:50%;top:-60%;width:700px;height:700px;transform:translateX(-50%);border-radius:50%;
+    background:radial-gradient(circle,rgba(18,165,116,.16),transparent 65%)}
+  .cta form{position:relative;z-index:2;margin:34px auto 0;max-width:520px;display:flex;gap:10px;padding:8px;border-radius:999px;
+    background:#fff;border:1px solid var(--hair);box-shadow:0 14px 34px rgba(20,40,30,.10)}
+  .cta input{flex:1;min-width:0;border:0;outline:0;font-family:inherit;font-size:14px;padding:0 10px 0 16px;background:transparent;color:var(--ink)}
+  .cta input::placeholder{color:var(--muted)}
+  .cta .note{position:relative;z-index:2;margin-top:16px;font-size:12px;color:var(--muted)}
+  .cta .ok{display:none;margin:30px auto 0;font-size:15px;font-weight:700;color:var(--em)}
+
+  /* ---------- footer ---------- */
+  footer{position:relative;z-index:3;border-top:1px solid var(--hair);margin-top:20px}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between;padding-top:30px;padding-bottom:34px}
+  footer .trust{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+  footer .trust svg{color:var(--em)}
+  footer small{font-size:12px;color:var(--muted)}
+  footer .langs{display:flex;gap:8px;font-size:12px;font-weight:700;color:var(--muted)}
+  footer .langs span{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.7);border:1px solid var(--hair)}
+
+  /* ---------- responsive ---------- */
+  @media(max-width:1020px){
+    .hero .wrap{grid-template-columns:1fr;gap:44px}
+    .chat{transform:none;max-width:560px;margin:0 auto}
+    .stats .grid{grid-template-columns:repeat(2,1fr)}
+    .steps{grid-template-columns:1fr}
+    .split{grid-template-columns:1fr}
+    .fgrid{grid-template-columns:repeat(2,1fr)}
+    .crm .inner{grid-template-columns:1fr}
+    nav .links{display:none}
+  }
+  @media(max-width:640px){
+    .hero{padding:110px 0 200px}
+    .fgrid{grid-template-columns:1fr}
+    .stats{margin-top:-90px}
+    .stats .grid{gap:12px}
+    .stat{padding:20px 14px}
+    .cta form{flex-direction:column;border-radius:24px}
+    .cta .btn{justify-content:center}
+    .chat .body{min-height:320px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none !important;transition:none !important}
+    .rv{opacity:1;transform:none}
+    .msg{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+  <div class="blob a"></div><div class="blob b"></div><div class="blob c"></div>
+  <canvas id="fall"></canvas>
+
+  <!-- ================= NAV ================= -->
+  <nav id="nav">
+    <div class="bar">
+      <a class="logo" href="#">Ho<span class="m">m</span>y<span class="dot"></span></a>
+      <div class="links">
+        <a href="#how">Как это работает</a>
+        <a href="#analysis">AI-разбор</a>
+        <a href="#features">Возможности</a>
+        <a href="#brokers">Брокерам</a>
+        <a href="#reviews">Отзывы</a>
+      </div>
+      <a class="btn small" href="#cta">Начать поиск</a>
+    </div>
+  </nav>
+
+  <!-- ================= HERO ================= -->
+  <header class="hero layer">
+    <canvas id="city"></canvas>
+    <div class="wrap">
+      <div>
+        <div class="kicker rv in"><i></i><span>AI-эксперт по недвижимости Армении</span></div>
+        <h1 class="rv in d1">Не просто объявления, <br><span class="grad">а слой доверия.</span></h1>
+        <p class="lede rv in d2">Homy разбирает каждый объект в Армении по фактам — застройщик, юридическая чистота, район, маршрут, инвестиционный потенциал — и честно показывает и плюсы, и риски. Расскажите, что ищете, — AI подберёт лучшее.</p>
+        <div class="hero-cta rv in d3">
+          <a class="btn" href="#cta">Найти свой дом
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+          <a class="btn ghost" href="#analysis">Смотреть AI-разбор</a>
+        </div>
+        <div class="hero-note rv in d4">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V5z"/><path d="m9 12 2 2 4-4"/></svg>
+          Слой доверия, а не брокер · Ереван, Армения
+        </div>
+      </div>
+
+      <div class="chat rv in d3" id="chatDemo">
+        <div class="head">
+          <div class="ava">H</div>
+          <div><b>Homy AI</b><span>онлайн · подбирает честно</span></div>
+          <i class="on"></i>
+        </div>
+        <div class="body" id="chatBody">
+          <div class="msg user" data-step="0">Ищу 2-комнатную в Ереване до $120 000, рядом с метро и школой 🏡</div>
+          <div class="typing" data-step="1"><i></i><i></i><i></i></div>
+          <div class="msg ai" data-step="2">Нашёл <b>14 объектов</b>. Лучший матч — в Кентроне: дом 2019 года, юридически чистый, школа в 4 минутах.
+            <div class="prop-mini">
+              <div class="ph"></div>
+              <div><b>2-комн · 68 м² · Кентрон</b><span>$118 500 · метро 6 мин пешком</span></div>
+              <div class="match-pill">96%</div>
+            </div>
+          </div>
+          <div class="msg ai" data-step="3"><b>Честно о рисках:</b> во дворе стройка до 2027 — возможен шум. Показать альтернативы в Арабкире?</div>
+          <div class="msg user" data-step="4">Да, и запиши меня на просмотр 👌</div>
+        </div>
+        <div class="input"><span id="typeLine"></span>
+          <button class="send" aria-label="Отправить"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= STATS ================= -->
+  <section class="stats layer">
+    <div class="wrap">
+      <div class="grid">
+        <div class="stat rv"><b class="cu" data-to="1500" data-suf="+">0</b><span>объектов в AI-анализе</span></div>
+        <div class="stat rv d1"><b class="cu" data-to="98" data-suf="%">0</b><span>точность подбора</span></div>
+        <div class="stat rv d2"><b class="cu" data-to="120" data-suf="+">0</b><span>проверенных брокеров</span></div>
+        <div class="stat rv d3"><b class="cu" data-to="10">0</b><span>городов Армении</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= HOW ================= -->
+  <section id="how" class="layer">
+    <div class="wrap center">
+      <div class="sec-kicker rv"><i></i>Как это работает</div>
+      <h2 class="rv d1">Три шага до дома,<br>в котором <span class="grad">хочется жить</span></h2>
+      <p class="sec-lede rv d2">Никаких бесконечных фильтров и звонков. Просто расскажите Homy, как вы живёте, — остальное сделает AI.</p>
+      <div class="steps">
+        <div class="step rv">
+          <span class="num">01</span>
+          <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <h3>Расскажите, что ищете</h3>
+          <p>Словами или голосом, на русском, армянском или английском: бюджет, район, образ жизни. AI понимает «поближе к школе и подальше от шумной улицы».</p>
+        </div>
+        <div class="step rv d1">
+          <span class="num">02</span>
+          <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6M8 11h6"/></svg></div>
+          <h3>Получите честный подбор</h3>
+          <p>Каждый объект получает match score и разбор по фактам: застройщик, документы, район, инфраструктура. И плюсы, и риски — без прикрас.</p>
+        </div>
+        <div class="step rv d2">
+          <span class="num">03</span>
+          <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg></div>
+          <h3>Смотрите и заезжайте</h3>
+          <p>360°-тур не выходя из дома, запись на просмотр в два клика, проверенный брокер на связи. От первого сообщения до ключей — в одном месте.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ANALYSIS ================= -->
+  <section id="analysis" class="layer">
+    <div class="wrap">
+      <div class="split">
+        <div>
+          <div class="sec-kicker rv"><i></i>AI-разбор объекта</div>
+          <h2 class="rv d1">Каждый объект — <br><span class="grad">под микроскопом</span></h2>
+          <p class="sec-lede rv d2">Homy не пересказывает объявление — он проверяет факты и говорит то, о чём продавец промолчит. Только реальные данные: никаких выдуманных цифр.</p>
+          <div class="feature-list">
+            <div class="feature-line rv">
+              <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V5z"/><path d="m9 12 2 2 4-4"/></svg></div>
+              <div><h4>Юридическая чистота</h4><p>Документы, собственники, история объекта. Если проверить пока нельзя — Homy честно скажет «источник в подключении», а не придумает ответ.</p></div>
+            </div>
+            <div class="feature-line rv d1">
+              <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+              <div><h4>Район и маршруты</h4><p>Школы, метро, магазины, парки — реальные точки на карте и время в пути, а не «развитая инфраструктура» из объявления.</p></div>
+            </div>
+            <div class="feature-line rv d2">
+              <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg></div>
+              <div><h4>Инвестиционный взгляд</h4><p>Динамика цен района, ликвидность, потенциал аренды — чтобы решение было не только сердцем, но и головой.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="an-card rv d2" id="anCard">
+          <div class="top">
+            <div class="ring">
+              <svg viewBox="0 0 86 86">
+                <defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#12A574"/><stop offset="1" stop-color="#0A6045"/>
+                </linearGradient></defs>
+                <circle class="bg" cx="43" cy="43" r="38.1"/>
+                <circle class="fg" id="ringFg" cx="43" cy="43" r="38.1"/>
+              </svg>
+              <b id="ringVal">0%</b>
+            </div>
+            <div>
+              <h4>2-комн · 68 м² · Кентрон, Ереван</h4>
+              <p>Match score по вашему запросу · дом 2019 г.</p>
+            </div>
+          </div>
+          <div class="an-list">
+            <div class="an-item good"><span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg></span><div><b>Документы в порядке.</b> Один собственник, без обременений и перепланировок.</div></div>
+            <div class="an-item good"><span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg></span><div><b>Школа — 4 минуты пешком.</b> Метро «Еритасардакан» — 6 минут.</div></div>
+            <div class="an-item risk"><span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5"/><path d="M12 16.5v.5"/></svg></span><div><b>Риск: стройка во дворе</b> до 2027 года — возможен шум по будням.</div></div>
+            <div class="bar-row"><span>Инфраструктура <em id="bv1" style="font-style:normal">0%</em></span><div class="bar"><i data-w="92"></i></div></div>
+            <div class="bar-row"><span>Ликвидность <em id="bv2" style="font-style:normal">0%</em></span><div class="bar"><i data-w="84"></i></div></div>
+            <div class="bar-row"><span>Тишина района <em id="bv3" style="font-style:normal">0%</em></span><div class="bar"><i data-w="61"></i></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FEATURES ================= -->
+  <section id="features" class="layer">
+    <div class="wrap center">
+      <div class="sec-kicker rv"><i></i>Возможности</div>
+      <h2 class="rv d1">Всё для спокойной сделки — <span class="grad">в одном месте</span></h2>
+      <div class="fgrid">
+        <div class="fcard rv">
+          <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+          <h3>360°-виртуальные туры</h3>
+          <p>Пройдитесь по квартире из любой точки мира: панорамы комнат, переходы-хотспоты, полное ощущение присутствия.</p>
+        </div>
+        <div class="fcard rv d1">
+          <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></svg></div>
+          <h3>Проверенные брокеры</h3>
+          <p>Рейтинг и настоящие отзывы клиентов — у брокера, а не у объекта. Бейдж «Проверен» выдаёт платформа, его нельзя купить.</p>
+        </div>
+        <div class="fcard rv d2">
+          <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg></div>
+          <h3>Просмотры без звонков</h3>
+          <p>Выберите удобное время — агент подтвердит или предложит другое. Вся история встреч в личном кабинете.</p>
+        </div>
+        <div class="fcard rv">
+          <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="18" rx="1.5"/><rect x="14" y="3" width="7" height="18" rx="1.5"/></svg></div>
+          <h3>Умное сравнение</h3>
+          <p>Сравнивайте объекты бок о бок по фактам: цена за метр, район, риски, match score — решение становится очевидным.</p>
+        </div>
+        <div class="fcard rv d1">
+          <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div>
+          <h3>Сохранённые поиски</h3>
+          <p>Homy следит за рынком за вас: появился объект под ваш запрос — придёт уведомление раньше, чем его увидят другие.</p>
+        </div>
+        <div class="fcard rv d2">
+          <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></div>
+          <h3>Голосовой поиск · 3 языка</h3>
+          <p>Говорите с Homy по-русски, по-армянски или по-английски — интерфейс и разбор объектов на вашем языке.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CRM ================= -->
+  <section id="brokers" class="crm layer">
+    <div class="wrap">
+      <div class="panel rv">
+        <div class="inner">
+          <div>
+            <div class="sec-kicker"><i></i>Брокерам и владельцам</div>
+            <h2>Собственная CRM —<br>лиды идут сами</h2>
+            <p class="sec-lede">Каждая заявка на просмотр превращается в лид. Ведите клиента от первого интереса до сделки — прямо внутри Homy.</p>
+            <ul>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>Лиды с полным контекстом: объект, бюджет, контакты, история диалога</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>Стадии new → warm → hot и умное «остывание» без ручной рутины</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>Модерация объявлений, отзывы и рейтинг — доверие растёт с каждой сделкой</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>Редактор 360°-туров: загрузите панорамы — Homy соберёт тур сам</li>
+            </ul>
+            <a class="btn light" href="#cta">Стать партнёром
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+          </div>
+          <div class="crm-mock" id="crmMock">
+            <div class="row"><div class="avatar" style="background:linear-gradient(140deg,#12A574,#0A6045)">АА</div><div><b>Анна Акопян</b><span>2-комн · Кентрон · $118 500</span></div><span class="stage hot">HOT</span></div>
+            <div class="row"><div class="avatar" style="background:linear-gradient(140deg,#3E8E7E,#2C6E5E)">ДМ</div><div><b>Давид Мкртчян</b><span>3-комн · Арабкир · $145 000</span></div><span class="stage warm">WARM</span></div>
+            <div class="row"><div class="avatar" style="background:linear-gradient(140deg,#5FA88F,#3E7E68)">КС</div><div><b>Карине Саркисян</b><span>Дом · Дилижан · $210 000</span></div><span class="stage warm">WARM</span></div>
+            <div class="row"><div class="avatar" style="background:linear-gradient(140deg,#8FD9BC,#4EA383)">ЛГ</div><div><b>Левон Григорян</b><span>1-комн · Давташен · аренда</span></div><span class="stage deal">СДЕЛКА ✓</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= REVIEWS ================= -->
+  <section id="reviews" class="reviews layer">
+    <div class="wrap center">
+      <div class="sec-kicker rv"><i></i>Отзывы</div>
+      <h2 class="rv d1">Им Homy уже <span class="grad">нашёл дом</span></h2>
+    </div>
+    <div class="marquee" id="marquee">
+      <div class="rev"><div class="stars">★★★★★</div><p>«Homy сразу предупредил про стройку во дворе — ни одно агентство об этом не сказало. Взяли другую квартиру и счастливы.»</p><div class="who"><div class="avatar" style="background:linear-gradient(140deg,#12A574,#0A6045)">МА</div><div><b>Мария А.</b><span>купила квартиру · Ереван</span></div></div></div>
+      <div class="rev"><div class="stars">★★★★★</div><p>«Посмотрел 360°-тур из Москвы, записался на просмотр на выходные — через месяц уже переехал. Ни одного лишнего звонка.»</p><div class="who"><div class="avatar" style="background:linear-gradient(140deg,#3E8E7E,#2C6E5E)">АГ</div><div><b>Арам Г.</b><span>переехал в Арабкир</span></div></div></div>
+      <div class="rev"><div class="stars">★★★★★</div><p>«Как брокер получила из Homy 11 лидов за первый месяц. CRM ведёт всё сама — я просто встречаюсь с клиентами.»</p><div class="who"><div class="avatar" style="background:linear-gradient(140deg,#5FA88F,#3E7E68)">АХ</div><div><b>Анна Х.</b><span>брокер · верифицирована</span></div></div></div>
+      <div class="rev"><div class="stars">★★★★★</div><p>«Match score реально работает: третий предложенный вариант оказался тем самым. AI понял меня лучше, чем я сама.»</p><div class="who"><div class="avatar" style="background:linear-gradient(140deg,#8FD9BC,#4EA383)">ЛП</div><div><b>Лилит П.</b><span>сняла квартиру · Кентрон</span></div></div></div>
+      <div class="rev"><div class="stars">★★★★★</div><p>«Искал инвестиционную студию. Homy показал динамику цен по районам и честно отговорил от «выгодного» варианта. Уважение.»</p><div class="who"><div class="avatar" style="background:linear-gradient(140deg,#2C8E6E,#14614A)">ВС</div><div><b>Ваге С.</b><span>инвестор</span></div></div></div>
+    </div>
+  </section>
+
+  <!-- ================= CTA ================= -->
+  <section id="cta" class="cta layer">
+    <div class="wrap">
+      <div class="panel rv">
+        <div class="sec-kicker"><i></i>Ранний доступ</div>
+        <h2 style="position:relative;z-index:2">Ваш дом уже ждёт.<br><span class="grad">Осталось познакомиться.</span></h2>
+        <p class="sec-lede" style="position:relative;z-index:2;margin-left:auto;margin-right:auto">Оставьте почту — пришлём приглашение в числе первых и подборку лучших объектов под ваш запрос.</p>
+        <form id="waitForm" autocomplete="off">
+          <input type="email" required placeholder="ваша@почта.am" aria-label="Email">
+          <button class="btn" type="submit">Получить доступ</button>
+        </form>
+        <div class="ok" id="waitOk">✓ Готово! Проверьте почту — приглашение уже в пути.</div>
+        <p class="note">Никакого спама. Только запуск и лучшие объекты.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer>
+    <div class="wrap">
+      <a class="logo" href="#" style="font-size:22px">Ho<span class="m">m</span>y<span class="dot"></span></a>
+      <span class="trust"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V5z"/><path d="m9 12 2 2 4-4"/></svg>Слой доверия, а не брокер</span>
+      <div class="langs"><span>ՀՅ</span><span>RU</span><span>EN</span></div>
+      <small>© 2026 Homy · Ереван, Армения</small>
+    </div>
+  </footer>
+
+<script>
+/* ---------- nav scroll state ---------- */
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>24),{passive:true});
+
+/* ---------- reveal on scroll ---------- */
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+},{threshold:.18,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.rv:not(.in)').forEach(el=>io.observe(el));
+
+/* ---------- count-up (when visible) ---------- */
+const cio=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(!e.isIntersecting)return; cio.unobserve(e.target);
+    const el=e.target, to=+el.dataset.to, suf=el.dataset.suf||'', dur=1600, t0=performance.now();
+    (function step(t){ const k=Math.min(1,(t-t0)/dur), ea=1-Math.pow(1-k,3);
+      el.textContent=Math.round(to*ea).toLocaleString('ru-RU')+suf; if(k<1)requestAnimationFrame(step); })(t0);
+  });
+},{threshold:.5});
+document.querySelectorAll('.cu').forEach(el=>cio.observe(el));
+
+/* ---------- hero chat scenario (loops) ---------- */
+(function(){
+  const steps=[...document.querySelectorAll('#chatBody [data-step]')];
+  const typeLine=document.getElementById('typeLine');
+  const phrase='квартира с видом на Арарат…';
+  let idx=0,timer;
+  function reset(){ steps.forEach(s=>s.classList.remove('show')); idx=0; }
+  function next(){
+    if(idx>=steps.length){ timer=setTimeout(()=>{reset();next();},6000); return; }
+    const el=steps[idx++];
+    el.classList.add('show');
+    if(el.classList.contains('typing')){ timer=setTimeout(()=>{ el.classList.remove('show'); next(); },1400); }
+    else timer=setTimeout(next, el.classList.contains('user')?1100:2100);
+  }
+  next();
+  /* typewriter in the input */
+  let p=0,dir=1;
+  setInterval(()=>{
+    p+=dir;
+    if(p>phrase.length+14){dir=-1;p=phrase.length}
+    if(p<0){dir=1;p=0}
+    typeLine.textContent=phrase.slice(0,Math.max(0,Math.min(p,phrase.length)));
+  },90);
+})();
+
+/* ---------- match ring + bars ---------- */
+(function(){
+  const card=document.getElementById('anCard'); if(!card)return;
+  const obs=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(!e.isIntersecting)return; obs.unobserve(card);
+      const fg=document.getElementById('ringFg'), val=document.getElementById('ringVal');
+      const target=96, C=239.4, dur=1700, t0=performance.now();
+      fg.style.transition='none';
+      (function step(t){ const k=Math.min(1,(t-t0)/dur), ea=1-Math.pow(1-k,3);
+        fg.style.strokeDashoffset=C*(1-(target/100)*ea);
+        val.textContent=Math.round(target*ea)+'%';
+        if(k<1)requestAnimationFrame(step); })(t0);
+      card.querySelectorAll('.bar i').forEach((b,i)=>{
+        setTimeout(()=>{ b.style.width=b.dataset.w+'%';
+          const lbl=document.getElementById('bv'+(i+1)); if(!lbl)return;
+          const to=+b.dataset.w, d=1400, s0=performance.now();
+          (function st(t){ const k=Math.min(1,(t-s0)/d), ea=1-Math.pow(1-k,3);
+            lbl.textContent=Math.round(to*ea)+'%'; if(k<1)requestAnimationFrame(st); })(s0);
+        }, 300+i*180);
+      });
+    });
+  },{threshold:.4});
+  obs.observe(card);
+})();
+
+/* ---------- CRM rows cascade ---------- */
+(function(){
+  const mock=document.getElementById('crmMock'); if(!mock)return;
+  const obs=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(!e.isIntersecting)return; obs.unobserve(mock);
+      mock.querySelectorAll('.row').forEach((r,i)=>setTimeout(()=>r.classList.add('in'),200+i*180));
+    });
+  },{threshold:.35});
+  obs.observe(mock);
+})();
+
+/* ---------- reviews marquee: duplicate content for seamless loop ---------- */
+(function(){
+  const m=document.getElementById('marquee');
+  m.innerHTML+=m.innerHTML;
+})();
+
+/* ---------- waitlist form ---------- */
+document.getElementById('waitForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  e.target.style.display='none';
+  document.getElementById('waitOk').style.display='block';
+});
+
+/* ---------- gentle parallax on blobs ---------- */
+(function(){
+  const a=document.querySelector('.blob.a'), b=document.querySelector('.blob.b');
+  addEventListener('scroll',()=>{
+    const y=scrollY;
+    a.style.marginTop=(y*0.06)+'px';
+    b.style.marginTop=(-y*0.04)+'px';
+  },{passive:true});
+})();
+
+/* ---------- falling houses ---------- */
+(function(){
+  const cv=document.getElementById('fall'), ctx=cv.getContext('2d');
+  let W,H,DPR,items=[];
+  const COLORS=['rgba(10,96,69,ALPHA)','rgba(18,165,116,ALPHA)','rgba(120,140,155,ALPHA)'];
+  function size(){ DPR=Math.min(2,devicePixelRatio||1); W=cv.width=innerWidth*DPR; H=cv.height=innerHeight*DPR;
+    cv.style.width=innerWidth+'px'; cv.style.height=innerHeight+'px'; build(); }
+  function mk(top){
+    const s=(Math.random()*20+12)*DPR;
+    return { x:Math.random()*W, y: top?(-Math.random()*H*0.6-s):(Math.random()*H),
+      s, vy:(Math.random()*0.45+0.28)*DPR, rot:(Math.random()-.5)*0.5, vr:(Math.random()-.5)*0.006,
+      sway:Math.random()*Math.PI*2, sw:(Math.random()*0.4+0.2),
+      c:COLORS[(Math.random()*COLORS.length)|0], a:Math.random()*0.16+0.08 };
+  }
+  function build(){ const n=Math.max(12,Math.min(30,Math.round(innerWidth/60))); items=[]; for(let i=0;i<n;i++)items.push(mk(false)); }
+  function house(o){
+    const s=o.s, col=o.c.replace('ALPHA',o.a.toFixed(3));
+    ctx.save(); ctx.translate(o.x,o.y); ctx.rotate(o.rot); ctx.fillStyle=col;
+    ctx.beginPath(); ctx.moveTo(-s*0.56,-s*0.08); ctx.lineTo(0,-s*0.62); ctx.lineTo(s*0.56,-s*0.08); ctx.closePath(); ctx.fill();
+    const r=s*0.08, x=-s*0.44, y=-s*0.08, w=s*0.88, h=s*0.6;
+    ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,'+(o.a*0.55).toFixed(3)+')';
+    ctx.fillRect(-s*0.1,y+h-s*0.3,s*0.2,s*0.3);
+    ctx.restore();
+  }
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    for(const o of items){
+      o.y+=o.vy; o.sway+=0.01; o.x+=Math.sin(o.sway)*o.sw*DPR*0.35; o.rot+=o.vr;
+      if(o.y-o.s>H)Object.assign(o,mk(true));
+      house(o);
+    }
+    requestAnimationFrame(frame);
+  }
+  addEventListener('resize',size);
+  size(); requestAnimationFrame(frame);
+})();
+
+/* ---------- hero skyline ---------- */
+(function(){
+  const cv=document.getElementById('city'); if(!cv)return; const ctx=cv.getContext('2d');
+  let W,H,DPR,bld=[];
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  function size(){
+    DPR=Math.min(2,devicePixelRatio||1);
+    const hpx=Math.round(Math.min(220, innerHeight*0.30));
+    W=cv.width=cv.parentElement.clientWidth*DPR; H=cv.height=hpx*DPR;
+    cv.style.width='100%'; cv.style.height=hpx+'px'; gen();
+  }
+  function gen(){
+    bld=[]; let x=-12*DPR;
+    while(x<W+24*DPR){
+      const layer=Math.random()<0.42?0:1;
+      const w=rnd(layer?36:44, layer?62:88)*DPR;
+      const h=(layer? rnd(H*0.5,H*0.98) : rnd(H*0.28,H*0.62));
+      const roof=['flat','flat','ant','step','pin'][Math.random()*5|0];
+      const b={x,w,h,layer,roof,win:[]};
+      const cols=Math.max(2,Math.floor(w/(11*DPR))), pad=w*0.16, cw=(w-pad*2)/cols;
+      const rows=Math.max(2,Math.floor((h-16*DPR)/(12*DPR)));
+      for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+        if(Math.random()<0.12)continue;
+        b.win.push({dx:pad+c*cw+cw*0.16, dy:13*DPR+r*12*DPR, w:cw*0.68, h:6*DPR,
+          lit:Math.random()<0.24, ph:Math.random()*6.28, sp:rnd(0.001,0.0028)});
+      }
+      bld.push(b); x+=w+rnd(1,9)*DPR;
+    }
+    bld.sort((a,b)=>a.layer-b.layer);
+  }
+  function frame(t){
+    ctx.clearRect(0,0,W,H);
+    for(const b of bld){
+      const top=H-b.h, cxp=b.x+b.w/2;
+      ctx.fillStyle=b.layer?'rgba(41,96,74,0.9)':'rgba(150,188,168,0.45)';
+      ctx.fillRect(b.x,top,b.w,b.h);
+      if(b.roof==='ant'){ ctx.fillRect(cxp-1*DPR, top-22*DPR, 2*DPR, 22*DPR); ctx.beginPath(); ctx.arc(cxp,top-22*DPR,2.4*DPR,0,7); ctx.fillStyle='rgba(43,192,145,0.9)'; ctx.fill(); ctx.fillStyle=b.layer?'rgba(41,96,74,0.9)':'rgba(150,188,168,0.45)'; }
+      else if(b.roof==='step'){ ctx.fillRect(b.x+b.w*0.22, top-12*DPR, b.w*0.56, 12*DPR); ctx.fillRect(b.x+b.w*0.36, top-22*DPR, b.w*0.28, 10*DPR); }
+      else if(b.roof==='pin'){ ctx.beginPath(); ctx.moveTo(b.x+b.w*0.3,top); ctx.lineTo(cxp,top-26*DPR); ctx.lineTo(b.x+b.w*0.7,top); ctx.closePath(); ctx.fill(); }
+      for(const wnd of b.win){
+        if(wnd.lit){ const a=0.5+0.5*Math.sin(t*wnd.sp+wnd.ph); ctx.fillStyle='rgba(43,192,145,'+(0.24+a*0.5).toFixed(3)+')'; }
+        else ctx.fillStyle=b.layer?'rgba(226,244,236,0.3)':'rgba(255,255,255,0.26)';
+        ctx.fillRect(b.x+wnd.dx, top+wnd.dy, wnd.w, wnd.h);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  addEventListener('resize',size);
+  size(); requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
