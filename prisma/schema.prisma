@@ -288,18 +288,8 @@ model Viewing {
   @@map("viewings")
 }
 
-// ============================================
-// PLATFORM METRICS MODEL
-// ============================================
-model PlatformMetric {
-  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  propertiesCount Int      @default(0) @map("properties_count")
-  citiesCount     Int      @default(0) @map("cities_count")
-  dealsCount      Int      @default(0) @map("deals_count")
-  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
-
-  @@map("platform_metrics")
-}
+// PlatformMetric model removed (2.11): it was dead — never populated or read;
+// platform stats are computed live in /api/platform/metrics from real data.
 
 // ============================================
 // VIEWING SLOTS MODEL

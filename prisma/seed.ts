@@ -1209,7 +1209,6 @@ async function main() {
   await prisma.viewing.deleteMany({});
   await prisma.favorite.deleteMany({});
   await prisma.property.deleteMany({});
-  await prisma.platformMetric.deleteMany({});
   console.log('Existing data cleared.\n');
 
   // ============================================

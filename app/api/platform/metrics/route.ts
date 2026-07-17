@@ -27,10 +27,11 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
+    // Real numbers only — no fabricated fallbacks (honest counts, even when small/zero).
     const metrics = {
-      properties_count: propertiesCount || 1500, // Fallback to frontend default
-      cities_count: citiesResult.length || 15,   // Fallback
-      deals_count: dealsCount || 350,            // Fallback
+      properties_count: propertiesCount,
+      cities_count: citiesResult.length,
+      deals_count: dealsCount,
     };
 
     // Update cache
@@ -42,12 +43,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(metrics);
   } catch (error) {
     console.error('Platform metrics error:', error);
-
-    // Return fallback data on error
-    return NextResponse.json({
-      properties_count: 1500,
-      cities_count: 15,
-      deals_count: 350,
-    });
+    // Don't fabricate numbers on error — surface a real failure.
+    return NextResponse.json({ error: 'Failed to load metrics' }, { status: 500 });
   }
 }
