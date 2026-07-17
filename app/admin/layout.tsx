@@ -14,6 +14,7 @@ import {
   Building2,
   Headphones,
   ListChecks,
+  Megaphone,
   LogOut,
   Menu,
   X,
@@ -45,6 +46,7 @@ const navItems: NavItem[] = [
   { id: 'crm', label: 'CRM', href: '/admin/crm', icon: <Briefcase size={20} /> },
   { id: 'support', label: 'Support', href: '/admin/support', icon: <Headphones size={20} /> },
   { id: 'waitlist', label: 'Waitlist', href: '/admin/waitlist', icon: <ListChecks size={20} /> },
+  { id: 'notifications', label: 'Notifications', href: '/admin/notifications', icon: <Megaphone size={20} /> },
   { id: 'settings', label: 'Settings', href: '/admin/settings', icon: <Settings size={20} />, requiredRole: 'admin' },
 ];
 
