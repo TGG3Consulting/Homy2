@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   Users,
   FileText,
-  Settings,
   Star,
   CalendarCheck,
   Briefcase,
@@ -47,7 +46,6 @@ const navItems: NavItem[] = [
   { id: 'support', label: 'Support', href: '/admin/support', icon: <Headphones size={20} /> },
   { id: 'waitlist', label: 'Waitlist', href: '/admin/waitlist', icon: <ListChecks size={20} /> },
   { id: 'notifications', label: 'Notifications', href: '/admin/notifications', icon: <Megaphone size={20} /> },
-  { id: 'settings', label: 'Settings', href: '/admin/settings', icon: <Settings size={20} />, requiredRole: 'admin' },
 ];
 
 // Dark glass morphism style for admin panel
