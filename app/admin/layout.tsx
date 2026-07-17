@@ -10,6 +10,7 @@ import {
   Settings,
   Star,
   CalendarCheck,
+  Briefcase,
   LogOut,
   Menu,
   X,
@@ -37,6 +38,7 @@ const navItems: NavItem[] = [
   { id: 'moderation', label: 'Moderation', href: '/admin/moderation', icon: <FileText size={20} /> },
   { id: 'reviews', label: 'Reviews', href: '/admin/reviews', icon: <Star size={20} /> },
   { id: 'viewings', label: 'Viewings', href: '/admin/viewings', icon: <CalendarCheck size={20} /> },
+  { id: 'crm', label: 'CRM', href: '/admin/crm', icon: <Briefcase size={20} /> },
   { id: 'settings', label: 'Settings', href: '/admin/settings', icon: <Settings size={20} />, requiredRole: 'admin' },
 ];
 
