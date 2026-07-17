@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 import prisma from '@/lib/db/prisma';
 import bcrypt from 'bcrypt';
+import jwtService from '@/lib/services/jwtService';
+import { setAuthCookies } from '@/lib/cookies';
 import { SELF_ASSIGNABLE_USER_TYPES, isSelfAssignableUserType } from '@/lib/auth/userTypes';
 
 // User data shape returned from API
@@ -256,8 +258,9 @@ async function patchHandler(req: AuthenticatedRequest) {
     // Hash new password if provided
     let passwordUpdate = {};
     if (new_password && current_password) {
-      const hashedPassword = await bcrypt.hash(new_password, 10);
-      passwordUpdate = { passwordHash: hashedPassword };
+      const hashedPassword = await bcrypt.hash(new_password, 12);
+      // Changing the password revokes every previously issued session (VULN-005).
+      passwordUpdate = { passwordHash: hashedPassword, token_version: { increment: 1 } };
     }
 
     // Perform update
@@ -283,6 +286,7 @@ async function patchHandler(req: AuthenticatedRequest) {
         avatar_url: true,
         emailVerified: true,
         createdAt: true,
+        token_version: true,
       }
     });
 
@@ -312,11 +316,22 @@ async function patchHandler(req: AuthenticatedRequest) {
       }
     };
 
-    return NextResponse.json({
+    const httpResponse = NextResponse.json({
       success: true,
       message: new_password ? 'Profile and password updated successfully' : 'Profile updated successfully',
       user: response
     });
+
+    // On password change we bumped token_version (revoking all sessions). Re-mint
+    // THIS session's cookies with the new version so the active user stays logged
+    // in while other devices are logged out (VULN-005).
+    if (new_password && current_password) {
+      const at = jwtService.generateAccessToken(updatedUser.id, updatedUser.email, updatedUser.token_version);
+      const rt = jwtService.generateRefreshToken(updatedUser.id, updatedUser.token_version);
+      return setAuthCookies(httpResponse, at, rt);
+    }
+
+    return httpResponse;
   } catch (error) {
     console.error('Error updating user:', error);
     return NextResponse.json(
