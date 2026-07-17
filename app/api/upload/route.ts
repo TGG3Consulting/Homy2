@@ -10,6 +10,17 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_FILES = 10;
 const VALID_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
+// Extension is derived from the SNIFFED type, never the client filename (VULN-018).
+const EXT_BY_TYPE: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+
+/** Verify real image type by magic bytes (client MIME + filename are untrusted). */
+function sniffImageType(buf: Buffer): keyof typeof EXT_BY_TYPE | null {
+  if (buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return 'image/jpeg';
+  if (buf.length >= 8 && buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return 'image/png';
+  if (buf.length >= 12 && buf.toString('ascii', 0, 4) === 'RIFF' && buf.toString('ascii', 8, 12) === 'WEBP') return 'image/webp';
+  return null;
+}
+
 interface UploadedFile {
   url: string;
   originalName: string;
@@ -61,18 +72,28 @@ async function handler(req: AuthenticatedRequest) {
 
     // Process each file
     for (const file of files) {
-      const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-      const filename = `${uuidv4()}.${ext}`;
-      const filepath = path.join(UPLOAD_DIR, filename);
+      const buffer = Buffer.from(await file.arrayBuffer());
 
-      const bytes = await file.arrayBuffer();
-      await writeFile(filepath, Buffer.from(bytes));
+      // Content sniff: reject anything that isn't a real allowed image, and
+      // derive the extension from the sniffed type — the client filename/MIME
+      // are never trusted for the saved name (VULN-018).
+      const sniffed = sniffImageType(buffer);
+      if (!sniffed) {
+        return NextResponse.json(
+          { error: `File "${file.name}" is not a valid JPEG/PNG/WebP image` },
+          { status: 400 }
+        );
+      }
+
+      const filename = `${uuidv4()}.${EXT_BY_TYPE[sniffed]}`;
+      const filepath = path.join(UPLOAD_DIR, filename);
+      await writeFile(filepath, buffer);
 
       uploadedFiles.push({
         url: `/uploads/${filename}`,
         originalName: file.name,
         size: file.size,
-        type: file.type,
+        type: sniffed,
       });
     }
 
