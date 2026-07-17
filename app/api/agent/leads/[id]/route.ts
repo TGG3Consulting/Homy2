@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
-import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { withBroker, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 
 function leadId(url: string): string | null {
   const parts = new URL(url).pathname.split('/');
@@ -12,7 +12,7 @@ function leadId(url: string): string | null {
  * PATCH /api/agent/leads/[id]
  * Update a lead. Body: { stage?, notes?, interest?, budget?, touch? (bump last_contact_at) }
  */
-export const PATCH = withAuth(async (req: AuthenticatedRequest) => {
+export const PATCH = withBroker(async (req: AuthenticatedRequest) => {
   try {
     const agentId = req.user!.id;
     const id = leadId(req.url);
@@ -46,7 +46,7 @@ export const PATCH = withAuth(async (req: AuthenticatedRequest) => {
 /**
  * DELETE /api/agent/leads/[id]
  */
-export const DELETE = withAuth(async (req: AuthenticatedRequest) => {
+export const DELETE = withBroker(async (req: AuthenticatedRequest) => {
   try {
     const agentId = req.user!.id;
     const id = leadId(req.url);

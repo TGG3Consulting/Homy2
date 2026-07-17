@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
-import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { withBroker, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 import { getAgentCrmMetrics, effectiveStage } from '@/lib/services/crmService';
 
 /**
  * GET /api/agent/dashboard
  * Aggregate for the broker dashboard (D1): metrics + recent leads + my listings.
  */
-export const GET = withAuth(async (req: AuthenticatedRequest) => {
+export const GET = withBroker(async (req: AuthenticatedRequest) => {
   try {
     const agentId = req.user!.id;
     const weekAgo = new Date(Date.now() - 7 * 86_400_000);

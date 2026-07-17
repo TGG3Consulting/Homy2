@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
-import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { withBroker, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 
 function leadId(url: string): string | null {
   const parts = new URL(url).pathname.split('/');
@@ -14,7 +14,7 @@ function leadId(url: string): string | null {
  * Reuses the Conversation/LiveChatMessage models. Returns { conversationId }.
  * Only works when the lead is linked to a registered client (client_id).
  */
-export const POST = withAuth(async (req: AuthenticatedRequest) => {
+export const POST = withBroker(async (req: AuthenticatedRequest) => {
   try {
     const agentId = req.user!.id;
     const id = leadId(req.url);

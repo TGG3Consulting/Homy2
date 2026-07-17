@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
-import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { withBroker, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 
 const STAGES = ['negotiation', 'offer', 'contract', 'closed', 'lost'];
 const STATUSES = ['open', 'won', 'lost'];
@@ -16,7 +16,7 @@ function dealId(url: string): string | null {
  * Update a deal. Body: { stage?, status?, value?, title?, notes? }
  * Setting status to won/lost (or stage closed/lost) stamps closed_at.
  */
-export const PATCH = withAuth(async (req: AuthenticatedRequest) => {
+export const PATCH = withBroker(async (req: AuthenticatedRequest) => {
   try {
     const agentId = req.user!.id;
     const id = dealId(req.url);
@@ -52,7 +52,7 @@ export const PATCH = withAuth(async (req: AuthenticatedRequest) => {
 /**
  * DELETE /api/agent/deals/[id]
  */
-export const DELETE = withAuth(async (req: AuthenticatedRequest) => {
+export const DELETE = withBroker(async (req: AuthenticatedRequest) => {
   try {
     const agentId = req.user!.id;
     const id = dealId(req.url);

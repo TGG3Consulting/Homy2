@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
-import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { withBroker, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 import { effectiveStage } from '@/lib/services/crmService';
 
 /**
  * GET /api/agent/leads?stage=new|warm|cold
  * List the current agent's leads (newest contact first), with computed stage.
  */
-export const GET = withAuth(async (req: AuthenticatedRequest) => {
+export const GET = withBroker(async (req: AuthenticatedRequest) => {
   try {
     const agentId = req.user!.id;
     const url = new URL(req.url);
@@ -43,7 +43,7 @@ export const GET = withAuth(async (req: AuthenticatedRequest) => {
  * POST /api/agent/leads
  * Manually add a lead. Body: { clientName, clientEmail?, clientPhone?, propertyId?, interest?, budget?, stage? }
  */
-export const POST = withAuth(async (req: AuthenticatedRequest) => {
+export const POST = withBroker(async (req: AuthenticatedRequest) => {
   try {
     const agentId = req.user!.id;
     const body = await req.json();

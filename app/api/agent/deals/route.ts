@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
-import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { withBroker, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 
 const STAGES = ['negotiation', 'offer', 'contract', 'closed', 'lost'];
 const STATUSES = ['open', 'won', 'lost'];
@@ -9,7 +9,7 @@ const STATUSES = ['open', 'won', 'lost'];
  * GET /api/agent/deals?status=open|won|lost
  * List the current agent's deals.
  */
-export const GET = withAuth(async (req: AuthenticatedRequest) => {
+export const GET = withBroker(async (req: AuthenticatedRequest) => {
   try {
     const agentId = req.user!.id;
     const url = new URL(req.url);
@@ -37,7 +37,7 @@ export const GET = withAuth(async (req: AuthenticatedRequest) => {
  * Create a deal (optionally from a lead).
  * Body: { title?, clientName?, propertyId?, leadId?, clientId?, value?, stage? }
  */
-export const POST = withAuth(async (req: AuthenticatedRequest) => {
+export const POST = withBroker(async (req: AuthenticatedRequest) => {
   try {
     const agentId = req.user!.id;
     const body = await req.json();
