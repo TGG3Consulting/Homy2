@@ -33,7 +33,6 @@ import { ChatPanel } from '@/components/Chat';
 import { Headphones } from 'lucide-react';
 import BuyerDashboard from '@/components/homy/BuyerDashboard';
 import BrokerCabinet from '@/components/homy/BrokerCabinet';
-import AdminPanel from '@/components/homy/AdminPanel';
 
 // Type definitions
 type UserType = 'buyer' | 'renter' | 'owner' | 'agent' | 'consultant';
@@ -135,6 +134,13 @@ function DashboardContent() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>('overview');
   const [isMounted, setIsMounted] = useState(false);
+
+  // 3.1: admins/moderators use the single full admin UI at /admin/* — send them there.
+  useEffect(() => {
+    if (user && (user.role === 'admin' || user.role === 'moderator' || user.user_type === 'admin')) {
+      router.replace('/admin');
+    }
+  }, [user, router]);
 
   // Sync activeTab with URL search params (considering user type for default)
   useEffect(() => {
@@ -597,10 +603,10 @@ function DashboardContent() {
   }
 
   // Authorization axis is `role` (admin/moderator/user) — check it FIRST so an admin
-  // with a default/unset product persona (user_type) still gets the admin panel and
-  // never falls through into the buyer cabinet. (B1/B2)
+  // with a default/unset product persona (user_type) never falls through into the buyer
+  // cabinet (B1/B2). The full admin UI lives at /admin/* (single source — 3.1); send them there.
   if (user && (user.role === 'admin' || user.role === 'moderator' || user.user_type === 'admin')) {
-    return <AdminPanel user={user} />;
+    return null; // redirecting to /admin (see effect above)
   }
 
   // Product persona (user_type): agent/owner get the 1:1 broker cabinet (D1–D5).
