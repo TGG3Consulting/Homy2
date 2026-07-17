@@ -104,9 +104,11 @@ function ScheduleInner() {
     if (!selSlot || !propertyId) return;
     setBooking(true);
     try {
-      const res = await fetch('/api/viewing/schedule', {
+      // Canonical viewing-creation endpoint (3.2): /api/viewings handles the
+      // client request (no clientEmail/clientId → client-created, status pending_agent).
+      const res = await fetch('/api/viewings', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
-        body: JSON.stringify({ property_id: propertyId, scheduled_at: selSlot.scheduled_at, message: `Просмотр на ${selSlot.dateObj.getDate()} ${MONTHS_GEN[selSlot.dateObj.getMonth()]} в ${selSlot.time}` }),
+        body: JSON.stringify({ propertyId, scheduledAt: selSlot.scheduled_at, message: `Просмотр на ${selSlot.dateObj.getDate()} ${MONTHS_GEN[selSlot.dateObj.getMonth()]} в ${selSlot.time}` }),
       });
       if (!res.ok) throw new Error();
       setSuccess(selSlot);

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 import emailService from '@/lib/services/emailService';
+import { captureLead } from '@/lib/services/crmService';
 import { viewingInclude, formatViewing, ViewingWithRelations } from './types';
 
 /**
@@ -60,6 +61,9 @@ async function createViewingHandler(req: AuthenticatedRequest) {
         email: true,
         user_type: true,
         name: true,
+        first_name: true,
+        last_name: true,
+        phone: true,
       },
     });
 
@@ -78,6 +82,11 @@ async function createViewingHandler(req: AuthenticatedRequest) {
         title: true,
         address: true,
         owner_id: true,
+        price: true,
+        rooms: true,
+        bedrooms: true,
+        district: true,
+        neighborhood: true,
         owner: {
           select: {
             id: true,
@@ -196,6 +205,23 @@ async function createViewingHandler(req: AuthenticatedRequest) {
       },
       include: viewingInclude,
     });
+
+    // When a CLIENT requests a viewing, capture/refresh a CRM lead for the agent
+    // (buyer engaged with their property). Consolidated here (3.2) so both client
+    // entry points — schedule page and the request form — feed the CRM identically.
+    if (!isAgentCreating) {
+      try {
+        await captureLead({
+          agentId,
+          clientId: finalClientId,
+          property,
+          client: { ...currentUser, id: finalClientId },
+          source: 'viewing',
+        });
+      } catch (e) {
+        console.error('[viewings] lead capture failed:', e);
+      }
+    }
 
     // Create notification for the other party
     const notifyUserId = isAgentCreating ? finalClientId : agentId;
