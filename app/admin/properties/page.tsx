@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { AlertCircle, Pencil, Trash2, Eye, EyeOff, Filter } from 'lucide-react';
+import { AlertCircle, Pencil, Trash2, Eye, EyeOff, Filter, Camera } from 'lucide-react';
 import { loc } from '@/lib/i18n';
 
 const glassStyle = {
@@ -176,6 +176,9 @@ export default function AdminPropertiesPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
+                      <a href={`/tour-editor/${p.id}`} className="p-2 rounded-lg hover:bg-purple-500/20 transition-colors" title="Редактор 3D-тура">
+                        <Camera size={16} className="text-purple-400" />
+                      </a>
                       <button onClick={() => openEdit(p)} disabled={busy === p.id} className="p-2 rounded-lg hover:bg-blue-500/20 transition-colors disabled:opacity-50" title="Редактировать">
                         <Pencil size={16} className="text-blue-400" />
                       </button>

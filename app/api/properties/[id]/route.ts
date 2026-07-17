@@ -79,6 +79,7 @@ export const PATCH = withAuth(async (req: AuthenticatedRequest) => {
     if (b.totalFloors !== undefined) data.totalFloors = b.totalFloors != null ? Number(b.totalFloors) : null;
     if (Array.isArray(b.images)) data.images = b.images;
     if (typeof b.available === 'boolean') data.available = b.available;
+    if (typeof b.virtual_tour_enabled === 'boolean') data.virtual_tour_enabled = b.virtual_tour_enabled;
     if (b.depositMonths !== undefined) data.depositMonths = b.depositMonths != null && b.depositMonths !== '' ? Number(b.depositMonths) : null;
     if (b.utilitiesEstimate !== undefined) data.utilitiesEstimate = b.utilitiesEstimate != null && b.utilitiesEstimate !== '' ? Number(b.utilitiesEstimate) : null;
     if (b.minimumLeaseMonths !== undefined) data.minimumLeaseMonths = b.minimumLeaseMonths != null && b.minimumLeaseMonths !== '' ? Number(b.minimumLeaseMonths) : null;
