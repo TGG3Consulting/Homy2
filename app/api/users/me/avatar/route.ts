@@ -7,8 +7,18 @@ import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware'
 import prisma from '@/lib/db/prisma';
 
 const AVATAR_DIR = path.join(process.cwd(), 'public', 'uploads', 'avatars');
+const UPLOADS_ROOT = path.join(process.cwd(), 'public', 'uploads');
 const MAX_SIZE = 2 * 1024 * 1024; // 2MB for avatars
 const VALID_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const EXT_BY_TYPE: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+
+/** Verify real image type by magic bytes (client MIME/filename untrusted) — VULN-018 sibling. */
+function sniffImageType(buf: Buffer): keyof typeof EXT_BY_TYPE | null {
+  if (buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return 'image/jpeg';
+  if (buf.length >= 8 && buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return 'image/png';
+  if (buf.length >= 12 && buf.toString('ascii', 0, 4) === 'RIFF' && buf.toString('ascii', 8, 12) === 'WEBP') return 'image/webp';
+  return null;
+}
 
 async function handler(req: AuthenticatedRequest) {
   const userId = req.user?.id;
@@ -46,14 +56,17 @@ async function handler(req: AuthenticatedRequest) {
       select: { avatar_url: true },
     });
 
-    // Save new avatar
-    const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-    const filename = `${userId}-${uuidv4()}.${ext}`;
+    // Save new avatar — verify real image + extension from sniffed type (VULN-018 sibling).
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const sniffed = sniffImageType(buffer);
+    if (!sniffed) {
+      return NextResponse.json({ error: 'Avatar is not a valid JPEG/PNG/WebP image' }, { status: 400 });
+    }
+    const filename = `${userId}-${uuidv4()}.${EXT_BY_TYPE[sniffed]}`;
     const filepath = path.join(AVATAR_DIR, filename);
     const avatarUrl = `/uploads/avatars/${filename}`;
 
-    const bytes = await file.arrayBuffer();
-    await writeFile(filepath, Buffer.from(bytes));
+    await writeFile(filepath, buffer);
 
     // Update user record
     await prisma.user.update({
@@ -61,10 +74,13 @@ async function handler(req: AuthenticatedRequest) {
       data: { avatar_url: avatarUrl },
     });
 
-    // Delete old avatar if exists (non-blocking)
+    // Delete old avatar if exists (non-blocking). Confine deletion to the uploads
+    // dir so a tampered avatar_url with "../" cannot delete arbitrary files (VULN-019).
     if (currentUser?.avatar_url) {
-      const oldPath = path.join(process.cwd(), 'public', currentUser.avatar_url);
-      unlink(oldPath).catch(() => {}); // Ignore errors
+      const oldPath = path.resolve(process.cwd(), 'public', '.' + currentUser.avatar_url);
+      if (oldPath.startsWith(UPLOADS_ROOT + path.sep)) {
+        unlink(oldPath).catch(() => {}); // Ignore errors
+      }
     }
 
     return NextResponse.json({
