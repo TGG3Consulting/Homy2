@@ -48,30 +48,20 @@ function ScheduleInner() {
       try {
         const pRes = await fetch(`/api/properties/${propertyId}`);
         if (pRes.ok) { const d = await pRes.json(); if (alive) setProperty(d.property || d); }
-        let list: any[] = [];
-        try {
-          const sRes = await fetch(`/api/properties/${propertyId}/viewing-slots`);
-          if (sRes.ok) { const sd = await sRes.json(); list = sd.slots || sd || []; }
-        } catch {}
-        let parsed: Slot[] = list
-          .map((s: any) => {
-            const at = s.scheduled_at || s.scheduledAt;
-            const dt = at ? new Date(at) : null;
-            return dt && !isNaN(dt.getTime()) ? { time: s.time || `${String(dt.getHours()).padStart(2, '0')}:${String(dt.getMinutes()).padStart(2, '0')}`, scheduled_at: dt.toISOString(), dateObj: dt } : null;
-          })
-          .filter(Boolean) as Slot[];
-        // fallback: generate next 7 days × standard times if API gave nothing
-        if (parsed.length === 0) {
-          const times = ['10:00', '11:30', '12:30', '14:00', '15:30', '17:00'];
-          const base = new Date(); base.setHours(0, 0, 0, 0);
-          for (let day = 1; day <= 7; day++) {
-            const d0 = new Date(base); d0.setDate(base.getDate() + day);
-            if (d0.getDay() === 0) continue; // skip Sunday
-            for (const t of times) {
-              const [h, m] = t.split(':').map(Number);
-              const dt = new Date(d0); dt.setHours(h, m, 0, 0);
-              parsed.push({ time: t, scheduled_at: dt.toISOString(), dateObj: dt });
-            }
+        // Client-request model (1.6): the visitor proposes a PREFERRED time; the
+        // agent then confirms it or offers an alternative. There are no pre-set
+        // "available slots" on the server — we present a rolling set of reasonable
+        // request options (next 7 days × standard hours) to pick from.
+        const parsed: Slot[] = [];
+        const times = ['10:00', '11:30', '12:30', '14:00', '15:30', '17:00'];
+        const base = new Date(); base.setHours(0, 0, 0, 0);
+        for (let day = 1; day <= 7; day++) {
+          const d0 = new Date(base); d0.setDate(base.getDate() + day);
+          if (d0.getDay() === 0) continue; // skip Sunday
+          for (const t of times) {
+            const [h, m] = t.split(':').map(Number);
+            const dt = new Date(d0); dt.setHours(h, m, 0, 0);
+            parsed.push({ time: t, scheduled_at: dt.toISOString(), dateObj: dt });
           }
         }
         if (!alive) return;
@@ -204,8 +194,8 @@ function ScheduleInner() {
               {success ? (
                 <div className="success">
                   <div className="ic"><Check size={26} color="#fff" strokeWidth={2.4} /></div>
-                  <h3>Просмотр запланирован</h3>
-                  <p>{DOW_RU[(success.dateObj.getDay() + 6) % 7]}, {success.dateObj.getDate()} {MONTHS_GEN[success.dateObj.getMonth()]}, {success.time}<br />Homy отправил запрос агенту. Придёт подтверждение.</p>
+                  <h3>Заявка отправлена</h3>
+                  <p>{DOW_RU[(success.dateObj.getDay() + 6) % 7]}, {success.dateObj.getDate()} {MONTHS_GEN[success.dateObj.getMonth()]}, {success.time}<br />Homy отправил запрос агенту. Он подтвердит время или предложит другое.</p>
                   <button className="btn-sec" onClick={addToCalendar}>Добавить в календарь</button>
                 </div>
               ) : (

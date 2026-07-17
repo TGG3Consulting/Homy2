@@ -56,7 +56,6 @@ model User {
   favorites           Favorite[]
   owned_properties    Property[]        @relation("PropertyOwner")
   property_listings   PropertyListing[]
-  viewing_slots       ViewingSlot[]
   admin_actions       AdminActionLog[] @relation("AdminActor")
   notifications       Notification[]
   reviewsReceived     Review[]         @relation("AgentReviews")  // отзывы о брокере (как об агенте)
@@ -208,7 +207,6 @@ model Property {
   favorites          Favorite[]
   viewings           Viewing[]
   virtual_tour_rooms VirtualTourRoom[]
-  viewing_slots      ViewingSlot[]
   conversations      Conversation[]
   leads              Lead[]
   deals              Deal[]
@@ -290,24 +288,6 @@ model Viewing {
 
 // PlatformMetric model removed (2.11): it was dead — never populated or read;
 // platform stats are computed live in /api/platform/metrics from real data.
-
-// ============================================
-// VIEWING SLOTS MODEL
-// ============================================
-model ViewingSlot {
-  id          String   @id @default(cuid())
-  property_id String   @db.Uuid
-  property    Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
-  date        DateTime
-  time        String   // "10:00", "14:30", etc.
-  available   Boolean  @default(true)
-  booked_by   String?  @db.Uuid
-  user        User?    @relation(fields: [booked_by], references: [id])
-  created_at  DateTime @default(now())
-
-  @@index([property_id])
-  @@index([date])
-}
 
 // ============================================
 // PROPERTY LISTINGS MODEL

@@ -1081,36 +1081,6 @@ function generateNearbyPois(property: PropertySeedData) {
   };
 }
 
-// ============================================
-// TIME SLOTS GENERATION
-// ============================================
-
-const TIME_SLOTS = ['10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00', '18:00', '18:30'];
-
-function generateViewingSlots(propertyId: string): { property_id: string; date: Date; time: string; available: boolean }[] {
-  const slots: { property_id: string; date: Date; time: string; available: boolean }[] = [];
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  for (let dayOffset = 0; dayOffset < 14; dayOffset++) {
-    const date = new Date(today);
-    date.setDate(date.getDate() + dayOffset);
-
-    // Skip Sundays (day 0 in JavaScript)
-    if (date.getDay() === 0) continue;
-
-    for (const time of TIME_SLOTS) {
-      slots.push({
-        property_id: propertyId,
-        date,
-        time,
-        available: Math.random() > 0.15, // 85% available
-      });
-    }
-  }
-
-  return slots;
-}
 
 // ============================================
 // MAIN SEED FUNCTION
@@ -1184,7 +1154,6 @@ async function main() {
   // Clear existing data in correct order (respecting foreign keys)
   console.log('Clearing existing data...');
   await prisma.virtualTourRoom.deleteMany({});
-  await prisma.viewingSlot.deleteMany({});
   await prisma.viewing.deleteMany({});
   await prisma.favorite.deleteMany({});
   await prisma.property.deleteMany({});
@@ -1293,32 +1262,6 @@ async function main() {
 
   console.log('\nVirtual tours created successfully.\n');
 
-  // ============================================
-  // SEED VIEWING SLOTS
-  // ============================================
-  console.log('Creating viewing slots for all properties (next 14 days)...');
-
-  let totalSlots = 0;
-
-  for (const prop of PROPERTIES) {
-    // Delete existing slots for this property
-    await prisma.viewingSlot.deleteMany({
-      where: { property_id: prop.id },
-    });
-
-    const slots = generateViewingSlots(prop.id);
-
-    await prisma.viewingSlot.createMany({
-      data: slots,
-    });
-
-    totalSlots += slots.length;
-  }
-
-  console.log(`  Created ${totalSlots} viewing slots across all properties.\n`);
-
-
-  console.log('Platform metrics created.\n');
 
   // ============================================
   // VERIFICATION
@@ -1330,12 +1273,10 @@ async function main() {
   const propertyCount = await prisma.property.count();
   const virtualTourCount = await prisma.property.count({ where: { virtual_tour_enabled: true } });
   const virtualTourRoomCount = await prisma.virtualTourRoom.count();
-  const viewingSlotCount = await prisma.viewingSlot.count();
 
   console.log(`Properties created: ${propertyCount}`);
   console.log(`Properties with virtual tours: ${virtualTourCount}`);
   console.log(`Virtual tour rooms: ${virtualTourRoomCount}`);
-  console.log(`Viewing slots: ${viewingSlotCount}`);
 
   // List properties by district
   const byDistrict = await prisma.property.groupBy({
