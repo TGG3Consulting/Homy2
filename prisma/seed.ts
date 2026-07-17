@@ -118,7 +118,6 @@ interface PropertySeedData {
   yearBuilt: number;
   buildingType: string;
   matchScore: number;
-  isTopChoice: boolean;
   hasVirtualTour: boolean;
   latitude: number;
   longitude: number;
@@ -153,7 +152,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2018,
     buildingType: 'monolith',
     matchScore: 98,
-    isTopChoice: true,
     hasVirtualTour: true,
     latitude: 40.1812,
     longitude: 44.5165,
@@ -191,7 +189,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2015,
     buildingType: 'brick',
     matchScore: 95,
-    isTopChoice: true,
     hasVirtualTour: true,
     latitude: 40.1985,
     longitude: 44.5058,
@@ -228,7 +225,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2010,
     buildingType: 'brick',
     matchScore: 88,
-    isTopChoice: false,
     hasVirtualTour: true,
     latitude: 40.1778,
     longitude: 44.5125,
@@ -265,7 +261,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 1985,
     buildingType: 'panel',
     matchScore: 82,
-    isTopChoice: false,
     hasVirtualTour: false,
     latitude: 40.2085,
     longitude: 44.4695,
@@ -302,7 +297,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2022,
     buildingType: 'monolith',
     matchScore: 92,
-    isTopChoice: true,
     hasVirtualTour: false,
     latitude: 40.1920,
     longitude: 44.5075,
@@ -339,7 +333,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2000,
     buildingType: 'stone',
     matchScore: 85,
-    isTopChoice: false,
     hasVirtualTour: false,
     latitude: 40.2180,
     longitude: 44.4820,
@@ -376,7 +369,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2019,
     buildingType: 'monolith',
     matchScore: 90,
-    isTopChoice: false,
     hasVirtualTour: false,
     latitude: 40.2025,
     longitude: 44.4985,
@@ -412,7 +404,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 1990,
     buildingType: 'panel',
     matchScore: 78,
-    isTopChoice: false,
     hasVirtualTour: false,
     latitude: 40.1365,
     longitude: 44.5280,
@@ -449,7 +440,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2008,
     buildingType: 'stone',
     matchScore: 86,
-    isTopChoice: false,
     hasVirtualTour: false,
     latitude: 40.1765,
     longitude: 44.5485,
@@ -486,7 +476,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2017,
     buildingType: 'monolith',
     matchScore: 84,
-    isTopChoice: false,
     hasVirtualTour: false,
     latitude: 40.2135,
     longitude: 44.5320,
@@ -521,7 +510,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2020,
     buildingType: 'monolith',
     matchScore: 92,
-    isTopChoice: false,
     hasVirtualTour: false,
     latitude: 40.1775,
     longitude: 44.5125,
@@ -553,7 +541,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2022,
     buildingType: 'monolith',
     matchScore: 88,
-    isTopChoice: false,
     hasVirtualTour: true,
     latitude: 40.1815,
     longitude: 44.5160,
@@ -586,7 +573,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2018,
     buildingType: 'brick',
     matchScore: 90,
-    isTopChoice: false,
     hasVirtualTour: false,
     latitude: 40.2020,
     longitude: 44.5010,
@@ -618,7 +604,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2005,
     buildingType: 'panel',
     matchScore: 85,
-    isTopChoice: false,
     hasVirtualTour: false,
     latitude: 40.2180,
     longitude: 44.4870,
@@ -650,7 +635,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2023,
     buildingType: 'monolith',
     matchScore: 87,
-    isTopChoice: false,
     hasVirtualTour: false,
     latitude: 40.1550,
     longitude: 44.4700,
@@ -682,7 +666,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2019,
     buildingType: 'monolith',
     matchScore: 91,
-    isTopChoice: false,
     hasVirtualTour: true,
     latitude: 40.1780,
     longitude: 44.5480,
@@ -714,7 +697,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2017,
     buildingType: 'monolith',
     matchScore: 82,
-    isTopChoice: false,
     hasVirtualTour: false,
     latitude: 40.1850,
     longitude: 44.5100,
@@ -746,7 +728,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2021,
     buildingType: 'monolith',
     matchScore: 86,
-    isTopChoice: false,
     hasVirtualTour: false,
     latitude: 40.1980,
     longitude: 44.5620,
@@ -778,7 +759,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2010,
     buildingType: 'brick',
     matchScore: 80,
-    isTopChoice: false,
     hasVirtualTour: false,
     latitude: 40.1600,
     longitude: 44.4950,
@@ -810,7 +790,6 @@ const PROPERTIES: PropertySeedData[] = [
     yearBuilt: 2023,
     buildingType: 'monolith',
     matchScore: 95,
-    isTopChoice: true,
     hasVirtualTour: true,
     latitude: 40.1870,
     longitude: 44.5130,
@@ -1251,7 +1230,6 @@ async function main() {
       latitude: new Prisma.Decimal(prop.latitude),
       longitude: new Prisma.Decimal(prop.longitude),
       matchScore: prop.matchScore,
-      isTopChoice: prop.isTopChoice,
       recommendationReasons: prop.recommendationReasons,
       warning: prop.warning,
       utilitiesEstimate: new Prisma.Decimal(25000 + Math.floor(Math.random() * 20000)),
@@ -1339,32 +1317,6 @@ async function main() {
 
   console.log(`  Created ${totalSlots} viewing slots across all properties.\n`);
 
-  // ============================================
-  // SEED PLATFORM METRICS
-  // ============================================
-  console.log('Creating platform metrics...');
-
-  // Platform metrics uses auto-generated UUID, so we just create/update
-  const existingMetric = await prisma.platformMetric.findFirst();
-
-  if (existingMetric) {
-    await prisma.platformMetric.update({
-      where: { id: existingMetric.id },
-      data: {
-        propertiesCount: PROPERTIES.length,
-        citiesCount: 1,
-        dealsCount: 45,
-      },
-    });
-  } else {
-    await prisma.platformMetric.create({
-      data: {
-        propertiesCount: PROPERTIES.length,
-        citiesCount: 1,
-        dealsCount: 45,
-      },
-    });
-  }
 
   console.log('Platform metrics created.\n');
 
@@ -1376,13 +1328,11 @@ async function main() {
   console.log('===========================================\n');
 
   const propertyCount = await prisma.property.count();
-  const topChoiceCount = await prisma.property.count({ where: { isTopChoice: true } });
   const virtualTourCount = await prisma.property.count({ where: { virtual_tour_enabled: true } });
   const virtualTourRoomCount = await prisma.virtualTourRoom.count();
   const viewingSlotCount = await prisma.viewingSlot.count();
 
   console.log(`Properties created: ${propertyCount}`);
-  console.log(`Top choice properties: ${topChoiceCount}`);
   console.log(`Properties with virtual tours: ${virtualTourCount}`);
   console.log(`Virtual tour rooms: ${virtualTourRoomCount}`);
   console.log(`Viewing slots: ${viewingSlotCount}`);
@@ -1400,7 +1350,7 @@ async function main() {
 
   // List match scores
   const properties = await prisma.property.findMany({
-    select: { title: true, matchScore: true, isTopChoice: true, district: true },
+    select: { title: true, matchScore: true, district: true },
     orderBy: { matchScore: 'desc' },
   });
 
@@ -1409,7 +1359,7 @@ async function main() {
     const title = typeof p.title === 'string' && p.title.startsWith('{')
       ? JSON.parse(p.title).en
       : p.title;
-    console.log(`  ${p.matchScore}% - ${title}${p.isTopChoice ? ' (TOP CHOICE)' : ''}`);
+    console.log(`  ${p.matchScore}% - ${title}`);
   }
 
   console.log('\n===========================================');

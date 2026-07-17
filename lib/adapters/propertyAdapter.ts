@@ -113,7 +113,9 @@ export const propertyAdapter = {
       verified: dbProperty.verified || false,
       listing_date: dbProperty.listingDate?.toISOString?.() || dbProperty.listingDate,
       match_score: dbProperty.matchScore || 0,
-      is_top_choice: dbProperty.isTopChoice || false,
+      // "top choice" is a per-search ranking artifact set at runtime (ranker/AI),
+      // not a stored attribute (3.7 — isTopChoice column removed). Always false here.
+      is_top_choice: false,
       recommendation_reasons: dbProperty.recommendationReasons || [],
       warning: dbProperty.warning || undefined,
     };
@@ -166,8 +168,9 @@ export const propertyAdapter = {
       ...property,
       match_score: matchScoreService.calculateMatchScore(property, criteria, criteria.search_context),
       recommendation_reasons: matchScoreService.generateRecommendationReasons(property, criteria),
-      warning: matchScoreService.generateWarning(property) || undefined,
-      // "top choice" is a ranking artifact set by the ranker (not the stale DB seed column).
+      // warning is authoritative from the stored column (3.7) — kept via ...property spread,
+      // no longer runtime-generated (that path diverged from the detail view + had broken hy).
+      // "top choice" is a ranking artifact set by the ranker (not a stored attribute).
       is_top_choice: false,
     };
   },

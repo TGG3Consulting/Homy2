@@ -178,7 +178,6 @@ model Property {
   latitude              Decimal? @db.Decimal(10, 7)
   longitude             Decimal? @db.Decimal(10, 7)
   matchScore            Int      @default(0) @map("match_score")
-  isTopChoice           Boolean  @default(false) @map("is_top_choice")
   recommendationReasons String[] @map("recommendation_reasons") @db.Text
   warning               String?  @db.Text
   utilitiesEstimate     Decimal? @map("utilities_estimate") @db.Decimal(10, 2)

@@ -141,39 +141,6 @@ export const matchScoreService = {
   },
 
   /**
-   * Generate warning if any concerns (multilingual JSON)
-   */
-  generateWarning(property: PropertyShowcase): string | null {
-    const warnings: string[] = [];
-
-    // Old building
-    if (property.year_built && property.year_built < 1990) {
-      warnings.push(`{"en":"Older building from ${property.year_built}","ru":"Старое здание ${property.year_built} года","hy":"Delays ${property.year_built}"}`);
-    }
-
-    // High floor without elevator
-    if (property.floor && property.floor > 4) {
-      warnings.push('{"en":"High floor - verify elevator availability","ru":"Высокий этаж - уточните наличие лифта","hy":"Delays"}');
-    }
-
-    // Small rooms
-    const area = property.size_sqm || property.area || 0;
-    const rooms = property.bedrooms || property.rooms || 1;
-    if (area / rooms < 15) {
-      warnings.push('{"en":"Smaller rooms - may be compact","ru":"Небольшие комнаты - может быть тесно","hy":"Delays"}');
-    }
-
-    // Low safety
-    const district = property.district || property.neighborhood || '';
-    const safety = getSafetyScore(district);
-    if (safety < 75) {
-      warnings.push('{"en":"Area safety rating below average","ru":"Рейтинг безопасности района ниже среднего","hy":"Delays"}');
-    }
-
-    return warnings.length > 0 ? warnings[0] : null;
-  },
-
-  /**
    * Select top choice from properties
    */
   selectTopChoice(properties: PropertyShowcase[], criteria: SearchCriteria): PropertyShowcase | null {
