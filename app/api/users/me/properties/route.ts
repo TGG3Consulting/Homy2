@@ -106,51 +106,13 @@ async function getHandler(req: AuthenticatedRequest) {
 export const GET = withAuth(getHandler);
 
 /**
- * POST /api/users/me/properties
- * Create a new listing owned by the current agent/owner (D3).
- * Body: { title?, dealType, propertyType?, district?, address?, price, rooms?, area?, floor?, totalFloors?, description?, images?, neighborhood? }
+ * POST removed (3.3 — split-brain fix). A property becomes live ONLY through moderation:
+ * POST /api/properties/list creates a PropertyListing (pending) → admin approve → live Property.
+ * This direct-create path bypassed moderation and had no callers.
  */
-async function postHandler(req: AuthenticatedRequest) {
-  const userId = req.user?.id;
-  if (!userId) return NextResponse.json({ error: 'User not found' }, { status: 401 });
-
-  try {
-    const b = await req.json();
-    const rooms = b.rooms != null ? Number(b.rooms) : null;
-    const district = b.district || null;
-    const roomsLabel = rooms ? `${rooms}-комнатная` : (b.propertyType === 'studio' ? 'Студия' : 'Объект');
-    const titleText = (b.title && String(b.title).trim()) || [roomsLabel, district].filter(Boolean).join(' · ');
-    const images = Array.isArray(b.images) ? b.images.filter((x: any) => typeof x === 'string') : [];
-
-    const property = await prisma.property.create({
-      data: {
-        title: JSON.stringify({ ru: titleText, en: titleText, hy: titleText }),
-        owner: { connect: { id: userId } },
-        address: b.address || null,
-        district,
-        neighborhood: b.neighborhood ? JSON.stringify({ ru: b.neighborhood, en: b.neighborhood, hy: b.neighborhood }) : null,
-        price: b.price != null ? Number(b.price) : null,
-        currency: 'AMD',
-        rooms,
-        bedrooms: rooms,
-        area: b.area != null ? Number(b.area) : null,
-        sizeSqm: b.area != null ? Number(b.area) : null,
-        floor: b.floor != null ? Number(b.floor) : null,
-        totalFloors: b.totalFloors != null ? Number(b.totalFloors) : null,
-        description: b.description || null,
-        images,
-        imageUrl: images[0] || null,
-        dealType: b.dealType || null,
-        propertyType: b.propertyType || 'apartment',
-        available: true,
-      },
-    });
-
-    return NextResponse.json({ success: true, id: property.id });
-  } catch (error) {
-    console.error('[POST /api/users/me/properties] Error:', error);
-    return NextResponse.json({ error: 'Failed to create listing', success: false }, { status: 500 });
-  }
+export function POST() {
+  return NextResponse.json(
+    { error: 'Создавайте объявления через POST /api/properties/list (проходят модерацию)', success: false },
+    { status: 410 }
+  );
 }
-
-export const POST = withAuth(postHandler);
