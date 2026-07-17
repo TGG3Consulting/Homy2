@@ -34,6 +34,7 @@ async function getUserWithRole(userId: string) {
       email: true,
       role: true,
       is_blocked: true,
+      token_version: true,
     }
   });
 }
@@ -76,6 +77,11 @@ export function withAdmin(handler: AdminHandler) {
         { error: 'Account is blocked' },
         { status: 403 }
       );
+    }
+
+    // Revoked session (force-reset / logout-everywhere)
+    if ((payload.tokenVersion ?? 0) !== user.token_version) {
+      return NextResponse.json({ error: 'Session revoked' }, { status: 401 });
     }
 
     // Check admin role
@@ -133,6 +139,11 @@ export function withModerator(handler: AdminHandler) {
         { error: 'Account is blocked' },
         { status: 403 }
       );
+    }
+
+    // Revoked session (force-reset / logout-everywhere)
+    if ((payload.tokenVersion ?? 0) !== user.token_version) {
+      return NextResponse.json({ error: 'Session revoked' }, { status: 401 });
     }
 
     // Check moderator or admin role

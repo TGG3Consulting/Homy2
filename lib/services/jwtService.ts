@@ -29,19 +29,21 @@ function getJwtRefreshSecret(): string {
 export interface TokenPayload {
   userId: string;
   email: string;
+  tokenVersion?: number;
 }
 
 export interface RefreshTokenPayload {
   userId: string;
+  tokenVersion?: number;
 }
 
 export const jwtService = {
-  generateAccessToken(userId: string, email: string): string {
-    return jwt.sign({ userId, email }, getJwtSecret(), { expiresIn: ACCESS_TOKEN_EXPIRY });
+  generateAccessToken(userId: string, email: string, tokenVersion = 0): string {
+    return jwt.sign({ userId, email, tokenVersion }, getJwtSecret(), { expiresIn: ACCESS_TOKEN_EXPIRY });
   },
 
-  generateRefreshToken(userId: string): string {
-    return jwt.sign({ userId }, getJwtRefreshSecret(), { expiresIn: REFRESH_TOKEN_EXPIRY });
+  generateRefreshToken(userId: string, tokenVersion = 0): string {
+    return jwt.sign({ userId, tokenVersion }, getJwtRefreshSecret(), { expiresIn: REFRESH_TOKEN_EXPIRY });
   },
 
   verifyAccessToken(token: string): TokenPayload | null {

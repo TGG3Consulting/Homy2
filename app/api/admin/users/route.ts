@@ -1,6 +1,21 @@
 import { NextResponse } from 'next/server';
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import { withAdmin, AdminAuthenticatedRequest, canModerateUser, UserRole } from '@/lib/middleware/adminMiddleware';
 import prisma from '@/lib/db/prisma';
+import emailService from '@/lib/services/emailService';
+
+const SALT_ROUNDS = 12;
+const RESET_TOKEN_EXPIRY_HOURS = 2;
+
+/** Create a password-reset token, revoke sessions optionally handled by caller. Returns the token. */
+async function issueResetToken(userId: string): Promise<string> {
+  const token = crypto.randomBytes(32).toString('hex');
+  const expiresAt = new Date(Date.now() + RESET_TOKEN_EXPIRY_HOURS * 60 * 60 * 1000);
+  await prisma.passwordResetToken.updateMany({ where: { userId, used: false }, data: { used: true } });
+  await prisma.passwordResetToken.create({ data: { userId, token, expiresAt } });
+  return token;
+}
 
 // GET - List users with pagination and filtering
 async function getUsers(req: AdminAuthenticatedRequest) {
@@ -127,6 +142,32 @@ async function updateUser(req: AdminAuthenticatedRequest) {
         { error: 'Cannot moderate this user' },
         { status: 403 }
       );
+    }
+
+    // Force password reset + logout everywhere: bump token_version (revokes all
+    // sessions instantly) and issue a reset token. We never set a password here;
+    // the user sets their own via the reset link (emailed; also returned so the
+    // admin can hand it over if SMTP isn't configured).
+    if (action === 'force_reset') {
+      const adminId0 = req.user?.id;
+      // Invalidate the OLD password (random unusable hash) AND revoke all sessions
+      // (token_version bump). The user regains access only via the reset link below.
+      const deadHash = await bcrypt.hash(crypto.randomBytes(24).toString('hex'), SALT_ROUNDS);
+      await prisma.$transaction([
+        prisma.user.update({ where: { id: user_id }, data: { passwordHash: deadHash, token_version: { increment: 1 } } }),
+        prisma.adminActionLog.create({
+          data: { admin_id: adminId0!, action_type: 'user_force_reset', target_type: 'user', target_id: user_id, details: {} },
+        }),
+      ]);
+      const token = await issueResetToken(user_id);
+      let emailed = false;
+      try { emailed = await emailService.sendPasswordResetEmail(targetUser.email, token); } catch { emailed = false; }
+      return NextResponse.json({
+        success: true,
+        message: 'Пароль сброшен, все сессии завершены',
+        emailed,
+        reset_url: `/reset-password?token=${token}`,
+      });
     }
 
     const adminId = req.user?.id;
@@ -261,5 +302,92 @@ async function updateUser(req: AdminAuthenticatedRequest) {
   }
 }
 
+// POST - Create a user (admin). No password is set here; the user sets their own
+// via the reset link (emailed; also returned so the admin can hand it over).
+async function createUser(req: AdminAuthenticatedRequest) {
+  try {
+    const body = await req.json();
+    const email = String(body.email || '').toLowerCase().trim();
+    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      return NextResponse.json({ error: 'Валидный email обязателен' }, { status: 400 });
+    }
+
+    const exists = await prisma.user.findUnique({ where: { email }, select: { id: true } });
+    if (exists) return NextResponse.json({ error: 'Пользователь с таким email уже существует' }, { status: 409 });
+
+    const ALLOWED_TYPES = ['buyer', 'renter', 'owner', 'agent', 'consultant'];
+    const ALLOWED_ROLES = ['user', 'moderator', 'admin'];
+    const uType = ALLOWED_TYPES.includes(body.user_type) ? body.user_type : 'buyer';
+    const uRole = ALLOWED_ROLES.includes(body.role) ? body.role : 'user';
+
+    // Unusable random password — the account is only accessible after the user
+    // sets their own password through the reset link.
+    const randomPw = crypto.randomBytes(24).toString('hex');
+    const passwordHash = await bcrypt.hash(randomPw, SALT_ROUNDS);
+
+    const user = await prisma.user.create({
+      data: {
+        email,
+        passwordHash,
+        first_name: (body.first_name || '').trim() || null,
+        last_name: (body.last_name || '').trim() || null,
+        phone: (body.phone || '').trim() || null,
+        user_type: uType,
+        role: uRole,
+        emailVerified: true, // admin-provisioned accounts are pre-verified
+      },
+      select: { id: true, email: true, user_type: true, role: true },
+    });
+
+    const token = await issueResetToken(user.id);
+    let emailed = false;
+    try { emailed = await emailService.sendPasswordResetEmail(email, token); } catch { emailed = false; }
+
+    await prisma.adminActionLog.create({
+      data: { admin_id: req.user!.id, action_type: 'user_create', target_type: 'user', target_id: user.id, details: { email, user_type: uType, role: uRole } },
+    });
+
+    return NextResponse.json({ success: true, user, emailed, set_password_url: `/reset-password?token=${token}` });
+  } catch (error) {
+    console.error('Create user error:', error);
+    return NextResponse.json({ error: 'Не удалось создать пользователя' }, { status: 500 });
+  }
+}
+
+// DELETE - Hard-delete a regular user and their content (irreversible).
+// Restricted to role='user' (staff accounts keep audit logs → block/demote instead).
+async function deleteUser(req: AdminAuthenticatedRequest) {
+  try {
+    const user_id = new URL(req.url).searchParams.get('user_id');
+    if (!user_id) return NextResponse.json({ error: 'user_id обязателен' }, { status: 400 });
+    if (user_id === req.user?.id) return NextResponse.json({ error: 'Нельзя удалить собственный аккаунт' }, { status: 400 });
+
+    const target = await prisma.user.findUnique({ where: { id: user_id }, select: { id: true, role: true, email: true } });
+    if (!target) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    if (target.role === 'admin' || target.role === 'moderator') {
+      return NextResponse.json({ error: 'Нельзя стереть админа/модератора. Снимите роль или заблокируйте.' }, { status: 403 });
+    }
+
+    await prisma.adminActionLog.create({
+      data: { admin_id: req.user!.id, action_type: 'user_delete', target_type: 'user', target_id: user_id, details: { email: target.email } },
+    });
+
+    // Clean up Restrict-referencing rows first, then cascade the rest via the delete.
+    await prisma.$transaction([
+      prisma.viewing.deleteMany({ where: { OR: [{ clientId: user_id }, { agentId: user_id }, { createdById: user_id }, { lastProposedById: user_id }] } }),
+      prisma.propertyListing.deleteMany({ where: { owner_id: user_id } }),
+      prisma.property.deleteMany({ where: { owner_id: user_id } }), // cascades favorites/viewings/tours/chats
+      prisma.user.delete({ where: { id: user_id } }),               // cascades reviews/leads/deals/notifications/etc.
+    ]);
+
+    return NextResponse.json({ success: true, message: 'Пользователь и его данные удалены' });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    return NextResponse.json({ error: 'Не удалось удалить пользователя' }, { status: 500 });
+  }
+}
+
 export const GET = withAdmin(getUsers);
+export const POST = withAdmin(createUser);
 export const PATCH = withAdmin(updateUser);
+export const DELETE = withAdmin(deleteUser);

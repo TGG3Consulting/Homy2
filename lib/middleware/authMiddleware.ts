@@ -50,6 +50,17 @@ export function withAuth(handler: AuthHandler) {
       );
     }
 
+    // Revocation check (instant logout-everywhere / block): the token's version
+    // must still match the user's current token_version, and the user must not
+    // be blocked. One indexed PK lookup per authenticated request.
+    const dbUser = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: { token_version: true, is_blocked: true },
+    });
+    if (!dbUser || dbUser.is_blocked || (payload.tokenVersion ?? 0) !== dbUser.token_version) {
+      return NextResponse.json({ error: 'Session revoked' }, { status: 401 });
+    }
+
     // Attach user to request
     (req as AuthenticatedRequest).user = {
       id: payload.userId,
@@ -86,7 +97,7 @@ export function withBroker(handler: AuthHandler) {
 
     const dbUser = await prisma.user.findUnique({
       where: { id: payload.userId },
-      select: { id: true, user_type: true, is_blocked: true },
+      select: { id: true, user_type: true, is_blocked: true, token_version: true },
     });
 
     if (!dbUser) {
@@ -94,6 +105,9 @@ export function withBroker(handler: AuthHandler) {
     }
     if (dbUser.is_blocked) {
       return NextResponse.json({ error: 'Account is blocked' }, { status: 403 });
+    }
+    if ((payload.tokenVersion ?? 0) !== dbUser.token_version) {
+      return NextResponse.json({ error: 'Session revoked' }, { status: 401 });
     }
     if (dbUser.user_type !== 'agent' && dbUser.user_type !== 'owner') {
       return NextResponse.json(
@@ -117,10 +131,18 @@ export function withOptionalAuth(handler: AuthHandler) {
     if (token) {
       const payload = jwtService.verifyAccessToken(token);
       if (payload) {
-        (req as AuthenticatedRequest).user = {
-          id: payload.userId,
-          email: payload.email
-        };
+        // Same revocation check as withAuth, but a revoked/blocked token here
+        // simply means "treat as anonymous" rather than 401.
+        const dbUser = await prisma.user.findUnique({
+          where: { id: payload.userId },
+          select: { token_version: true, is_blocked: true },
+        });
+        if (dbUser && !dbUser.is_blocked && (payload.tokenVersion ?? 0) === dbUser.token_version) {
+          (req as AuthenticatedRequest).user = {
+            id: payload.userId,
+            email: payload.email
+          };
+        }
       }
     }
 

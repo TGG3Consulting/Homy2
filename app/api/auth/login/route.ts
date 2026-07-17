@@ -53,9 +53,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate tokens
-    const accessToken = jwtService.generateAccessToken(user.id, user.email);
-    const refreshToken = jwtService.generateRefreshToken(user.id);
+    // Blocked users cannot obtain tokens.
+    if (user.is_blocked) {
+      return NextResponse.json(
+        { error: 'Account is blocked', code: 'ACCOUNT_BLOCKED' },
+        { status: 403 }
+      );
+    }
+
+    // Generate tokens carrying the user's current token_version (revocable).
+    const accessToken = jwtService.generateAccessToken(user.id, user.email, user.token_version);
+    const refreshToken = jwtService.generateRefreshToken(user.id, user.token_version);
 
     // Set tokens in HttpOnly cookies (secure against XSS)
     const response = NextResponse.json({

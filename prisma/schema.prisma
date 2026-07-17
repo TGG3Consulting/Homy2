@@ -17,6 +17,10 @@ model User {
   id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email         String   @unique @db.VarChar(255)
   passwordHash  String?  @map("password_hash") @db.VarChar(255)
+  // Bumped to revoke all issued JWTs (force logout everywhere / after password reset).
+  // Every access & refresh token carries the version it was minted with; auth
+  // middleware rejects tokens whose version != the user's current token_version.
+  token_version Int      @default(0) @map("token_version")
   emailVerified Boolean  @default(false) @map("email_verified")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")

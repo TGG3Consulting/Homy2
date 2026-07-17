@@ -11,6 +11,10 @@ import {
   X,
   Pencil,
   MailCheck,
+  KeyRound,
+  Trash2,
+  UserPlus,
+  Copy,
 } from 'lucide-react';
 
 interface User {
@@ -61,6 +65,9 @@ export default function UsersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editModal, setEditModal] = useState<User | null>(null);
   const [editForm, setEditForm] = useState({ first_name: '', last_name: '', phone: '' });
+  const [createModal, setCreateModal] = useState(false);
+  const [createForm, setCreateForm] = useState({ email: '', first_name: '', last_name: '', phone: '', user_type: 'buyer', role: 'user' });
+  const [linkModal, setLinkModal] = useState<{ title: string; url: string; emailed: boolean } | null>(null);
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
@@ -204,6 +211,50 @@ export default function UsersPage() {
     }
   };
 
+  // Force password reset + logout everywhere; surfaces the reset link (email may be off).
+  const forceReset = async (user: User) => {
+    if (!confirm(`Сбросить пароль и завершить ВСЕ сессии ${user.email}?`)) return;
+    setError(null);
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+        body: JSON.stringify({ user_id: user.id, action: 'force_reset' }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || 'Не удалось сбросить');
+      setLinkModal({ title: 'Пароль сброшен · все сессии завершены', url: d.reset_url, emailed: d.emailed });
+    } catch (err) { setError(err instanceof Error ? err.message : 'Ошибка'); }
+  };
+
+  // Hard delete (regular users only) — irreversible, wipes their content.
+  const removeUser = async (user: User) => {
+    if (!confirm(`СТЕРЕТЬ НАВСЕГДА ${user.email} и все его данные (объекты, заявки, лиды)?\nОтменить нельзя.`)) return;
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/users?user_id=${encodeURIComponent(user.id)}`, { method: 'DELETE', credentials: 'include' });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(d.error || 'Не удалось удалить');
+      fetchUsers();
+    } catch (err) { setError(err instanceof Error ? err.message : 'Ошибка'); }
+  };
+
+  const submitCreate = async () => {
+    setIsSubmitting(true); setError(null);
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+        body: JSON.stringify(createForm),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || 'Не удалось создать');
+      setCreateModal(false);
+      setCreateForm({ email: '', first_name: '', last_name: '', phone: '', user_type: 'buyer', role: 'user' });
+      fetchUsers();
+      setLinkModal({ title: 'Пользователь создан', url: d.set_password_url, emailed: d.emailed });
+    } catch (err) { setError(err instanceof Error ? err.message : 'Ошибка'); }
+    finally { setIsSubmitting(false); }
+  };
+
   const getRoleBadgeColor = (role: string | null) => {
     switch (role) {
       case 'admin': return 'bg-emerald-500/20 text-emerald-400';
@@ -220,6 +271,12 @@ export default function UsersPage() {
           <h1 className="text-2xl font-display font-semibold text-white">Users</h1>
           <p className="text-gray-400 mt-1">Manage platform users</p>
         </div>
+        <button
+          onClick={() => setCreateModal(true)}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg text-white bg-[#0A6045] hover:bg-[#0B6E4F] transition-colors text-sm font-medium"
+        >
+          <UserPlus size={16} /> Создать пользователя
+        </button>
       </div>
 
       {/* Filters */}
@@ -380,6 +437,24 @@ export default function UsersPage() {
                             <UserX size={16} className="text-red-400" />
                           </button>
                         ))}
+                        {user.role !== 'admin' && (
+                          <button
+                            onClick={() => forceReset(user)}
+                            className="p-2 rounded-lg hover:bg-amber-500/20 transition-colors"
+                            title="Сбросить пароль + выйти со всех устройств"
+                          >
+                            <KeyRound size={16} className="text-amber-400" />
+                          </button>
+                        )}
+                        {user.role === 'user' && (
+                          <button
+                            onClick={() => removeUser(user)}
+                            className="p-2 rounded-lg hover:bg-red-500/20 transition-colors"
+                            title="Стереть навсегда"
+                          >
+                            <Trash2 size={16} className="text-red-500" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -503,6 +578,101 @@ export default function UsersPage() {
               >
                 {isSubmitting ? 'Сохраняем…' : 'Сохранить'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create User Modal */}
+      {createModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="rounded-xl p-6 w-full max-w-md mx-4" style={glassStyle}>
+            <h3 className="text-lg font-semibold text-white mb-1">Новый пользователь</h3>
+            <p className="text-gray-400 text-sm mb-4">Пароль пользователь задаёт сам по ссылке сброса.</p>
+            <div className="space-y-3">
+              <input
+                placeholder="Email *"
+                value={createForm.email}
+                onChange={(e) => setCreateForm((f) => ({ ...f, email: e.target.value }))}
+                className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#0A6045]"
+              />
+              <div className="flex gap-3">
+                <input
+                  placeholder="Имя"
+                  value={createForm.first_name}
+                  onChange={(e) => setCreateForm((f) => ({ ...f, first_name: e.target.value }))}
+                  className="w-1/2 p-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#0A6045]"
+                />
+                <input
+                  placeholder="Фамилия"
+                  value={createForm.last_name}
+                  onChange={(e) => setCreateForm((f) => ({ ...f, last_name: e.target.value }))}
+                  className="w-1/2 p-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#0A6045]"
+                />
+              </div>
+              <input
+                placeholder="Телефон"
+                value={createForm.phone}
+                onChange={(e) => setCreateForm((f) => ({ ...f, phone: e.target.value }))}
+                className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#0A6045]"
+              />
+              <div className="flex gap-3">
+                <select
+                  value={createForm.user_type}
+                  onChange={(e) => setCreateForm((f) => ({ ...f, user_type: e.target.value }))}
+                  className="w-1/2 p-3 rounded-lg bg-gray-800 border border-white/10 text-white focus:outline-none focus:border-[#0A6045] capitalize"
+                >
+                  {['buyer', 'renter', 'owner', 'agent', 'consultant'].map((t) => <option key={t} value={t}>{t}</option>)}
+                </select>
+                <select
+                  value={createForm.role}
+                  onChange={(e) => setCreateForm((f) => ({ ...f, role: e.target.value }))}
+                  className="w-1/2 p-3 rounded-lg bg-gray-800 border border-white/10 text-white focus:outline-none focus:border-[#0A6045]"
+                >
+                  {['user', 'moderator', 'admin'].map((r) => <option key={r} value={r}>{r}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-4">
+              <button onClick={() => setCreateModal(false)} className="px-4 py-2 rounded-lg text-gray-400 hover:bg-white/10 transition-colors">Отмена</button>
+              <button
+                onClick={submitCreate}
+                disabled={isSubmitting || !createForm.email.trim()}
+                className="px-4 py-2 rounded-lg text-white bg-[#0A6045] hover:bg-[#0B6E4F] disabled:opacity-50 transition-colors"
+              >
+                {isSubmitting ? 'Создаём…' : 'Создать'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reset / set-password link Modal */}
+      {linkModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="rounded-xl p-6 w-full max-w-lg mx-4" style={glassStyle}>
+            <h3 className="text-lg font-semibold text-white mb-2">{linkModal.title}</h3>
+            <p className="text-gray-400 text-sm mb-3">
+              {linkModal.emailed
+                ? 'Ссылка отправлена на email пользователя. Можно также передать её вручную:'
+                : 'Письмо не отправлено (email не настроен). Передайте ссылку пользователю вручную:'}
+            </p>
+            <div className="flex items-center gap-2 mb-4">
+              <input
+                readOnly
+                value={typeof window !== 'undefined' ? window.location.origin + linkModal.url : linkModal.url}
+                className="flex-1 p-2 rounded-lg bg-white/5 border border-white/10 text-gray-200 text-sm"
+              />
+              <button
+                onClick={() => navigator.clipboard?.writeText((typeof window !== 'undefined' ? window.location.origin : '') + linkModal.url)}
+                className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+                title="Скопировать"
+              >
+                <Copy size={16} className="text-gray-300" />
+              </button>
+            </div>
+            <div className="flex justify-end">
+              <button onClick={() => setLinkModal(null)} className="px-4 py-2 rounded-lg text-white bg-[#0A6045] hover:bg-[#0B6E4F] transition-colors">Готово</button>
             </div>
           </div>
         </div>

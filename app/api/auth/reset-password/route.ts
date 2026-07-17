@@ -55,7 +55,8 @@ export async function POST(req: NextRequest) {
     await prisma.$transaction([
       prisma.user.update({
         where: { id: tokenRecord.userId },
-        data: { passwordHash },
+        // Changing the password revokes every previously issued session.
+        data: { passwordHash, token_version: { increment: 1 } },
       }),
       prisma.passwordResetToken.update({
         where: { id: tokenRecord.id },

@@ -37,9 +37,18 @@ export async function POST() {
       return clearAuthCookies(response);
     }
 
-    // Generate new tokens
-    const newAccessToken = jwtService.generateAccessToken(user.id, user.email);
-    const newRefreshToken = jwtService.generateRefreshToken(user.id);
+    // Reject revoked (force-reset / logout-everywhere) or blocked sessions.
+    if (user.is_blocked || (payload.tokenVersion ?? 0) !== user.token_version) {
+      const response = NextResponse.json(
+        { error: 'Session revoked' },
+        { status: 401 }
+      );
+      return clearAuthCookies(response);
+    }
+
+    // Generate new tokens carrying the current token_version.
+    const newAccessToken = jwtService.generateAccessToken(user.id, user.email, user.token_version);
+    const newRefreshToken = jwtService.generateRefreshToken(user.id, user.token_version);
 
     // Set new tokens in cookies
     const response = NextResponse.json({
