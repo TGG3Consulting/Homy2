@@ -50,6 +50,14 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // Cap input length (VULN-012): bound prompt-injection surface + token/cost abuse.
+    if (lastMessage.content.length > 4000) {
+      return new Response(JSON.stringify({ error: 'Message too long (max 4000 chars)' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     // Create SSE stream
     const stream = new ReadableStream({
       async start(controller) {

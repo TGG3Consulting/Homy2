@@ -241,6 +241,7 @@ interface Session {
 
 const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 const MAX_HISTORY_MESSAGES = 20; // Keep last 20 messages
+const MAX_USER_MESSAGE_LENGTH = 4000; // Cap user input — limits prompt-injection surface + token/cost abuse (VULN-012)
 
 class AnthropicSessionManager {
   private sessions: Map<string, Session> = new Map();
@@ -287,8 +288,13 @@ class AnthropicSessionManager {
   async sendMessage(sessionId: string, userMessage: string): Promise<AgentResponse> {
     const session = this.getOrCreateSession(sessionId);
 
+    // Cap user input length (VULN-012): the agent's tools are read-only
+    // (search/show only), so the residual risk is token/cost abuse and
+    // off-topic steering — both bounded by limiting input size.
+    const safeMessage = (userMessage || '').slice(0, MAX_USER_MESSAGE_LENGTH);
+
     // Add user message to history
-    this.addMessage(sessionId, 'user', userMessage);
+    this.addMessage(sessionId, 'user', safeMessage);
 
     // Build messages array for API
     const messages = session.messageHistory.map(msg => ({
