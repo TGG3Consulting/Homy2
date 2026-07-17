@@ -213,6 +213,7 @@ function ListingsView({ lang, router, showToast }: any) {
               <div className="lact">
                 {r.kind === 'property' && <button className="sec" onClick={() => router.push(`/properties/${r.id}`)}>Открыть</button>}
                 <button className="sec" onClick={() => setEditItem({ id: r.id, kind: r.kind, data: r._orig })}>Изменить</button>
+                {r.kind === 'property' && <button className="sec" onClick={() => router.push(`/tour-editor/${r.id}`)}>3D-тур</button>}
                 {r.kind === 'property' && <button className="sec danger" onClick={() => unpublish(r)}>{r.available ? 'Снять' : 'Вернуть'}</button>}
               </div>
             </div>
