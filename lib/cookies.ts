@@ -5,10 +5,12 @@ const ACCESS_TOKEN_NAME = 'homy_access_token';
 const REFRESH_TOKEN_NAME = 'homy_refresh_token';
 
 // Cookie settings for production security
-// Note: secure should only be true when using HTTPS
+// Auth cookies: HttpOnly (no JS access) + SameSite=lax (blocks cross-site CSRF on
+// state-changing requests — VULN-020) + Secure. Secure is always on in production
+// (and whenever HTTPS is enabled) so tokens are never sent over plain HTTP (VULN-025).
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env.HTTPS_ENABLED === 'true',
+  secure: process.env.NODE_ENV === 'production' || process.env.HTTPS_ENABLED === 'true',
   sameSite: 'lax' as const,
   path: '/',
 };
