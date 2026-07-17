@@ -96,8 +96,10 @@ export const dashboardService = {
     });
     const properties_viewed = viewingsWithProperties.length;
 
-    // Search history count - placeholder
-    const search_history_count = 0;
+    // Saved searches the user has stored
+    const search_history_count = await prisma.savedSearch.count({
+      where: { userId }
+    });
 
     // Recommended count - properties with high match score
     const recommended_count = await prisma.property.count({
@@ -144,8 +146,16 @@ export const dashboardService = {
       }
     });
 
-    // Total views - placeholder
-    const total_views = 0;
+    // Real views of the owner's properties in the last 7 days (excludes the
+    // owner's own views). Matches the "Просмотры за 7 дней" mockup tile.
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const total_views = await prisma.propertyView.count({
+      where: {
+        property: { owner_id: userId },
+        created_at: { gte: sevenDaysAgo },
+        NOT: { viewer_id: userId },
+      }
+    });
 
     // Count inquiries (viewings) where user is the agent (property owner)
     const total_inquiries = await prisma.viewing.count({
@@ -198,8 +208,10 @@ export const dashboardService = {
       }
     });
 
-    // Deals closed - placeholder
-    const deals_closed = 0;
+    // Deals actually won by this agent
+    const deals_closed = await prisma.deal.count({
+      where: { agent_id: userId, status: 'won' }
+    });
 
     return {
       clients_count,

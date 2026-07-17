@@ -2,11 +2,38 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import propertyAdapter from '@/lib/adapters/propertyAdapter';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { getAccessTokenFromRequest } from '@/lib/cookies';
+import jwtService from '@/lib/services/jwtService';
 
 function propIdFromUrl(url: string): string | null {
   const parts = new URL(url).pathname.split('/');
   const i = parts.indexOf('properties');
   return i >= 0 && parts[i + 1] ? parts[i + 1] : null;
+}
+
+/**
+ * Record a property view (3.5). Fire-and-forget: any failure is swallowed and
+ * NEVER affects the detail response. viewer_id is captured when a valid token
+ * is present, otherwise null (anonymous).
+ */
+async function recordView(req: NextRequest, propertyId: string): Promise<void> {
+  try {
+    let viewerId: string | null = null;
+    const token = getAccessTokenFromRequest(req);
+    if (token) {
+      try {
+        const payload = jwtService.verifyAccessToken(token);
+        viewerId = (payload as { userId?: string })?.userId ?? null;
+      } catch {
+        // invalid/expired token → treat as anonymous
+      }
+    }
+    await prisma.propertyView.create({
+      data: { property_id: propertyId, viewer_id: viewerId },
+    });
+  } catch {
+    // never block or break the response on view tracking
+  }
 }
 
 export async function GET(
@@ -28,6 +55,9 @@ export async function GET(
         { status: 404 }
       );
     }
+
+    // Fire-and-forget view tracking (does not await-block the response path).
+    void recordView(req, id);
 
     const frontendProperty = propertyAdapter.toFrontendFormat(property);
 

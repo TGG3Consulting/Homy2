@@ -213,6 +213,7 @@ model Property {
   conversations      Conversation[]
   leads              Lead[]
   deals              Deal[]
+  property_views     PropertyView[]
 
   @@index([owner_id], name: "idx_properties_owner_id")
   @@index([district], name: "idx_properties_district")
@@ -535,6 +536,21 @@ model Deal {
   @@index([agent_id, status])
   @@index([agent_id, stage])
   @@map("deals")
+}
+
+// Property view log — one row per detail-page open. Powers the owner
+// dashboard "Просмотры за 7 дней" tile (3.5). viewer_id is null for
+// anonymous visitors; the owner's own views are excluded in the query.
+model PropertyView {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  property_id String   @db.Uuid
+  viewer_id   String?  @db.Uuid
+  created_at  DateTime @default(now()) @map("created_at")
+
+  property Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+
+  @@index([property_id, created_at])
+  @@map("property_views")
 }
 
 // ============================================
