@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 
+/** Admins/moderators may edit any pending listing before approving it (2.3). */
+async function isAdminUser(userId: string): Promise<boolean> {
+  const u = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+  return u?.role === 'admin' || u?.role === 'moderator';
+}
+
 // GET - Get listing by ID (public)
 export async function GET(
   req: NextRequest,
@@ -88,7 +94,7 @@ async function patchHandler(
       );
     }
 
-    if (listing.owner_id !== userId) {
+    if (listing.owner_id !== userId && !(await isAdminUser(userId))) {
       return NextResponse.json(
         { error: 'Forbidden' },
         { status: 403 }
@@ -280,7 +286,7 @@ async function deleteHandler(
       );
     }
 
-    if (listing.owner_id !== userId) {
+    if (listing.owner_id !== userId && !(await isAdminUser(userId))) {
       return NextResponse.json(
         { error: 'Forbidden' },
         { status: 403 }

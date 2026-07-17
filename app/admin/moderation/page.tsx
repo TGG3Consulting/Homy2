@@ -12,6 +12,7 @@ import {
   ChevronRight,
   AlertCircle,
   X,
+  Pencil,
 } from 'lucide-react';
 
 interface Listing {
@@ -59,6 +60,8 @@ export default function ModerationPage() {
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [rejectReason, setRejectReason] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editListing, setEditListing] = useState<Listing | null>(null);
+  const [editForm, setEditForm] = useState({ price: '', area: '', rooms: '', location: '', description: '' });
 
   const fetchListings = useCallback(async () => {
     setIsLoading(true);
@@ -139,6 +142,47 @@ export default function ModerationPage() {
       fetchListings();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to reject');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const openEdit = (listing: Listing) => {
+    setEditForm({
+      price: listing.price != null ? String(listing.price) : '',
+      area: listing.area != null ? String(listing.area) : '',
+      rooms: listing.rooms != null ? String(listing.rooms) : '',
+      location: listing.location || '',
+      description: listing.description || '',
+    });
+    setEditListing(listing);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editListing) return;
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/properties/listings/${editListing.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          price: editForm.price === '' ? undefined : Number(editForm.price),
+          area: editForm.area === '' ? undefined : Number(editForm.area),
+          rooms: editForm.rooms === '' ? undefined : Number(editForm.rooms),
+          location: editForm.location,
+          description: editForm.description,
+        }),
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Не удалось сохранить');
+      }
+      setEditListing(null);
+      fetchListings();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Не удалось сохранить');
     } finally {
       setIsSubmitting(false);
     }
@@ -311,6 +355,14 @@ export default function ModerationPage() {
                       Approve
                     </button>
                     <button
+                      onClick={() => openEdit(listing)}
+                      disabled={isSubmitting}
+                      className="px-4 py-2 rounded-lg bg-blue-500/80 text-white hover:bg-blue-600 transition-colors disabled:opacity-50 flex items-center gap-2"
+                    >
+                      <Pencil size={18} />
+                      Изменить
+                    </button>
+                    <button
                       onClick={() => setSelectedListing(listing)}
                       disabled={isSubmitting}
                       className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-50 flex items-center gap-2"
@@ -380,6 +432,28 @@ export default function ModerationPage() {
               >
                 {isSubmitting ? 'Rejecting...' : 'Reject Listing'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Listing Modal (moderator fixes a pending listing before approve) */}
+      {editListing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="rounded-xl p-6 w-full max-w-md mx-4" style={glassStyle}>
+            <h3 className="text-lg font-semibold text-white mb-4">Изменить заявку</h3>
+            <div className="space-y-3">
+              <input placeholder="Локация" value={editForm.location} onChange={(e) => setEditForm((f) => ({ ...f, location: e.target.value }))} className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#0A6045]" />
+              <div className="grid grid-cols-3 gap-3">
+                <input type="number" placeholder="Цена" value={editForm.price} onChange={(e) => setEditForm((f) => ({ ...f, price: e.target.value }))} className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#0A6045]" />
+                <input type="number" placeholder="Площадь" value={editForm.area} onChange={(e) => setEditForm((f) => ({ ...f, area: e.target.value }))} className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#0A6045]" />
+                <input type="number" placeholder="Комнаты" value={editForm.rooms} onChange={(e) => setEditForm((f) => ({ ...f, rooms: e.target.value }))} className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#0A6045]" />
+              </div>
+              <textarea placeholder="Описание" value={editForm.description} onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))} rows={3} className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#0A6045] resize-none" />
+            </div>
+            <div className="flex justify-end gap-3 mt-4">
+              <button onClick={() => setEditListing(null)} className="px-4 py-2 rounded-lg text-gray-400 hover:bg-white/10 transition-colors">Отмена</button>
+              <button onClick={handleSaveEdit} disabled={isSubmitting} className="px-4 py-2 rounded-lg bg-[#0A6045] text-white hover:bg-[#0B6E4F] transition-colors disabled:opacity-50">{isSubmitting ? 'Сохраняем…' : 'Сохранить'}</button>
             </div>
           </div>
         </div>
