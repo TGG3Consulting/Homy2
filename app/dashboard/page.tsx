@@ -41,6 +41,7 @@ interface User {
   id: string;
   email: string;
   user_type: UserType;
+  role?: 'user' | 'moderator' | 'admin';
   language_preference?: string;
 }
 
@@ -137,7 +138,7 @@ function DashboardContent() {
 
   // 3.1: admins/moderators use the single full admin UI at /admin/* — send them there.
   useEffect(() => {
-    if (user && (user.role === 'admin' || user.role === 'moderator' || user.user_type === 'admin')) {
+    if (user && (user.role === 'admin' || user.role === 'moderator')) {
       router.replace('/admin');
     }
   }, [user, router]);
@@ -605,7 +606,7 @@ function DashboardContent() {
   // Authorization axis is `role` (admin/moderator/user) — check it FIRST so an admin
   // with a default/unset product persona (user_type) never falls through into the buyer
   // cabinet (B1/B2). The full admin UI lives at /admin/* (single source — 3.1); send them there.
-  if (user && (user.role === 'admin' || user.role === 'moderator' || user.user_type === 'admin')) {
+  if (user && (user.role === 'admin' || user.role === 'moderator')) {
     return null; // redirecting to /admin (see effect above)
   }
 

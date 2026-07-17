@@ -119,7 +119,7 @@ export default function RegisterPage() {
               {otp.map((d, i) => (
                 <input
                   key={i}
-                  ref={(el) => (otpRefs.current[i] = el)}
+                  ref={(el) => { otpRefs.current[i] = el; }}
                   inputMode="numeric"
                   maxLength={1}
                   value={d}
