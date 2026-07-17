@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { useT } from '@/lib/i18n';
+import { useT, loc } from '@/lib/i18n';
 import { useChatWidget } from '@/contexts/ChatWidgetContext';
 import HomyLogoMenu from '@/components/homy/HomyLogoMenu';
 import SupportFab from '@/components/homy/SupportFab';
@@ -27,16 +27,6 @@ const NEEDS_SOURCE = 'Источник в подключении';
 function fmtPrice(p: number): string {
   if (!p) return '—';
   return Math.round(p).toLocaleString('ru-RU').replace(/,/g, ' ');
-}
-function loc(v: any, lang: string): string {
-  if (v == null) return '';
-  if (typeof v === 'object') return v[lang] || v.ru || v.en || '';
-  if (typeof v !== 'string') return String(v);
-  const s = v.trim();
-  if (s.startsWith('{') && s.includes('"')) {
-    try { const o = JSON.parse(s); return o[lang] || o.ru || o.en || s; } catch { return v; }
-  }
-  return v;
 }
 const BUILDING_TYPE_RU: Record<string, string> = { brick: 'кирпичный дом', panel: 'панельный дом', monolith: 'монолит' };
 function plur(n: number, forms: [string, string, string]): string {

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { useT } from '@/lib/i18n';
+import { useT, loc } from '@/lib/i18n';
 import ViewingCreateForm from '@/components/dashboard/ViewingCreateForm';
 
 /** 1:1 A12 «Мои просмотры» styles from Homy-Batch2 mockup. Scoped under .homy-view. */
@@ -62,14 +62,6 @@ html.dark .homy-view{--surface:#0E1218;--surface2:#171C25;--ink:#F2F4F7;--muted:
 const DOW = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
 const MON_GEN = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
 
-function loc(v: any, lang: string): string {
-  if (v == null) return '';
-  if (typeof v === 'object') return v[lang] || v.ru || v.en || '';
-  if (typeof v !== 'string') return String(v);
-  const s = v.trim();
-  if (s.startsWith('{') && s.includes('"')) { try { const o = JSON.parse(s); return o[lang] || o.ru || o.en || s; } catch { return v; } }
-  return v;
-}
 function fmtDt(s: string): string {
   const d = new Date(s);
   if (isNaN(d.getTime())) return '';

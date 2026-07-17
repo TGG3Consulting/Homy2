@@ -4,7 +4,7 @@ import React, {
   useState, useEffect, useCallback, useRef, useMemo, Suspense, FormEvent,
 } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useT } from '@/lib/i18n';
+import { useT, loc } from '@/lib/i18n';
 import { useTheme } from '@/components/homy/ThemeProvider';
 import HomyLogoMenu from '@/components/homy/HomyLogoMenu';
 import SupportFab from '@/components/homy/SupportFab';
@@ -73,21 +73,6 @@ function fmtPrice(p: number): string {
   return Math.round(p).toLocaleString('ru-RU').replace(/,/g, ' ');
 }
 /** Resolve i18n-JSON fields ({"en":..,"ru":..,"hy":..}) to the active language. */
-function loc(v: any, lang: string): string {
-  if (v == null) return '';
-  if (typeof v === 'object') return v[lang] || v.ru || v.en || '';
-  if (typeof v !== 'string') return String(v);
-  const s = v.trim();
-  if (s.startsWith('{') && s.includes('"')) {
-    try {
-      const o = JSON.parse(s);
-      return o[lang] || o.ru || o.en || s;
-    } catch {
-      return v;
-    }
-  }
-  return v;
-}
 function specsLine(p: PropertyShowcase): string {
   const beds = p.rooms ? `${p.rooms} ${p.rooms === 1 ? 'спальня' : 'спальни'}` : 'студия';
   const area = p.area ?? p.size_sqm;

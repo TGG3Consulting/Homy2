@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useT } from '@/lib/i18n';
+import { useT, loc } from '@/lib/i18n';
 import { useTheme } from '@/components/homy/ThemeProvider';
 import HomyLogoMenu from '@/components/homy/HomyLogoMenu';
 import ViewingsTab from '@/components/homy/ViewingsTab';
@@ -10,14 +10,6 @@ import { BROKER_CSS } from '@/components/homy/brokerStyles';
 import { PROVINCES, getCities, YEREVAN_DISTRICTS, localizeGeo } from '@/lib/geo/armenia';
 
 function fmtPrice(p: any): string { const n = Number(p); return n ? Math.round(n).toLocaleString('ru-RU').replace(/,/g, ' ') : '—'; }
-function loc(v: any, lang: string): string {
-  if (v == null) return '';
-  if (typeof v === 'object') return v[lang] || v.ru || v.en || '';
-  if (typeof v !== 'string') return String(v);
-  const s = v.trim();
-  if (s.startsWith('{') && s.includes('"')) { try { const o = JSON.parse(s); return o[lang] || o.ru || o.en || s; } catch { return v; } }
-  return v;
-}
 const initials = (name: string) => (name || '?').trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 
 const TABS = [

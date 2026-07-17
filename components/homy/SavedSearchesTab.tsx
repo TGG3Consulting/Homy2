@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { useT } from '@/lib/i18n';
+import { useT, loc } from '@/lib/i18n';
 
 /** 1:1 A10 «Сохранённые поиски» styles from Homy-Batch2 mockup. Scoped under .homy-ssearch. */
 const SS_CSS = `
@@ -46,14 +46,6 @@ html.dark .homy-ssearch{--surface:#0E1218;--surface2:#171C25;--ink:#F2F4F7;--mut
 @media(max-width:640px){.homy-ssearch .srow{flex-wrap:wrap;gap:10px}.homy-ssearch .srow .q{flex:1 1 100%}}
 `;
 
-function loc(v: any, lang: string): string {
-  if (v == null) return '';
-  if (typeof v === 'object') return v[lang] || v.ru || v.en || '';
-  if (typeof v !== 'string') return String(v);
-  const s = v.trim();
-  if (s.startsWith('{') && s.includes('"')) { try { const o = JSON.parse(s); return o[lang] || o.ru || o.en || s; } catch { return v; } }
-  return v;
-}
 function matchWord(n: number): string {
   const a = n % 10, b = n % 100;
   if (a === 1 && b !== 11) return 'совпадение';

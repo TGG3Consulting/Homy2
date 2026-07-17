@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { useT } from '@/lib/i18n';
+import { useT, loc } from '@/lib/i18n';
 
 /** 1:1 A9 «Избранное» styles from Homy-Batch2 mockup. Scoped under .homy-fav. */
 const FAV_CSS = `
@@ -44,14 +44,6 @@ html.dark .homy-fav{--bg:#080A0E;--surface:#0E1218;--surface2:#171C25;--ink:#F2F
 const RING_C = 2 * Math.PI * 15;
 
 function fmtPrice(p: number): string { return p ? Math.round(p).toLocaleString('ru-RU').replace(/,/g, ' ') : '—'; }
-function loc(v: any, lang: string): string {
-  if (v == null) return '';
-  if (typeof v === 'object') return v[lang] || v.ru || v.en || '';
-  if (typeof v !== 'string') return String(v);
-  const s = v.trim();
-  if (s.startsWith('{') && s.includes('"')) { try { const o = JSON.parse(s); return o[lang] || o.ru || o.en || s; } catch { return v; } }
-  return v;
-}
 function objWord(n: number): string {
   const a = n % 10, b = n % 100;
   if (a === 1 && b !== 11) return 'объект';

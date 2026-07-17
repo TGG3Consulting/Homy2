@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ArrowLeft, ShieldCheck } from 'lucide-react';
-import { useT } from '@/lib/i18n';
+import { useT, loc } from '@/lib/i18n';
 import HomyLogoMenu from '@/components/homy/HomyLogoMenu';
 import SupportFab from '@/components/homy/SupportFab';
 import CardActions from '@/components/homy/CardActions';
@@ -17,16 +17,6 @@ const RING_C = 2 * Math.PI * 18; // r=18 → 113.1
 function fmtPrice(p: number): string {
   if (!p) return '—';
   return Math.round(p).toLocaleString('ru-RU').replace(/,/g, ' ');
-}
-function loc(v: any, lang: string): string {
-  if (v == null) return '';
-  if (typeof v === 'object') return v[lang] || v.ru || v.en || '';
-  if (typeof v !== 'string') return String(v);
-  const s = v.trim();
-  if (s.startsWith('{') && s.includes('"')) {
-    try { const o = JSON.parse(s); return o[lang] || o.ru || o.en || s; } catch { return v; }
-  }
-  return v;
 }
 function specsLine(p: PropertyShowcase): string {
   const rooms = p.rooms || p.bedrooms;

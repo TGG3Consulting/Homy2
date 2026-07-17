@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useT } from '@/lib/i18n';
+import { useT, loc } from '@/lib/i18n';
 import { useTheme } from '@/components/homy/ThemeProvider';
 import HomyLogoMenu from '@/components/homy/HomyLogoMenu';
 import SupportFab from '@/components/homy/SupportFab';
@@ -17,14 +17,6 @@ import { ChatPanel } from '@/components/Chat';
 const RING_C = 2 * Math.PI * 15; // r=15 → 94.2
 
 function fmtPrice(p: number): string { return p ? Math.round(p).toLocaleString('ru-RU').replace(/,/g, ' ') : '—'; }
-function loc(v: any, lang: string): string {
-  if (v == null) return '';
-  if (typeof v === 'object') return v[lang] || v.ru || v.en || '';
-  if (typeof v !== 'string') return String(v);
-  const s = v.trim();
-  if (s.startsWith('{') && s.includes('"')) { try { const o = JSON.parse(s); return o[lang] || o.ru || o.en || s; } catch { return v; } }
-  return v;
-}
 
 const TABS = [
   { id: 'overview', label: 'Обзор' },
