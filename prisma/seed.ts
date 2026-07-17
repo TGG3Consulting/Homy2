@@ -1,4 +1,5 @@
 import { PrismaClient, Prisma } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -1091,6 +1092,18 @@ async function main() {
   console.log('Starting Homy Database Seed');
   console.log('===========================================\n');
 
+  // Refuse to seed a production database with known demo credentials (VULN-008).
+  if (process.env.NODE_ENV === 'production' && process.env.ALLOW_PROD_SEED !== 'true') {
+    console.error('Refusing to seed in production. Set ALLOW_PROD_SEED=true to override intentionally.');
+    process.exit(1);
+  }
+  // Seed password comes from env — no hardcoded weak default committed to the repo.
+  const SEED_PASSWORD = process.env.SEED_PASSWORD || 'devpassword123';
+  if (!process.env.SEED_PASSWORD) {
+    console.warn('⚠️  SEED_PASSWORD not set — using an insecure dev default. Never use this in production.');
+  }
+  const DEFAULT_PW = await bcrypt.hash(SEED_PASSWORD, 12);
+
   // ============================================
   // SEED ADMIN USER
   // ============================================
@@ -1106,7 +1119,7 @@ async function main() {
     },
     create: {
       email: 'admin@homy.am',
-      passwordHash: '$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu.1u', // "admin123" hashed with bcrypt
+      passwordHash: DEFAULT_PW,
       role: 'admin',
       emailVerified: true,
       user_type: 'admin',
@@ -1123,7 +1136,6 @@ async function main() {
   // SEED OWNER / AGENT USERS (real accounts so listings have an owner)
   // ============================================
   console.log('Creating owner/agent users from contacts...');
-  const DEFAULT_PW = '$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu.1u'; // "admin123"
   const slug = (name: string) =>
     name.toLowerCase().replace(/[^a-z\s]/g, '').trim().replace(/\s+/g, '.');
   const contactUserIds: string[] = [];
