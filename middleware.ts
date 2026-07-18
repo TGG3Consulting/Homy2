@@ -37,9 +37,14 @@ export function middleware(request: NextRequest) {
   );
 
   // Content Security Policy (CSP)
+  // 'unsafe-eval' is only needed by Next.js in development (HMR/react-refresh);
+  // drop it in production to shrink the XSS surface (VULN-021).
+  const scriptSrc = process.env.NODE_ENV === 'production'
+    ? "script-src 'self' 'unsafe-inline'"
+    : "script-src 'self' 'unsafe-inline' 'unsafe-eval'";
   const cspDirectives = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Next.js requires unsafe-eval in dev
+    scriptSrc,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: blob: https:",
     "font-src 'self' data: https://fonts.gstatic.com",
