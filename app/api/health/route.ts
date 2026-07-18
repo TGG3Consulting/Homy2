@@ -8,7 +8,7 @@ export async function GET() {
     uptime: process.uptime(),
     checks: {
       database: 'unknown' as 'ok' | 'error' | 'unknown',
-      memory: process.memoryUsage(),
+      // memory metrics removed — don't expose internal process info publicly (VULN-034)
     }
   };
 
