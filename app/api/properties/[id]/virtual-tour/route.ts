@@ -3,21 +3,24 @@ import prisma from '@/lib/db/prisma';
 import { jwtService } from '@/lib/services/jwtService';
 import { getAccessTokenFromRequest } from '@/lib/cookies';
 
-// ---- auth helpers (owner or admin/moderator may author a property's tour) ----
-function authUserId(req: Request): string | null {
+// ---- auth helpers: owner or admin/moderator may author a tour, AND the session
+// must still be valid — token_version match + not blocked (VULN-004). ----
+function authSession(req: Request): { userId: string; tokenVersion: number } | null {
   const token = getAccessTokenFromRequest(req);
   if (!token) return null;
   const p = jwtService.verifyAccessToken(token);
-  return p?.userId || null;
+  if (!p?.userId) return null;
+  return { userId: p.userId, tokenVersion: p.tokenVersion ?? 0 };
 }
-async function canManage(userId: string | null, propertyId: string): Promise<boolean> {
-  if (!userId) return false;
+async function canManage(auth: { userId: string; tokenVersion: number } | null, propertyId: string): Promise<boolean> {
+  if (!auth) return false;
   const [prop, user] = await Promise.all([
     prisma.property.findUnique({ where: { id: propertyId }, select: { owner_id: true } }),
-    prisma.user.findUnique({ where: { id: userId }, select: { role: true } }),
+    prisma.user.findUnique({ where: { id: auth.userId }, select: { role: true, token_version: true, is_blocked: true } }),
   ]);
-  if (!prop) return false;
-  return prop.owner_id === userId || user?.role === 'admin' || user?.role === 'moderator';
+  if (!prop || !user) return false;
+  if (user.is_blocked || auth.tokenVersion !== user.token_version) return false; // revoked/blocked session
+  return prop.owner_id === auth.userId || user.role === 'admin' || user.role === 'moderator';
 }
 
 const roomDto = (room: any) => ({
@@ -41,7 +44,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     if (!property) return NextResponse.json({ error: 'Property not found' }, { status: 404 });
 
     if (manage) {
-      if (!(await canManage(authUserId(req), id))) {
+      if (!(await canManage(authSession(req), id))) {
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
       }
       return NextResponse.json({
@@ -68,7 +71,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    if (!(await canManage(authUserId(req), id))) {
+    if (!(await canManage(authSession(req), id))) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
     const b = await req.json().catch(() => ({} as any));
