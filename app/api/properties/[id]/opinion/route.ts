@@ -7,15 +7,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { propertyOpinion } from '@/lib/anthropicClient';
 import { propertyIntelligenceService } from '@/lib/services/propertyIntelligence';
+import { checkRateLimit, getClientIP, RATE_LIMITS, rateLimitResponse } from '@/lib/rateLimiter';
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Paid LLM endpoint — rate-limit per IP against denial-of-wallet (VULN-001).
+    const rl = checkRateLimit(`prop-opinion:${getClientIP(req)}`, RATE_LIMITS.ai);
+    if (!rl.success) return rateLimitResponse(rl);
+
     const { id } = await params;
     const body = await req.json().catch(() => ({}));
-    const conversationHistory = body.conversationHistory || '';
+    // Cap input length to bound token/cost abuse + prompt-injection surface (VULN-001).
+    const conversationHistory = String(body.conversationHistory || '').slice(0, 4000);
 
     // Get property from DB
     const property = await prisma.property.findUnique({ where: { id } });
