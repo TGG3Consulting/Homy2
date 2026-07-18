@@ -10,7 +10,10 @@ export async function POST(request: NextRequest) {
     if (!rl.success) return rateLimitResponse(rl);
 
     const body = await request.json();
-    const { message, systemContext, properties, searchContext } = body;
+    // Cap client-supplied free text (token/cost + prompt-injection bound) — VULN-025.
+    const message = String(body.message || '').slice(0, 4000);
+    const systemContext = String(body.systemContext || '').slice(0, 4000);
+    const { properties, searchContext } = body;
 
     if (!message) {
       return NextResponse.json(

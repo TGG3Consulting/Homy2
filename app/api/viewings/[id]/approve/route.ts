@@ -97,6 +97,25 @@ async function approveViewingHandler(req: AuthenticatedRequest) {
       );
     }
 
+    // Prevent double-booking the agent's calendar (VULN-012): the per-client dedupe
+    // at creation does NOT stop two different clients being confirmed into the same
+    // agent slot. Reject if this agent already has another confirmed viewing at this time.
+    const slotConflict = await prisma.viewing.findFirst({
+      where: {
+        id: { not: viewingId },
+        agentId: viewing.agent.id,
+        scheduledAt: viewing.scheduledAt,
+        status: 'confirmed',
+      },
+      select: { id: true },
+    });
+    if (slotConflict) {
+      return NextResponse.json(
+        { error: 'На это время у агента уже подтверждён другой просмотр' },
+        { status: 409 }
+      );
+    }
+
     // Update viewing status to confirmed
     const updatedViewing = await prisma.viewing.update({
       where: { id: viewingId },

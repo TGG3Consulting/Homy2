@@ -67,18 +67,20 @@ export function checkRateLimit(
  * Get client IP from request headers
  */
 export function getClientIP(request: Request): string {
-  // Check various headers for proxy/load balancer setups
+  // X-Real-IP is set by our nginx from the actual peer ($remote_addr) and is NOT
+  // client-controllable — prefer it (VULN-007).
+  const realIP = request.headers.get('x-real-ip');
+  if (realIP) return realIP.trim();
+
+  // X-Forwarded-For: a client can prepend arbitrary values on the LEFT; the trusted
+  // proxy appends the real peer on the RIGHT ($proxy_add_x_forwarded_for). Take the
+  // rightmost (last) entry, never the leftmost, so per-IP limits can't be reset by spoofing.
   const forwarded = request.headers.get('x-forwarded-for');
   if (forwarded) {
-    return forwarded.split(',')[0].trim();
+    const parts = forwarded.split(',').map((p) => p.trim()).filter(Boolean);
+    if (parts.length) return parts[parts.length - 1];
   }
 
-  const realIP = request.headers.get('x-real-ip');
-  if (realIP) {
-    return realIP;
-  }
-
-  // Fallback
   return 'unknown';
 }
 

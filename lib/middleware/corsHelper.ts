@@ -4,11 +4,11 @@ import { NextRequest, NextResponse } from 'next/server';
  * CORS Configuration
  */
 const corsConfig = {
+  // Localhost origins only outside production — never trust them in prod (VULN-032).
   allowedOrigins: [
-    process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-    'http://localhost:3000',
-    'http://localhost:3001',
-  ],
+    process.env.NEXT_PUBLIC_APP_URL,
+    ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:3000', 'http://localhost:3001'] : []),
+  ].filter(Boolean) as string[],
   allowedMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: [
     'Content-Type',

@@ -3,10 +3,17 @@ import { voiceSearchService } from '@/lib/services/voiceSearch';
 import { prisma } from '@/lib/db/prisma';
 import { matchScoreService } from '@/lib/services/matchScoreService';
 import { adaptPrismaProperty } from '@/lib/adapters/propertyAdapter';
+import { checkRateLimit, getClientIP, RATE_LIMITS, rateLimitResponse } from '@/lib/rateLimiter';
 
 export async function POST(req: NextRequest) {
+  // Public endpoint — throttle per IP (VULN-026).
+  const rl = checkRateLimit(`voice:${getClientIP(req)}`, RATE_LIMITS.api);
+  if (!rl.success) return rateLimitResponse(rl);
+
   const body = await req.json();
-  const { transcript, lang = 'en' } = body;
+  const lang = body.lang || 'en';
+  // Cap transcript length to bound parsing/DB work (VULN-026).
+  const transcript = typeof body.transcript === 'string' ? body.transcript.slice(0, 2000) : '';
 
   if (!transcript) {
     return NextResponse.json(

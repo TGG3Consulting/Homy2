@@ -84,9 +84,25 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
       return NextResponse.json({ error: 'Нельзя оставить отзыв самому себе' }, { status: 400 });
     }
 
-    const agent = await prisma.user.findUnique({ where: { id: agentId }, select: { id: true } });
+    const agent = await prisma.user.findUnique({ where: { id: agentId }, select: { id: true, user_type: true } });
     if (!agent) {
       return NextResponse.json({ error: 'Agent not found' }, { status: 404 });
+    }
+    // Reviews are for brokers only — cannot review a plain client account (VULN-010).
+    if (agent.user_type !== 'agent' && agent.user_type !== 'owner') {
+      return NextResponse.json({ error: 'Отзывы можно оставлять только брокерам' }, { status: 400 });
+    }
+    // Require a real interaction: reviewer must have had a viewing with this broker,
+    // so reputation can't be fabricated/review-bombed by throwaway accounts (CHAIN-003).
+    const interaction = await prisma.viewing.findFirst({
+      where: { clientId: req.user!.id, agentId },
+      select: { id: true },
+    });
+    if (!interaction) {
+      return NextResponse.json(
+        { error: 'Оставить отзыв можно только после просмотра с этим брокером' },
+        { status: 403 }
+      );
     }
 
     const existing = await prisma.review.findUnique({

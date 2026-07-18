@@ -61,11 +61,11 @@ export function middleware(request: NextRequest) {
   // ============================================
   if (pathname.startsWith('/api')) {
     const origin = request.headers.get('origin');
+    // Localhost origins only outside production (VULN-032).
     const allowedOrigins = [
-      process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-      'http://localhost:3000',
-      'http://localhost:3001',
-    ];
+      process.env.NEXT_PUBLIC_APP_URL,
+      ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:3000', 'http://localhost:3001'] : []),
+    ].filter(Boolean) as string[];
 
     if (origin && allowedOrigins.includes(origin)) {
       response.headers.set('Access-Control-Allow-Origin', origin);

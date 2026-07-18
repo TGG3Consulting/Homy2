@@ -18,18 +18,26 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      HTTPS_ENABLED: "true"
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
-      REDIS_URL: redis://redis:6379
-      NEXTAUTH_URL: ${NEXTAUTH_URL}
-      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      # Auth (required — app fails fast without both). NEXTAUTH_* dropped (unused; app has its own JWT).
       JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      # Cron (required in production or cron endpoints return 503)
+      CRON_SECRET: ${CRON_SECRET}
+      # AI
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      # Email — names MUST match what the code reads: SMTP_PASS / EMAIL_FROM (not SMTP_PASSWORD/SMTP_FROM)
       SMTP_HOST: ${SMTP_HOST}
       SMTP_PORT: ${SMTP_PORT}
       SMTP_USER: ${SMTP_USER}
-      SMTP_PASSWORD: ${SMTP_PASSWORD}
-      SMTP_FROM: ${SMTP_FROM}
+      SMTP_PASS: ${SMTP_PASS}
+      EMAIL_FROM: ${EMAIL_FROM}
     ports:
-      - "3000:3000"
+      # Loopback only — all public ingress must go through nginx (TLS + rate-limit
+      # zones + security headers). App is reachable internally via homy-network (VULN-015).
+      - "127.0.0.1:3000:3000"
     depends_on:
       postgres:
         condition: service_healthy

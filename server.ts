@@ -44,10 +44,15 @@ app.prepare().then(() => {
   // Socket.io for Live Chat
   // ============================================
 
+  // Explicit CORS allowlist — never '*' with credentials:true (VULN-008).
+  // Prod: only the configured app URL (fail closed if unset). Dev: localhost.
+  const socketOrigins: string[] | false = dev
+    ? ['http://localhost:3000', 'http://localhost:3001']
+    : (process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL] : false);
   const io = new SocketIOServer(server, {
     path: '/socket.io',
     cors: {
-      origin: dev ? '*' : process.env.NEXT_PUBLIC_APP_URL || '*',
+      origin: socketOrigins,
       methods: ['GET', 'POST'],
       credentials: true
     }
@@ -363,6 +368,22 @@ app.prepare().then(() => {
     const pathname = new URL(request.url || '', `http://${request.headers.host || 'localhost'}`).pathname;
 
     if (pathname === '/ws/chat') {
+      // Origin validation to block Cross-Site WebSocket Hijacking (VULN-006):
+      // browsers auto-send cookies on WS upgrades, so a cross-site page could open
+      // an authenticated socket. Reject any Origin that isn't our own site.
+      const reqOrigin = request.headers.origin;
+      if (reqOrigin) {
+        const host = request.headers.host || '';
+        const allowedWsOrigins = [
+          process.env.NEXT_PUBLIC_APP_URL,
+          `https://${host}`, `http://${host}`,          // same-origin (covers ngrok/prod host)
+          'http://localhost:3000', 'http://localhost:3001',
+        ].filter(Boolean) as string[];
+        if (!allowedWsOrigins.includes(reqOrigin)) {
+          socket.destroy();
+          return;
+        }
+      }
       // Best-effort auth: attach userId if a valid access-token cookie is present.
       const cookies = parseCookies(request.headers.cookie);
       const token = cookies['homy_access_token'];

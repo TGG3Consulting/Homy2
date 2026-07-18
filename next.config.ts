@@ -118,11 +118,8 @@ const nextConfig: NextConfig = {
 
   // Webpack configuration
   webpack: (config, { isServer }) => {
-    // Handle SVG imports
-    config.module.rules.push({
-      test: /\.svg$/,
-      use: ['@svgr/webpack'],
-    });
+    // (Removed unused @svgr/webpack SVG loader — no .svg module imports exist and the
+    // package was never installed, so the rule would break a clean build — VULN-020.)
 
     // Ignore specific modules on client side
     if (!isServer) {

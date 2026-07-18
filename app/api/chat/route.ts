@@ -107,8 +107,7 @@ export async function POST(request: NextRequest) {
     console.error('[API] Route error:', error);
     return new Response(
       JSON.stringify({
-        error: 'Internal server error',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Internal server error'
       }),
       {
         status: 500,
@@ -146,8 +145,7 @@ export async function DELETE(request: NextRequest) {
     console.error('[API] Cleanup error:', error);
     return new Response(
       JSON.stringify({
-        error: 'Internal server error',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Internal server error'
       }),
       {
         status: 500,

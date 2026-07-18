@@ -48,7 +48,8 @@ export const jwtService = {
 
   verifyAccessToken(token: string): TokenPayload | null {
     try {
-      return jwt.verify(token, getJwtSecret()) as TokenPayload;
+      // Pin the algorithm — reject any token whose header advertises a different alg (VULN-023).
+      return jwt.verify(token, getJwtSecret(), { algorithms: ['HS256'] }) as TokenPayload;
     } catch {
       return null;
     }
@@ -56,7 +57,7 @@ export const jwtService = {
 
   verifyRefreshToken(token: string): RefreshTokenPayload | null {
     try {
-      return jwt.verify(token, getJwtRefreshSecret()) as RefreshTokenPayload;
+      return jwt.verify(token, getJwtRefreshSecret(), { algorithms: ['HS256'] }) as RefreshTokenPayload;
     } catch {
       return null;
     }

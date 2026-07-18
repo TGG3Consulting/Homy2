@@ -123,10 +123,11 @@ async function createViewingHandler(req: AuthenticatedRequest) {
     let finalClientId: string;
     let isAgentCreating = false;
 
-    // Check if current user is the property owner/agent
-    if (currentUser.id === property.owner_id ||
-        currentUser.user_type === 'owner' ||
-        currentUser.user_type === 'agent') {
+    // Agent-side creation is allowed ONLY when the caller actually owns THIS property
+    // (VULN-011). A user with owner/agent persona who does not own the property is
+    // treated as a client requesting a viewing for themselves — otherwise any agent
+    // account could inject viewings/notifications for arbitrary clients on any listing.
+    if (currentUser.id === property.owner_id) {
       isAgentCreating = true;
 
       // Agent is creating the viewing, need client information
