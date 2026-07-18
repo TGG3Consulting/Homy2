@@ -19,11 +19,12 @@ export async function GET(
     const listing = await prisma.propertyListing.findUnique({
       where: { id },
       include: {
+        // Public endpoint — do NOT expose the owner's email/phone (VULN-033).
+        // Only the non-PII id; the listing's own `contact` field carries any
+        // contact info the owner chose to publish.
         owner: {
           select: {
             id: true,
-            email: true,
-            phone: true,
           },
         },
       },
