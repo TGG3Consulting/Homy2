@@ -44,6 +44,30 @@ async function handler(req: AuthenticatedRequest) {
     );
   }
 
+  // Validate PARSED numbers, not raw strings — "0"/"-5000" are truthy and would
+  // otherwise pass the check above and land a negative/zero price in the catalogue
+  // (VULN-002). Enforce positive values with sane upper bounds.
+  const priceNum = parseFloat(price);
+  const areaNum = parseFloat(area);
+  const roomsNum = parseInt(rooms, 10);
+  const floorNum = floor != null && floor !== '' ? parseInt(floor, 10) : null;
+  if (!Number.isFinite(priceNum) || priceNum <= 0 || priceNum > 100_000_000_000) {
+    return NextResponse.json({ error: 'Invalid price' }, { status: 400 });
+  }
+  if (!Number.isFinite(areaNum) || areaNum <= 0 || areaNum > 100_000) {
+    return NextResponse.json({ error: 'Invalid area' }, { status: 400 });
+  }
+  if (!Number.isInteger(roomsNum) || roomsNum < 0 || roomsNum > 100) {
+    return NextResponse.json({ error: 'Invalid rooms' }, { status: 400 });
+  }
+  if (floorNum != null && (!Number.isInteger(floorNum) || floorNum < -5 || floorNum > 300)) {
+    return NextResponse.json({ error: 'Invalid floor' }, { status: 400 });
+  }
+  // Bound free-text / arrays to prevent storage abuse (VULN-022 partial).
+  const descriptionVal = description != null ? String(description).slice(0, 5000) : null;
+  const titleVal = title != null ? String(title).slice(0, 200) : null;
+  const photosVal = Array.isArray(photos) ? photos.slice(0, 30) : (photos || null);
+
   // Default the contact to the submitter's own account.
   let contactValue = contact;
   if (!contactValue) {
@@ -56,12 +80,12 @@ async function handler(req: AuthenticatedRequest) {
       owner_id: userId,
       property_type,
       location: loc,
-      price: parseFloat(price),
+      price: priceNum,
       currency,
-      area: parseFloat(area),
-      rooms: parseInt(rooms),
-      description: description || null,
-      photos: photos || null,
+      area: areaNum,
+      rooms: roomsNum,
+      description: descriptionVal,
+      photos: photosVal,
       contact: contactValue,
       status: 'pending',
       deal_type: deal_type || null,
@@ -70,8 +94,8 @@ async function handler(req: AuthenticatedRequest) {
       district: district || null,
       neighborhood: neighborhood || district || null,
       address: address || null,
-      floor: floor != null ? parseInt(floor) : null,
-      title: title || null,
+      floor: floorNum,
+      title: titleVal,
       deposit_months: deposit_months != null && deposit_months !== '' ? parseInt(deposit_months) : null,
       utilities_estimate: utilities_estimate != null && utilities_estimate !== '' ? parseFloat(utilities_estimate) : null,
       minimum_lease_months: minimum_lease_months != null && minimum_lease_months !== '' ? parseInt(minimum_lease_months) : null,

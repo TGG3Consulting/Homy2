@@ -29,6 +29,19 @@ async function approveListing(
     const listing = await prisma.propertyListing.findUnique({ where: { id: listingId } });
     if (!listing) return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
 
+    // Re-validate numeric fields before publishing to the live catalogue — a listing
+    // created before validation existed (or via direct DB) must not reach Property with
+    // a negative/zero price/area (breaks CHAIN-001). Revert the claim if invalid.
+    const priceN = Number(listing.price);
+    const areaN = Number(listing.area);
+    if (!(priceN > 0) || !(areaN > 0) || (listing.rooms != null && listing.rooms < 0)) {
+      await prisma.propertyListing.update({
+        where: { id: listingId },
+        data: { status: 'rejected', moderated_at: new Date(), moderated_by: adminId, rejection_reason: 'Invalid price/area/rooms — failed validation on approve' },
+      });
+      return NextResponse.json({ error: 'Listing has invalid price/area/rooms; cannot publish' }, { status: 400 });
+    }
+
     // Build the live catalogue Property from the approved listing.
     const roomsLabel = listing.rooms ? `${listing.rooms}-комнатная` : (listing.property_type === 'studio' ? 'Студия' : 'Объект');
     const titleText = (listing.title && listing.title.trim()) || [roomsLabel, listing.district].filter(Boolean).join(' · ') || listing.location;
