@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { validateBody } from '@/lib/validations/validate';
+import { cancelViewingSchema } from '@/lib/validations/schemas/viewing';
 import { viewingInclude, formatViewing, ViewingWithRelations } from '../../types';
 
 /**
@@ -31,14 +33,17 @@ async function cancelViewingHandler(req: AuthenticatedRequest) {
       );
     }
 
-    // Parse optional reason from request body
-    let reason: string | undefined;
+    // Parse optional reason from request body through the zod gate (VULN-022).
+    // A missing/empty body is fine (FE cancels without a body) — treat as {}.
+    let rawBody: unknown = {};
     try {
-      const body = await req.json();
-      reason = body.reason;
+      rawBody = await req.json();
     } catch {
       // No body provided, which is fine since reason is optional
     }
+    const validation = validateBody(cancelViewingSchema, rawBody);
+    if (!validation.success) return validation.error;
+    const reason = validation.data.reason || undefined;
 
     // Find the viewing with all party information
     const viewingResult = await prisma.viewing.findUnique({

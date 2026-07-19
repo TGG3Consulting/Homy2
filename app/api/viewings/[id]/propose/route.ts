@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { validateBody } from '@/lib/validations/validate';
+import { proposeViewingSchema } from '@/lib/validations/schemas/viewing';
 import { viewingInclude, formatViewing, ViewingWithRelations } from '../../types';
 
 /**
@@ -33,32 +35,13 @@ async function proposeViewingHandler(req: AuthenticatedRequest) {
       );
     }
 
-    // Parse request body
-    const body = await req.json();
-    const { scheduledAt, comment } = body;
+    // Zod gate (VULN-022): ISO future date + capped comment, .strict()
+    // against junk keys — replaces the manual field checks.
+    const validation = validateBody(proposeViewingSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const { scheduledAt, comment } = validation.data;
 
-    if (!scheduledAt) {
-      return NextResponse.json(
-        { error: 'Scheduled date/time is required' },
-        { status: 400 }
-      );
-    }
-
-    // Parse and validate scheduled date
     const scheduledDate = new Date(scheduledAt);
-    if (isNaN(scheduledDate.getTime())) {
-      return NextResponse.json(
-        { error: 'Invalid date format' },
-        { status: 400 }
-      );
-    }
-
-    if (scheduledDate < new Date()) {
-      return NextResponse.json(
-        { error: 'Cannot schedule viewing in the past' },
-        { status: 400 }
-      );
-    }
 
     // Find the viewing with all party information
     const viewingResult = await prisma.viewing.findUnique({

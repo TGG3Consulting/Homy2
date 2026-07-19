@@ -4,6 +4,8 @@ import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware'
 import emailService from '@/lib/services/emailService';
 import { captureLead } from '@/lib/services/crmService';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rateLimiter';
+import { validateBody } from '@/lib/validations/validate';
+import { createViewingSchema } from '@/lib/validations/schemas/viewing';
 import { viewingInclude, formatViewing, ViewingWithRelations } from './types';
 
 /**
@@ -26,39 +28,13 @@ async function createViewingHandler(req: AuthenticatedRequest) {
   }
 
   try {
-    const body = await req.json();
-    const { propertyId, clientEmail, clientId, scheduledAt, message } = body;
+    // Zod gate (VULN-022): shape, id format, ISO future date, text caps,
+    // and .strict() against junk keys — replaces the manual field checks.
+    const validation = validateBody(createViewingSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const { propertyId, clientEmail, clientId, scheduledAt, message } = validation.data;
 
-    // Validate required fields
-    if (!propertyId) {
-      return NextResponse.json(
-        { error: 'Property ID is required' },
-        { status: 400 }
-      );
-    }
-
-    if (!scheduledAt) {
-      return NextResponse.json(
-        { error: 'Scheduled date/time is required' },
-        { status: 400 }
-      );
-    }
-
-    // Parse and validate scheduled date
     const scheduledDate = new Date(scheduledAt);
-    if (isNaN(scheduledDate.getTime())) {
-      return NextResponse.json(
-        { error: 'Invalid date format' },
-        { status: 400 }
-      );
-    }
-
-    if (scheduledDate < new Date()) {
-      return NextResponse.json(
-        { error: 'Cannot schedule viewing in the past' },
-        { status: 400 }
-      );
-    }
 
     // Get current user info
     const currentUser = await prisma.user.findUnique({
