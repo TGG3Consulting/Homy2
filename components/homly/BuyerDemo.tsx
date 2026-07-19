@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   Sparkles, MapPin, Star, Bed, Maximize2,
@@ -97,7 +98,7 @@ function MiniCard({ p, visible, best, counting, idx }: MiniCardProps) {
       }}
     >
       <div className="w-[110px] h-[82px] flex-shrink-0 overflow-hidden">
-        <img src={p.image} alt={p.title} className="w-full h-full object-cover" />
+        <Image src={p.image} alt={p.title} width={110} height={82} className="w-full h-full object-cover" />
       </div>
       <div className="flex-1 min-w-0 px-3 py-2">
         <div className="flex items-start justify-between gap-1">

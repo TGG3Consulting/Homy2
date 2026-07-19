@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { User, LogIn, LogOut, Settings, Heart, Calendar, ChevronDown } from 'lucide-react';
@@ -136,9 +137,11 @@ export default function UserAuthButton({ variant = 'light', className = '', comp
           style={{ backgroundColor: 'rgb(10, 96, 69)' }}
         >
           {user.avatar_url ? (
-            <img
+            <Image
               src={user.avatar_url}
               alt="Avatar"
+              width={28}
+              height={28}
               className="w-full h-full object-cover"
             />
           ) : (

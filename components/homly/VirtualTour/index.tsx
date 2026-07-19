@@ -329,13 +329,13 @@ export default function VirtualTour({ propertyId, onClose }: VirtualTourProps) {
     return () => ro.disconnect();
   }, []);
 
-  /* ── Load room when currentRoomId changes ── */
+  /* ── Load room when currentRoom changes ── */
   useEffect(() => {
     if (currentRoom) {
       createScene(currentRoom);
     }
     return () => destroyScene();
-  }, [currentRoomId]);
+  }, [currentRoom, createScene, destroyScene]);
 
   /* ── Init from tour ── */
   useEffect(() => {

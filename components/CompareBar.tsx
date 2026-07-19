@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { X, Scale, Trash2 } from 'lucide-react';
@@ -96,9 +97,11 @@ export default function CompareBar() {
                   >
                     <X size={12} className="text-white" />
                   </button>
-                  <img
+                  <Image
                     src={property.image_url}
                     alt={getLocalized(property.title, lang)}
+                    width={144}
+                    height={56}
                     className="w-full h-14 object-cover"
                   />
                   <div className="p-1.5">

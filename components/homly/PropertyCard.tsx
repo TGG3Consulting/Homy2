@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { createPortal } from "react-dom";
 import { Star, MapPin, Bed, Maximize2, ChevronUp, Heart, Scale, Calendar, MessageCircle, ShieldCheck, Car, Leaf } from "lucide-react";
 import { useT, getLocalized } from "@/lib/i18n";
@@ -69,11 +70,12 @@ export default function PropertyCard({ property, isSelected, onSelect, onViewDet
 
           {/* Image */}
           <div className="relative h-[200px] md:h-[260px] overflow-hidden">
-          <img
+          <Image
           src={property.image_url}
           alt={title}
-          className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-105"
-          loading="lazy"
+          fill
+          sizes="(max-width: 768px) 100vw, 400px"
+          className="object-cover transition-transform duration-600 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent pointer-events-none" />
 

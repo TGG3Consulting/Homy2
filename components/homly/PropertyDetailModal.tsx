@@ -88,6 +88,7 @@ export default function PropertyDetailModal({ property, onClose }: PropertyDetai
   const [hasExistingViewing, setHasExistingViewing] = useState(false);
   const { t, lang } = useT();
   const { openPropertyChat } = useChatWidget();
+  const propertyId = property?.id;
 
   // Handle opening chat with property owner
   const handleWriteToOwner = () => {
@@ -111,7 +112,7 @@ export default function PropertyDetailModal({ property, onClose }: PropertyDetai
 
   // Check if user already has a viewing for this property
   useEffect(() => {
-    if (!isLoggedIn || !property) {
+    if (!isLoggedIn || !propertyId) {
       setHasExistingViewing(false);
       return;
     }
@@ -124,7 +125,7 @@ export default function PropertyDetailModal({ property, onClose }: PropertyDetai
           const viewings = data.viewings || [];
           // Only block scheduling for active viewings (not completed/cancelled)
           const hasActiveViewing = viewings.some((v: any) =>
-            v.propertyId === property.id && v.status !== 'completed' && v.status !== 'cancelled'
+            v.propertyId === propertyId && v.status !== 'completed' && v.status !== 'cancelled'
           );
           setHasExistingViewing(hasActiveViewing);
         }
@@ -133,7 +134,7 @@ export default function PropertyDetailModal({ property, onClose }: PropertyDetai
       }
     };
     checkExistingViewing();
-  }, [isLoggedIn, property?.id]);
+  }, [isLoggedIn, propertyId]);
 
   // Localize property fields
   const title = property ? getLocalized(property.title, lang) : '';
@@ -143,13 +144,13 @@ export default function PropertyDetailModal({ property, onClose }: PropertyDetai
 
   // Fetch AI opinion when modal opens
   useEffect(() => {
-    if (!property) return;
+    if (!propertyId) return;
 
     const fetchOpinion = async () => {
       setOpinionLoading(true);
       try {
         const conversationHistory = getConversationHistory();
-        const res = await fetch(`/api/properties/${property.id}/opinion`, {
+        const res = await fetch(`/api/properties/${propertyId}/opinion`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ conversationHistory }),
@@ -166,7 +167,7 @@ export default function PropertyDetailModal({ property, onClose }: PropertyDetai
     };
 
     fetchOpinion();
-  }, [property?.id]);
+  }, [propertyId]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {

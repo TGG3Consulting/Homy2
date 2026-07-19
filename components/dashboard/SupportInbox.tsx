@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import Image from 'next/image';
 import {
   Headphones,
   Clock,
@@ -350,9 +351,11 @@ export default function SupportInbox() {
               <div className="flex items-start gap-4">
                 {/* Avatar */}
                 {conv.client.avatar_url ? (
-                  <img
+                  <Image
                     src={conv.client.avatar_url}
                     alt={conv.client.first_name}
+                    width={48}
+                    height={48}
                     className="w-12 h-12 rounded-full object-cover"
                   />
                 ) : (

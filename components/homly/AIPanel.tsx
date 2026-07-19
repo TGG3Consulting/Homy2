@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { ArrowRight, Sparkles, Phone, Loader2, MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
 import FilterChips from "./FilterChips";
@@ -158,7 +159,7 @@ export default function AIPanel({
         <div className="flex-shrink-0 px-5 py-3.5 border-t space-y-3" style={{ borderColor: "rgba(200, 196, 188, 0.3)" }}>
           <div className="flex items-center gap-4">
             <div className="w-[60px] h-[60px] rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
-              <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=face" alt="Anna Hakobyan" className="w-full h-full object-cover" />
+              <Image src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=face" alt="Anna Hakobyan" width={60} height={60} className="w-full h-full object-cover" />
             </div>
             <div className="flex-1 min-w-0 leading-tight">
               <p className="text-[17px] font-semibold font-body" style={{ color: "#1A1A1A" }}>{t("schedulePage.consultant.name")}</p>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { ChevronLeft, ChevronRight, Images, Rotate3D } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
@@ -36,10 +37,12 @@ export default function PropertyGallery({ mainImageUrl, images: providedImages, 
     <div className="space-y-3">
       {/* Main image */}
       <div className="relative rounded-2xl overflow-hidden aspect-[16/9] group" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.06)" }}>
-        <img
+        <Image
           src={images[activeIndex]}
           alt="Property"
-          className="w-full h-full object-cover transition-all duration-500"
+          fill
+          sizes="(max-width: 1024px) 100vw, 800px"
+          className="object-cover transition-all duration-500"
         />
         {/* Nav arrows */}
         <button
@@ -86,7 +89,7 @@ export default function PropertyGallery({ mainImageUrl, images: providedImages, 
               outlineOffset: "2px",
             }}
           >
-            <img src={img} alt="" className="w-full h-full object-cover" />
+            <Image src={img} alt="" width={80} height={56} className="w-full h-full object-cover" />
           </button>
         ))}
         {/* See all photos button */}

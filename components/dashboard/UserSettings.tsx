@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import Image from 'next/image';
 import {
   User,
   Mail,
@@ -720,9 +721,11 @@ export default function UserSettings() {
             style={{ backgroundColor: 'rgba(10, 96, 69, 0.1)' }}
           >
             {userData.avatar_url ? (
-              <img
+              <Image
                 src={userData.avatar_url}
                 alt="Avatar"
+                width={80}
+                height={80}
                 className="w-full h-full rounded-full object-cover"
               />
             ) : (

@@ -560,9 +560,11 @@ export default function ChatWidget() {
             }}
           >
             {conversation?.consultant?.avatar_url ? (
-              <img
+              <Image
                 src={conversation.consultant.avatar_url}
                 alt={consultantName || 'Consultant'}
+                width={40}
+                height={40}
                 className="w-full h-full object-cover rounded-xl"
               />
             ) : (
@@ -641,9 +643,11 @@ export default function ChatWidget() {
           }}
         >
           {conversation.property.imageUrl && (
-            <img
+            <Image
               src={conversation.property.imageUrl}
               alt={conversation.property.title || 'Property'}
+              width={40}
+              height={40}
               className="w-10 h-10 rounded-lg object-cover"
             />
           )}

@@ -137,9 +137,8 @@ export default function ViewingsTab() {
     finally { setBusy(null); }
   }, [fetchAll, showToast]);
 
-  const now = new Date();
-  const active = useMemo(() => viewings.filter((v) => new Date(v.scheduledAt) >= now && v.status !== 'completed' && v.status !== 'cancelled'), [viewings]);
-  const done = useMemo(() => viewings.filter((v) => new Date(v.scheduledAt) < now || v.status === 'completed' || v.status === 'cancelled'), [viewings]);
+  const active = useMemo(() => { const now = new Date(); return viewings.filter((v) => new Date(v.scheduledAt) >= now && v.status !== 'completed' && v.status !== 'cancelled'); }, [viewings]);
+  const done = useMemo(() => { const now = new Date(); return viewings.filter((v) => new Date(v.scheduledAt) < now || v.status === 'completed' || v.status === 'cancelled'); }, [viewings]);
   const list = tab === 'active' ? active : done;
 
   return (

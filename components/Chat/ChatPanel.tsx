@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import Image from 'next/image';
 import { ArrowLeft, MoreVertical, Phone, X, CheckCircle, AlertCircle } from 'lucide-react';
 import ConversationList, { ConversationPreview } from './ConversationList';
 import ChatThread from './ChatThread';
@@ -38,6 +39,60 @@ export default function ChatPanel({
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const initialConvSelectedRef = useRef(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Fetch conversations
+  const fetchConversations = useCallback(async () => {
+    try {
+      setIsLoadingList(true);
+      const typeParam = mode !== 'all' ? `?type=${mode}` : '';
+      const res = await fetch(`/api/chats${typeParam}`, {
+        credentials: 'include'
+      });
+
+      if (!res.ok) throw new Error('Failed to fetch conversations');
+
+      const data = await res.json();
+      setConversations(data.conversations || []);
+    } catch (err) {
+      console.error('Error fetching conversations:', err);
+      setError('Не удалось загрузить диалоги');
+    } finally {
+      setIsLoadingList(false);
+    }
+  }, [mode]);
+
+  // Fetch messages for a conversation
+  const fetchMessages = useCallback(async (conversationId: string) => {
+    try {
+      setIsLoadingMessages(true);
+      const res = await fetch(`/api/chats/${conversationId}`, {
+        credentials: 'include'
+      });
+
+      if (!res.ok) throw new Error('Failed to fetch messages');
+
+      const data = await res.json();
+      setMessages(data.messages || []);
+
+      // Mark as read
+      await fetch(`/api/chats/${conversationId}/read`, {
+        method: 'PATCH',
+        credentials: 'include'
+      });
+
+      // Update unread count in list
+      setConversations(prev =>
+        prev.map(c =>
+          c.id === conversationId ? { ...c, unreadCount: 0 } : c
+        )
+      );
+    } catch (err) {
+      console.error('Error fetching messages:', err);
+      setError('Не удалось загрузить сообщения');
+    } finally {
+      setIsLoadingMessages(false);
+    }
+  }, []);
 
   // Socket.io event subscriptions
   useEffect(() => {
@@ -150,7 +205,7 @@ export default function ChatPanel({
         clearTimeout(typingTimeoutRef.current);
       }
     };
-  }, [selectedConversation?.id, currentUserId]);
+  }, [selectedConversation?.id, currentUserId, fetchConversations]);
 
   // Fetch current user
   useEffect(() => {
@@ -183,75 +238,10 @@ export default function ChatPanel({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showMenu]);
 
-  // Fetch conversations
-  const fetchConversations = useCallback(async () => {
-    try {
-      setIsLoadingList(true);
-      const typeParam = mode !== 'all' ? `?type=${mode}` : '';
-      const res = await fetch(`/api/chats${typeParam}`, {
-        credentials: 'include'
-      });
-
-      if (!res.ok) throw new Error('Failed to fetch conversations');
-
-      const data = await res.json();
-      setConversations(data.conversations || []);
-    } catch (err) {
-      console.error('Error fetching conversations:', err);
-      setError('Не удалось загрузить диалоги');
-    } finally {
-      setIsLoadingList(false);
-    }
-  }, [mode]);
-
-  // Fetch messages for a conversation
-  const fetchMessages = useCallback(async (conversationId: string) => {
-    try {
-      setIsLoadingMessages(true);
-      const res = await fetch(`/api/chats/${conversationId}`, {
-        credentials: 'include'
-      });
-
-      if (!res.ok) throw new Error('Failed to fetch messages');
-
-      const data = await res.json();
-      setMessages(data.messages || []);
-
-      // Mark as read
-      await fetch(`/api/chats/${conversationId}/read`, {
-        method: 'PATCH',
-        credentials: 'include'
-      });
-
-      // Update unread count in list
-      setConversations(prev =>
-        prev.map(c =>
-          c.id === conversationId ? { ...c, unreadCount: 0 } : c
-        )
-      );
-    } catch (err) {
-      console.error('Error fetching messages:', err);
-      setError('Не удалось загрузить сообщения');
-    } finally {
-      setIsLoadingMessages(false);
-    }
-  }, []);
-
   // Fetch conversations on mount
   useEffect(() => {
     fetchConversations();
   }, [fetchConversations]);
-
-  // Handle initial conversation (with guard to prevent infinite loop)
-  useEffect(() => {
-    if (initialConversationId && conversations.length > 0 && !initialConvSelectedRef.current) {
-      const conv = conversations.find(c => c.id === initialConversationId);
-      if (conv) {
-        initialConvSelectedRef.current = true;
-        handleSelectConversation(conv);
-      }
-    }
-  }, [initialConversationId, conversations]);
 
   // Select conversation
   const handleSelectConversation = useCallback((conv: ConversationPreview) => {
@@ -272,6 +262,17 @@ export default function ChatPanel({
       socketClient.joinWhenReady(conv.id);
     }
   }, [fetchMessages, isConnected, selectedConversation]);
+
+  // Handle initial conversation (with guard to prevent infinite loop)
+  useEffect(() => {
+    if (initialConversationId && conversations.length > 0 && !initialConvSelectedRef.current) {
+      const conv = conversations.find(c => c.id === initialConversationId);
+      if (conv) {
+        initialConvSelectedRef.current = true;
+        handleSelectConversation(conv);
+      }
+    }
+  }, [initialConversationId, conversations, handleSelectConversation]);
 
   // Send message (Socket.io with REST fallback)
   const handleSendMessage = useCallback(async (content: string) => {
@@ -436,9 +437,11 @@ export default function ChatPanel({
 
               {/* Avatar */}
               {otherParty?.avatar_url ? (
-                <img
+                <Image
                   src={otherParty.avatar_url}
                   alt={otherPartyName}
+                  width={40}
+                  height={40}
                   className="w-10 h-10 rounded-full object-cover"
                 />
               ) : (

@@ -180,6 +180,7 @@ export default function PropertyDetailView({ propertyId, mode = 'page', onClose,
       .then((d) => { if (alive && d && (d.summary || (d.reasons && d.reasons.length))) setOpinion(d); })
       .catch(() => {}).finally(() => { if (alive) setOpinionLoading(false); });
     return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- намеренно: мнение AI запрашиваем один раз на объект; clientContext — снимок контекста поиска на момент открытия, его identity нестабильна и в deps вызывала бы повторные POST на каждый рендер родителя
   }, [propertyId]);
 
   // auth

@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useCallback, useEffect } from "react";
-import { X, ChevronLeft, ChevronRight, Image, Maximize2 } from "lucide-react";
+import Image from "next/image";
+import { X, ChevronLeft, ChevronRight, Image as ImageIcon, Maximize2 } from "lucide-react";
 
 const categories = [
   "All",
@@ -103,7 +104,7 @@ export default function PropertyPhotoGallery({ mainImageUrl, onClose }: Property
       {/* Header bar */}
       <div className="flex items-center justify-between px-5 py-3 flex-shrink-0 border-b" style={{ borderColor: "rgba(0,0,0,0.05)" }}>
         <div className="flex items-center gap-3">
-          <Image size={16} style={{ color: "#7B61FF" }} />
+          <ImageIcon size={16} style={{ color: "#7B61FF" }} />
           <span className="text-[13px] font-body font-semibold" style={{ color: "#242424" }}>
             See all photos
           </span>
@@ -133,10 +134,12 @@ export default function PropertyPhotoGallery({ mainImageUrl, onClose }: Property
       {/* Main viewer */}
       <div className="relative flex-shrink-0" style={{ height: isFullscreen ? "55%" : "380px", backgroundColor: "rgba(0,0,0,0.02)" }}>
         {currentPhoto && (
-          <img
+          <Image
             src={currentPhoto.url}
             alt={currentPhoto.category}
-            className="w-full h-full object-contain"
+            fill
+            sizes="(max-width: 1100px) 100vw, 1100px"
+            className="object-contain"
           />
         )}
         {/* Category badge */}
@@ -206,7 +209,7 @@ export default function PropertyPhotoGallery({ mainImageUrl, onClose }: Property
                 opacity: i === activeIndex ? 1 : 0.7,
               }}
             >
-              <img src={photo.url} alt={photo.category} className="w-full h-full object-cover" />
+              <Image src={photo.url} alt={photo.category} fill sizes="(max-width: 640px) 33vw, 260px" className="object-cover" />
               <div
                 className="absolute inset-0 transition-opacity duration-200 pointer-events-none"
                 style={{ opacity: i === activeIndex ? 0 : 0, backgroundColor: "rgba(123,97,255,0.06)" }}

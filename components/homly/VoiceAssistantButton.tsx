@@ -13,6 +13,9 @@ const LANG_MAP: Record<string, string> = {
 
 const violet = "#7B61FF";
 
+/* ── State machine constants (module scope — stable identity, not needed in hook deps) ── */
+const STATE = { IDLE: "idle", LISTENING: "listening", PROCESSING: "processing", SPEAKING: "speaking" } as const;
+
 /* ── TypeScript Interfaces ── */
 interface VoiceSearchCriteria {
   [key: string]: unknown;
@@ -118,7 +121,6 @@ export default function VoiceAssistantButton({
   const { t } = useT();
 
   /* ── State machine ── */
-  const STATE = { IDLE: "idle", LISTENING: "listening", PROCESSING: "processing", SPEAKING: "speaking" } as const;
   const [state, setState] = useState<VoiceState>(STATE.IDLE);
   const [error, setError] = useState<VoiceError>(null);
   const [liveTranscript, setLiveTranscript] = useState("");
@@ -147,29 +149,6 @@ export default function VoiceAssistantButton({
       console.error('Voice search API error:', err);
     }
   }, [enableVoiceSearch, onVoiceSearchResult, lang]);
-
-  /* ── Cleanup on unmount ── */
-  useEffect(() => {
-    return () => {
-      stopRecognition();
-      stopSpeaking();
-    };
-  }, []);
-
-  /* ── Speak AI response ── */
-  useEffect(() => {
-    if (speakText && stateRef.current === STATE.PROCESSING) {
-      speak(speakText);
-    }
-  }, [speakText]);
-
-  /* ── Keyboard: Enter / Space to toggle mic ── */
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      handleClick();
-    }
-  }, [state]);
 
   /* ── Speech Recognition ── */
   const startRecognition = useCallback(() => {
@@ -325,6 +304,30 @@ export default function VoiceAssistantButton({
       setState(STATE.IDLE);
     }
   }, [state, startRecognition, stopRecognition, stopSpeaking, onInterrupt]);
+
+  /* ── Keyboard: Enter / Space to toggle mic ── */
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleClick();
+    }
+  }, [handleClick]);
+
+  /* ── Cleanup on unmount ── */
+  useEffect(() => {
+    return () => {
+      stopRecognition();
+      stopSpeaking();
+    };
+  }, [stopRecognition, stopSpeaking]);
+
+  /* ── Speak AI response ── */
+  useEffect(() => {
+    if (speakText && stateRef.current === STATE.PROCESSING) {
+      speak(speakText);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- намеренно: озвучка запускается только при появлении нового speakText; `speak` нестабилен (родители передают inline onClearSpeakText) и в deps перезапускал бы речь на каждом рендере родителя
+  }, [speakText]);
 
   /* ── Dismiss error ── */
   const dismissError = () => setError(null);

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { X, MapPin, Bed, Maximize2, DollarSign } from 'lucide-react';
 import { useCompare } from '@/lib/contexts/CompareContext';
 import { PropertyShowcase } from '@/lib/types';
@@ -135,11 +136,12 @@ export default function ComparePropertyCards({ onPropertiesLoaded }: CompareProp
 
             {/* Image */}
             <div className="relative aspect-[16/10] overflow-hidden">
-              <img
+              <Image
                 src={property.image_url || '/placeholder.jpg'}
                 alt={title}
-                className="w-full h-full object-cover"
-                loading="lazy"
+                fill
+                sizes="288px"
+                className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
 

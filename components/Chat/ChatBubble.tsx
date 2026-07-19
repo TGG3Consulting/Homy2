@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { Check, CheckCheck } from 'lucide-react';
 
 export interface ChatMessage {
@@ -48,9 +49,11 @@ export default function ChatBubble({
       {showAvatar && (
         <div className="flex-shrink-0">
           {message.senderAvatar ? (
-            <img
+            <Image
               src={message.senderAvatar}
               alt={message.senderName}
+              width={32}
+              height={32}
               className="w-8 h-8 rounded-full object-cover"
             />
           ) : (

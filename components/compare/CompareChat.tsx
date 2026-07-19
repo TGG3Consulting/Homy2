@@ -79,17 +79,8 @@ export default function CompareChat({ properties, onCompareResult, onCompareStar
     return prompt;
   }, [properties]);
 
-  // Auto-compare on load when properties are available
-  useEffect(() => {
-    if (properties.length >= 2 && !hasAutoCompared && !isLoading) {
-      setHasAutoCompared(true);
-      const prompt = buildComparePrompt();
-      sendCompareRequest(prompt, true);
-    }
-  }, [properties, hasAutoCompared, isLoading, buildComparePrompt]);
-
   // Send compare request
-  const sendCompareRequest = async (prompt: string, isAutoCompare: boolean = false) => {
+  const sendCompareRequest = useCallback(async (prompt: string, isAutoCompare: boolean = false) => {
     if (isLoading) return;
 
     setIsLoading(true);
@@ -169,7 +160,16 @@ export default function CompareChat({ properties, onCompareResult, onCompareStar
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [isLoading, properties, onCompareStart, onCompareResult]);
+
+  // Auto-compare on load when properties are available
+  useEffect(() => {
+    if (properties.length >= 2 && !hasAutoCompared && !isLoading) {
+      setHasAutoCompared(true);
+      const prompt = buildComparePrompt();
+      sendCompareRequest(prompt, true);
+    }
+  }, [properties, hasAutoCompared, isLoading, buildComparePrompt, sendCompareRequest]);
 
   // Handle send
   const handleSend = () => {

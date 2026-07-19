@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import {
   CheckCircle,
   XCircle,
@@ -260,12 +261,14 @@ export default function ModerationPage() {
             <div key={listing.id} className="rounded-xl p-6" style={glassStyle}>
               <div className="flex flex-wrap gap-6">
                 {/* Image */}
-                <div className="w-48 h-32 rounded-lg bg-white/10 overflow-hidden flex-shrink-0">
+                <div className="relative w-48 h-32 rounded-lg bg-white/10 overflow-hidden flex-shrink-0">
                   {listing.photos && listing.photos.length > 0 ? (
-                    <img
+                    <Image
                       src={listing.photos[0]}
                       alt={listing.property_type}
-                      className="w-full h-full object-cover"
+                      fill
+                      sizes="192px"
+                      className="object-cover"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">

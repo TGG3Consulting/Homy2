@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Sparkles, MessageCircle, Scale, Calendar, Phone, Loader2 } from "lucide-react";
 import { useT } from "@/lib/i18n";
@@ -172,7 +173,7 @@ export default function PropertyAIChat({ property }: PropertyAIChatProps) {
       <div className="py-2.5 border-t space-y-2.5" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
         <div className="flex items-center gap-2.5">
           <div className="w-[42px] h-[42px] rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
-            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=face" alt="Anna Hakobyan" className="w-full h-full object-cover" />
+            <Image src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=face" alt="Anna Hakobyan" width={42} height={42} className="w-full h-full object-cover" />
           </div>
           <div className="flex-1 min-w-0 leading-tight">
             <p className="text-[13px] font-semibold font-body" style={{ color: textMain }}>{t("aiChat.consultantName")}</p>
