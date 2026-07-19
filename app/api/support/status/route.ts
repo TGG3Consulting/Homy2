@@ -6,6 +6,8 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { validateBody } from '@/lib/validations/validate';
+import { supportStatusSchema } from '@/lib/validations/schemas/chat';
 
 // ============================================
 // POST - Update online status
@@ -31,15 +33,10 @@ async function postHandler(req: AuthenticatedRequest) {
       );
     }
 
-    const body = await req.json();
-    const { is_online } = body;
-
-    if (typeof is_online !== 'boolean') {
-      return NextResponse.json(
-        { error: 'is_online must be a boolean' },
-        { status: 400 }
-      );
-    }
+    // Schema validation (VULN-022): strict { is_online: boolean } only.
+    const validation = validateBody(supportStatusSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const { is_online } = validation.data;
 
     // Update status
     const updated = await prisma.user.update({

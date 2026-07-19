@@ -7,6 +7,8 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rateLimiter';
+import { validateBody } from '@/lib/validations/validate';
+import { sendChatMessageSchema } from '@/lib/validations/schemas/chat';
 
 /**
  * Extract conversation ID from URL
@@ -40,22 +42,10 @@ async function postHandler(req: AuthenticatedRequest) {
       return NextResponse.json({ error: 'Conversation ID required' }, { status: 400 });
     }
 
-    const body = await req.json();
-    const { content } = body;
-
-    if (!content || typeof content !== 'string' || content.trim().length === 0) {
-      return NextResponse.json(
-        { error: 'Message content is required' },
-        { status: 400 }
-      );
-    }
-
-    if (content.length > 5000) {
-      return NextResponse.json(
-        { error: 'Message too long. Maximum 5000 characters.' },
-        { status: 400 }
-      );
-    }
+    // Schema validation (VULN-022): strict shape, non-empty content, cap 5000.
+    const validation = validateBody(sendChatMessageSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const { content } = validation.data; // trimmed by schema
 
     // Get conversation
     const conversation = await prisma.conversation.findUnique({

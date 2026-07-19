@@ -6,6 +6,8 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { validateBody } from '@/lib/validations/validate';
+import { updateConversationSchema } from '@/lib/validations/schemas/chat';
 
 /**
  * Extract conversation ID from URL
@@ -168,17 +170,10 @@ async function patchHandler(req: AuthenticatedRequest) {
       return NextResponse.json({ error: 'Conversation ID required' }, { status: 400 });
     }
 
-    const body = await req.json();
-    const { status } = body;
-
-    // Validate status
-    const validStatuses = ['open', 'assigned', 'resolved', 'closed'];
-    if (!status || !validStatuses.includes(status)) {
-      return NextResponse.json(
-        { error: 'Invalid status. Must be: open, assigned, resolved, or closed' },
-        { status: 400 }
-      );
-    }
+    // Schema validation (VULN-022): strict shape, status whitelist.
+    const validation = validateBody(updateConversationSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const { status } = validation.data;
 
     const conversation = await prisma.conversation.findUnique({
       where: { id }

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { validateBody } from '@/lib/validations/validate';
+import { createAgentReviewSchema } from '@/lib/validations/schemas/chat';
 
 /**
  * Reviews target the BROKER (agent), not the property.
@@ -67,17 +69,11 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
     const reviewsIndex = pathParts.indexOf('reviews');
     const agentId = pathParts[reviewsIndex - 1];
 
-    const body = await req.json();
-
-    const rating = parseInt(body.rating);
-    if (isNaN(rating) || rating < 1 || rating > 5) {
-      return NextResponse.json({ error: 'Rating must be between 1 and 5' }, { status: 400 });
-    }
-
-    const comment = body.comment?.trim() || null;
-    if (comment && comment.length > 2000) {
-      return NextResponse.json({ error: 'Comment too long (max 2000 characters)' }, { status: 400 });
-    }
+    // Schema validation (VULN-022): strict shape, rating int 1..5, comment cap 2000.
+    const validation = validateBody(createAgentReviewSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const { rating } = validation.data;
+    const comment = validation.data.comment || null; // trimmed by schema; '' → null
 
     // Cannot review yourself.
     if (agentId === req.user!.id) {

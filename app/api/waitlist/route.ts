@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { checkRateLimit, getClientIP, RATE_LIMITS } from '@/lib/rateLimiter';
+import { validateBody } from '@/lib/validations/validate';
+import { waitlistSchema } from '@/lib/validations/schemas/chat';
 
 /**
  * POST /api/waitlist  { email }
@@ -14,11 +16,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Too many requests', success: false }, { status: 429 });
     }
 
-    const { email } = await req.json();
-    const v = typeof email === 'string' ? email.trim().toLowerCase() : '';
-    if (!/.+@.+\..+/.test(v)) {
-      return NextResponse.json({ error: 'Invalid email', success: false }, { status: 400 });
-    }
+    // Schema validation (VULN-022): strict { email } via shared emailSchema (lowercased).
+    const validation = validateBody(waitlistSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const v = validation.data.email;
     await prisma.waitlistEntry.upsert({
       where: { email: v },
       update: {},

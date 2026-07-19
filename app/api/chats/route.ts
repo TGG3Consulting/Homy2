@@ -6,6 +6,8 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { validateBody } from '@/lib/validations/validate';
+import { createConversationSchema } from '@/lib/validations/schemas/chat';
 
 // ============================================
 // POST - Create conversation
@@ -18,16 +20,10 @@ async function postHandler(req: AuthenticatedRequest) {
   }
 
   try {
-    const body = await req.json();
-    const { type, property_id, subject } = body;
-
-    // Validate type
-    if (!type || !['property', 'support'].includes(type)) {
-      return NextResponse.json(
-        { error: 'Invalid conversation type. Must be "property" or "support"' },
-        { status: 400 }
-      );
-    }
+    // Schema validation (VULN-022): strict shape, type whitelist, UUID property_id.
+    const validation = validateBody(createConversationSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const { type, property_id, subject } = validation.data;
 
     let consultantId: string | null = null;
 

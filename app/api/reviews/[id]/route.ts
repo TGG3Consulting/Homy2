@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { validateBody } from '@/lib/validations/validate';
+import { updateReviewSchema } from '@/lib/validations/schemas/chat';
 
 // PATCH /api/reviews/[id] - Update own review
 export const PATCH = withAuth(async (req: AuthenticatedRequest) => {
@@ -27,31 +29,15 @@ export const PATCH = withAuth(async (req: AuthenticatedRequest) => {
       );
     }
 
-    const body = await req.json();
+    // Schema validation (VULN-022): strict shape, rating int 1..5, comment cap 2000.
+    const validation = validateBody(updateReviewSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const body = validation.data;
 
-    // Validate rating if provided
-    let rating = review.rating;
-    if (body.rating !== undefined) {
-      rating = parseInt(body.rating);
-      if (isNaN(rating) || rating < 1 || rating > 5) {
-        return NextResponse.json(
-          { error: 'Rating must be between 1 and 5' },
-          { status: 400 }
-        );
-      }
-    }
-
-    // Validate comment if provided
-    let comment = review.comment;
-    if (body.comment !== undefined) {
-      comment = body.comment?.trim() || null;
-      if (comment && comment.length > 2000) {
-        return NextResponse.json(
-          { error: 'Comment too long (max 2000 characters)' },
-          { status: 400 }
-        );
-      }
-    }
+    // Absent field keeps the stored value; empty/null comment clears it.
+    const rating = body.rating !== undefined ? body.rating : review.rating;
+    const comment =
+      body.comment !== undefined ? (body.comment || null) : review.comment;
 
     // Update the review
     const updatedReview = await prisma.review.update({
