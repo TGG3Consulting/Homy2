@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { jwtService } from '@/lib/services/jwtService';
 import { getAccessTokenFromRequest } from '@/lib/cookies';
+import { createTourRoomSchema } from '@/lib/validations/schemas/tour';
+import { validateBody } from '@/lib/validations/validate';
 
 // ---- auth helpers: owner or admin/moderator may author a tour, AND the session
 // must still be valid — token_version match + not blocked (VULN-004). ----
@@ -74,12 +76,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (!(await canManage(authSession(req), id))) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
-    const b = await req.json().catch(() => ({} as any));
+    // Schema validation (VULN-022): capped names, panorama path shape,
+    // hotspot shape, unknown keys rejected.
+    const validation = validateBody(createTourRoomSchema, await req.json().catch(() => ({})));
+    if (!validation.success) return validation.error;
+    const b = validation.data;
     const name_ru = (b.name_ru || b.name || '').trim();
-    if (!name_ru) return NextResponse.json({ error: 'Название комнаты обязательно' }, { status: 400 });
-    if (!b.panorama_url || !String(b.panorama_url).trim()) {
-      return NextResponse.json({ error: 'URL панорамы обязателен' }, { status: 400 });
-    }
 
     const last = await prisma.virtualTourRoom.findFirst({
       where: { property_id: id },
@@ -93,8 +95,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         name_ru,
         name_en: (b.name_en || name_ru).trim(),
         name_hy: (b.name_hy || name_ru).trim(),
-        panorama_url: String(b.panorama_url).trim(),
-        hotspots: Array.isArray(b.hotspots) ? b.hotspots : [],
+        panorama_url: b.panorama_url,
+        hotspots: b.hotspots ?? [],
         order_index: (last?.order_index ?? -1) + 1,
       },
     });

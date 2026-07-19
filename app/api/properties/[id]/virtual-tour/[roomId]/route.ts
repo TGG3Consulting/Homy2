@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { jwtService } from '@/lib/services/jwtService';
 import { getAccessTokenFromRequest } from '@/lib/cookies';
+import { updateTourRoomSchema } from '@/lib/validations/schemas/tour';
+import { validateBody } from '@/lib/validations/validate';
 
 // Session must still be valid: token_version match + not blocked (VULN-004).
 function authSession(req: Request): { userId: string; tokenVersion: number } | null {
@@ -34,22 +36,23 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       return NextResponse.json({ error: 'Room not found' }, { status: 404 });
     }
 
-    const b = await req.json().catch(() => ({} as any));
+    // Schema validation (VULN-022): shapes/caps enforced; x/y still clamped.
+    const validation = validateBody(updateTourRoomSchema, await req.json().catch(() => ({})));
+    if (!validation.success) return validation.error;
+    const b = validation.data;
     const data: Record<string, unknown> = {};
-    if (typeof b.name_ru === 'string') data.name_ru = b.name_ru.trim();
-    if (typeof b.name_en === 'string') data.name_en = b.name_en.trim();
-    if (typeof b.name_hy === 'string') data.name_hy = b.name_hy.trim();
-    if (typeof b.panorama_url === 'string') data.panorama_url = b.panorama_url.trim();
-    if (b.order_index !== undefined) data.order_index = Number(b.order_index);
-    if (Array.isArray(b.hotspots)) {
-      // Sanitize hotspots: { target_room_id, x, y } with x/y in 0..1.
-      data.hotspots = b.hotspots
-        .filter((h: any) => h && h.target_room_id)
-        .map((h: any) => ({
-          target_room_id: String(h.target_room_id),
-          x: Math.max(0, Math.min(1, Number(h.x) || 0)),
-          y: Math.max(0, Math.min(1, Number(h.y) || 0)),
-        }));
+    if (b.name_ru !== undefined) data.name_ru = b.name_ru;
+    if (b.name_en !== undefined) data.name_en = b.name_en;
+    if (b.name_hy !== undefined) data.name_hy = b.name_hy;
+    if (b.panorama_url !== undefined) data.panorama_url = b.panorama_url;
+    if (b.order_index !== undefined) data.order_index = b.order_index;
+    if (b.hotspots !== undefined) {
+      // Clamp hotspot coordinates into 0..1 (schema validated the shape).
+      data.hotspots = b.hotspots.map((h) => ({
+        target_room_id: h.target_room_id,
+        x: Math.max(0, Math.min(1, h.x || 0)),
+        y: Math.max(0, Math.min(1, h.y || 0)),
+      }));
     }
 
     const updated = await prisma.virtualTourRoom.update({ where: { id: roomId }, data });
