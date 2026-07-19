@@ -188,6 +188,9 @@ function DashboardContent() {
         id: user.id || '',
         email: user.email || '',
         user_type: (user.user_type || 'buyer') as UserType,
+        // role is the AUTHORIZATION axis — without it admins/moderators never
+        // redirect to /admin and fall through to an empty buyer shell.
+        role: user.role as ('user' | 'moderator' | 'admin' | undefined),
         language_preference: user.language_preference,
       };
     } catch (err) {
