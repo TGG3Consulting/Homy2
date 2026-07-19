@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 const CS_CSS = `
@@ -48,7 +49,7 @@ export default function ComingSoonPage() {
   return (
     <div className="homy-cs">
       <style dangerouslySetInnerHTML={{ __html: CS_CSS }} />
-      <div className="cnav"><a href="/" className="lg">Ho<span className="m">m</span>y</a></div>
+      <div className="cnav"><Link href="/" className="lg">Ho<span className="m">m</span>y</Link></div>
       <div className="estate">
         <div className="big"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8v4l3 2" /><circle cx="12" cy="12" r="9" /></svg></div>
         <h1>Скоро запуск</h1>

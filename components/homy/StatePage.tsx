@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 /** 1:1 F5–F7 centered "state" pages (404 / error / coming-soon) from Homy-Batch7. */
 const STATE_CSS = `
@@ -72,7 +73,7 @@ export default function StatePage({
     <div className="homy-state">
       <style dangerouslySetInnerHTML={{ __html: STATE_CSS }} />
       <div className="cnav">
-        <a href="/" className="lg">Ho<span className="m">m</span>y</a>
+        <Link href="/" className="lg">Ho<span className="m">m</span>y</Link>
         <div className="links">
           <a href="/how-it-works">Как это работает</a>
           <a href="/for-buyers">Для кого</a>
@@ -91,7 +92,7 @@ export default function StatePage({
             <a href="/about">О нас</a>
             <div className="cmenu-sep" />
             <a href="/login" className="acc">Войти</a>
-            <a href="/">Главная</a>
+            <Link href="/">Главная</Link>
           </div>
         </div>
         <div className="right"><a href="/login" className="em3d" style={{ textDecoration: 'none', padding: '8px 16px' }}>Войти</a></div>

@@ -204,7 +204,6 @@ function ResultsInner() {
       } catch { if (alive) setIsLoading(false); }
     })();
     return () => { alive = false; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [savedId]);
 
   // ---- restore from sessionStorage (fast back-nav) ----
@@ -425,7 +424,6 @@ function ResultsInner() {
     socket.onclose = () => setWsConnected(false);
     setWs(socket);
     return () => socket.close();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, handlePropertiesUpdate]);
 
   // ---- fallback fetch if WS unavailable ----

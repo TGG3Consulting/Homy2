@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 /**
@@ -181,7 +182,7 @@ export default function HomyHero() {
       <div className="grad" />
 
       <div className="nav">
-        <a href="/" className="brand">Ho<span className="m">m</span>y</a>
+        <Link href="/" className="brand">Ho<span className="m">m</span>y</Link>
         <a href="/results">Купить</a>
         <a href="/results">Снять</a>
         <a href="/for-owners">Владельцам</a>
