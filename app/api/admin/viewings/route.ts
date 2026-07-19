@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withModerator, AdminAuthenticatedRequest } from '@/lib/middleware/adminMiddleware';
 import prisma from '@/lib/db/prisma';
+import { validateBody } from '@/lib/validations/validate';
+import { adminViewingActionSchema } from '@/lib/validations/schemas/admin';
 
 /**
  * Admin overview of viewings (client-requested; agent confirms).
@@ -41,11 +43,10 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   return withModerator(async (r: AdminAuthenticatedRequest) => {
-    const body = await r.json().catch(() => ({} as any));
-    const { viewing_id, action } = body;
-    if (!viewing_id || !['complete', 'cancel'].includes(action)) {
-      return NextResponse.json({ error: 'viewing_id и action (complete|cancel) обязательны' }, { status: 400 });
-    }
+    // Schema validation (VULN-022): viewing_id UUID + action enum.
+    const validation = validateBody(adminViewingActionSchema, await r.json().catch(() => null));
+    if (!validation.success) return validation.error;
+    const { viewing_id, action } = validation.data;
 
     const viewing = await prisma.viewing.findUnique({ where: { id: viewing_id }, select: { id: true, status: true } });
     if (!viewing) {

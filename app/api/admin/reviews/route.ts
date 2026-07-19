@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withModerator, AdminAuthenticatedRequest } from '@/lib/middleware/adminMiddleware';
 import prisma from '@/lib/db/prisma';
+import { validateBody } from '@/lib/validations/validate';
+import { adminDeleteReviewSchema } from '@/lib/validations/schemas/admin';
 
 /**
  * Admin moderation of BROKER reviews (reviews target agents, not properties).
@@ -49,11 +51,10 @@ export async function GET(req: NextRequest) {
 // DELETE /api/admin/reviews  { review_id }
 export async function DELETE(req: NextRequest) {
   return withModerator(async (r: AdminAuthenticatedRequest) => {
-    const body = await r.json().catch(() => ({} as any));
-    const reviewId = body.review_id;
-    if (!reviewId) {
-      return NextResponse.json({ error: 'review_id is required' }, { status: 400 });
-    }
+    // Schema validation (VULN-022): review_id must be a UUID.
+    const validation = validateBody(adminDeleteReviewSchema, await r.json().catch(() => null));
+    if (!validation.success) return validation.error;
+    const reviewId = validation.data.review_id;
 
     const review = await prisma.review.findUnique({ where: { id: reviewId } });
     if (!review) {

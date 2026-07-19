@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withModerator, AdminAuthenticatedRequest } from '@/lib/middleware/adminMiddleware';
 import prisma from '@/lib/db/prisma';
+import { validateBody } from '@/lib/validations/validate';
+import { adminAssignSupportSchema } from '@/lib/validations/schemas/admin';
 
 /**
  * Admin support desk: overview of support conversations + consultant load/online.
@@ -52,11 +54,10 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   return withModerator(async (r: AdminAuthenticatedRequest) => {
-    const body = await r.json().catch(() => ({} as any));
-    const { conversation_id, consultant_id } = body;
-    if (!conversation_id) {
-      return NextResponse.json({ error: 'conversation_id обязателен' }, { status: 400 });
-    }
+    // Schema validation (VULN-022): UUIDs; consultant_id may be null (unassign).
+    const validation = validateBody(adminAssignSupportSchema, await r.json().catch(() => null));
+    if (!validation.success) return validation.error;
+    const { conversation_id, consultant_id } = validation.data;
 
     const conv = await prisma.conversation.findUnique({ where: { id: conversation_id }, select: { id: true, consultant_id: true } });
     if (!conv) return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });

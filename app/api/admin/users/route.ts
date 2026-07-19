@@ -4,6 +4,12 @@ import crypto from 'crypto';
 import { withAdmin, AdminAuthenticatedRequest, canModerateUser, UserRole } from '@/lib/middleware/adminMiddleware';
 import prisma from '@/lib/db/prisma';
 import emailService from '@/lib/services/emailService';
+import { validateBody, validateQuery } from '@/lib/validations/validate';
+import {
+  adminUpdateUserSchema,
+  adminCreateUserSchema,
+  adminDeleteUserQuerySchema,
+} from '@/lib/validations/schemas/admin';
 
 const SALT_ROUNDS = 12;
 const RESET_TOKEN_EXPIRY_HOURS = 2;
@@ -111,15 +117,13 @@ async function getUsers(req: AdminAuthenticatedRequest) {
 // PATCH - Block/Unblock user or change role
 async function updateUser(req: AdminAuthenticatedRequest) {
   try {
-    const body = await req.json();
-    const { user_id, action, reason, new_role } = body;
-
-    if (!user_id) {
-      return NextResponse.json(
-        { error: 'user_id is required' },
-        { status: 400 }
-      );
-    }
+    // Schema validation (VULN-022): shape/enums/bounds only; role rules below.
+    const validation = validateBody(adminUpdateUserSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const body = validation.data;
+    const { user_id, action } = body;
+    const reason = 'reason' in body ? body.reason : undefined;
+    const new_role = 'new_role' in body ? body.new_role : undefined;
 
     const targetUser = await prisma.user.findUnique({
       where: { id: user_id },
@@ -174,7 +178,7 @@ async function updateUser(req: AdminAuthenticatedRequest) {
     let actionType: string;
     let updateData: Record<string, unknown> = {};
 
-    switch (action) {
+    switch (body.action) {
       case 'block':
         updateData = {
           is_blocked: true,
@@ -196,20 +200,15 @@ async function updateUser(req: AdminAuthenticatedRequest) {
         break;
 
       case 'change_role':
-        if (!new_role || !['user', 'moderator', 'admin'].includes(new_role)) {
-          return NextResponse.json(
-            { error: 'Invalid role' },
-            { status: 400 }
-          );
-        }
+        // new_role shape/enum is enforced by the schema.
         // Only admins can promote to admin
-        if (new_role === 'admin' && actorRole !== 'admin') {
+        if (body.new_role === 'admin' && actorRole !== 'admin') {
           return NextResponse.json(
             { error: 'Only admins can promote to admin role' },
             { status: 403 }
           );
         }
-        updateData = { role: new_role };
+        updateData = { role: body.new_role };
         actionType = 'role_change';
         break;
 
@@ -237,16 +236,8 @@ async function updateUser(req: AdminAuthenticatedRequest) {
       case 'set_user_type': {
         // Product persona (buyer/renter/owner/agent/consultant) — set through the
         // admin panel instead of hand-editing the DB/API (closes the C1 workaround,
-        // e.g. provisioning a consultant).
-        const ALLOWED_USER_TYPES = ['buyer', 'renter', 'owner', 'agent', 'consultant'];
-        const nextType = body.user_type;
-        if (!nextType || !ALLOWED_USER_TYPES.includes(nextType)) {
-          return NextResponse.json(
-            { error: `Invalid user_type. Use one of: ${ALLOWED_USER_TYPES.join(', ')}` },
-            { status: 400 }
-          );
-        }
-        updateData = { user_type: nextType };
+        // e.g. provisioning a consultant). Enum is enforced by the schema.
+        updateData = { user_type: body.user_type };
         actionType = 'user_type_change';
         break;
       }
@@ -283,7 +274,7 @@ async function updateUser(req: AdminAuthenticatedRequest) {
           action_type: actionType,
           target_type: 'user',
           target_id: user_id,
-          details: { reason, new_role, previous_role: targetRole, user_type: body.user_type },
+          details: { reason, new_role, previous_role: targetRole, user_type: 'user_type' in body ? body.user_type : undefined },
         },
       }),
     ]);
@@ -306,19 +297,17 @@ async function updateUser(req: AdminAuthenticatedRequest) {
 // via the reset link (emailed; also returned so the admin can hand it over).
 async function createUser(req: AdminAuthenticatedRequest) {
   try {
-    const body = await req.json();
-    const email = String(body.email || '').toLowerCase().trim();
-    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-      return NextResponse.json({ error: 'Валидный email обязателен' }, { status: 400 });
-    }
+    // Schema validation (VULN-022): email format/lowercase + enums + bounds.
+    const validation = validateBody(adminCreateUserSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const body = validation.data;
+    const email = body.email; // already lowercased/validated by emailSchema
 
     const exists = await prisma.user.findUnique({ where: { email }, select: { id: true } });
     if (exists) return NextResponse.json({ error: 'Пользователь с таким email уже существует' }, { status: 409 });
 
-    const ALLOWED_TYPES = ['buyer', 'renter', 'owner', 'agent', 'consultant'];
-    const ALLOWED_ROLES = ['user', 'moderator', 'admin'];
-    const uType = ALLOWED_TYPES.includes(body.user_type) ? body.user_type : 'buyer';
-    const uRole = ALLOWED_ROLES.includes(body.role) ? body.role : 'user';
+    const uType = body.user_type ?? 'buyer';
+    const uRole = body.role ?? 'user';
 
     // Unusable random password — the account is only accessible after the user
     // sets their own password through the reset link.
@@ -329,8 +318,10 @@ async function createUser(req: AdminAuthenticatedRequest) {
       data: {
         email,
         passwordHash,
-        first_name: (body.first_name || '').trim() || null,
-        last_name: (body.last_name || '').trim() || null,
+        // first_name/last_name are non-nullable columns; empty string when omitted
+        // (the old `|| null` was a latent Prisma runtime error surfaced by typing).
+        first_name: (body.first_name || '').trim(),
+        last_name: (body.last_name || '').trim(),
         phone: (body.phone || '').trim() || null,
         user_type: uType,
         role: uRole,
@@ -358,8 +349,10 @@ async function createUser(req: AdminAuthenticatedRequest) {
 // Restricted to role='user' (staff accounts keep audit logs → block/demote instead).
 async function deleteUser(req: AdminAuthenticatedRequest) {
   try {
-    const user_id = new URL(req.url).searchParams.get('user_id');
-    if (!user_id) return NextResponse.json({ error: 'user_id обязателен' }, { status: 400 });
+    // Schema validation (VULN-022): user_id must be a UUID (query param).
+    const validation = validateQuery(adminDeleteUserQuerySchema, new URL(req.url).searchParams);
+    if (!validation.success) return validation.error;
+    const { user_id } = validation.data;
     if (user_id === req.user?.id) return NextResponse.json({ error: 'Нельзя удалить собственный аккаунт' }, { status: 400 });
 
     const target = await prisma.user.findUnique({ where: { id: user_id }, select: { id: true, role: true, email: true } });
