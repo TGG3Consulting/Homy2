@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withBroker, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { validateBody } from '@/lib/validations/validate';
+import { updateLeadSchema } from '@/lib/validations/schemas/crm';
 
 function leadId(url: string): string | null {
   const parts = new URL(url).pathname.split('/');
@@ -22,7 +24,9 @@ export const PATCH = withBroker(async (req: AuthenticatedRequest) => {
     if (!existing) return NextResponse.json({ error: 'Lead not found', success: false }, { status: 404 });
     if (existing.agent_id !== agentId) return NextResponse.json({ error: 'Access denied', success: false }, { status: 403 });
 
-    const body = await req.json().catch(() => ({} as any));
+    const validation = validateBody(updateLeadSchema, await req.json().catch(() => ({})));
+    if (!validation.success) return validation.error;
+    const body = validation.data;
     const data: Record<string, unknown> = {};
     if (body.stage && ['new', 'warm', 'cold'].includes(body.stage)) {
       data.stage = body.stage;

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { withModerator, AdminAuthenticatedRequest } from '@/lib/middleware/adminMiddleware';
 import prisma from '@/lib/db/prisma';
 import { effectiveStage } from '@/lib/services/crmService';
+import { validateBody, validateQuery } from '@/lib/validations/validate';
+import { adminLeadReassignSchema, adminLeadDeleteQuerySchema } from '@/lib/validations/schemas/crm';
 
 /**
  * Admin overview of CRM leads (agent-scoped in the cabinet; global here).
@@ -42,8 +44,9 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   return withModerator(async (r: AdminAuthenticatedRequest) => {
-    const body = await r.json().catch(() => ({} as any));
-    const { lead_id, action, agent_id } = body;
+    const validation = validateBody(adminLeadReassignSchema, await r.json().catch(() => ({})));
+    if (!validation.success) return validation.error;
+    const { lead_id, action, agent_id } = validation.data;
     if (action !== 'reassign' || !lead_id || !agent_id) {
       return NextResponse.json({ error: 'lead_id, action=reassign и agent_id обязательны' }, { status: 400 });
     }
@@ -77,8 +80,9 @@ export async function PATCH(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   return withModerator(async (r: AdminAuthenticatedRequest) => {
-    const lead_id = new URL(r.url).searchParams.get('lead_id');
-    if (!lead_id) return NextResponse.json({ error: 'lead_id обязателен' }, { status: 400 });
+    const queryValidation = validateQuery(adminLeadDeleteQuerySchema, new URL(r.url).searchParams);
+    if (!queryValidation.success) return queryValidation.error;
+    const { lead_id } = queryValidation.data;
 
     const lead = await prisma.lead.findUnique({ where: { id: lead_id }, select: { id: true, agent_id: true } });
     if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });

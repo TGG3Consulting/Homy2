@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withBroker, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { validateBody } from '@/lib/validations/validate';
+import { updateDealSchema } from '@/lib/validations/schemas/crm';
 
 const STAGES = ['negotiation', 'offer', 'contract', 'closed', 'lost'];
 const STATUSES = ['open', 'won', 'lost'];
@@ -26,7 +28,9 @@ export const PATCH = withBroker(async (req: AuthenticatedRequest) => {
     if (!existing) return NextResponse.json({ error: 'Deal not found', success: false }, { status: 404 });
     if (existing.agent_id !== agentId) return NextResponse.json({ error: 'Access denied', success: false }, { status: 403 });
 
-    const body = await req.json().catch(() => ({} as any));
+    const validation = validateBody(updateDealSchema, await req.json().catch(() => ({})));
+    if (!validation.success) return validation.error;
+    const body = validation.data;
     const data: Record<string, unknown> = {};
     if (body.stage && STAGES.includes(body.stage)) data.stage = body.stage;
     if (body.status && STATUSES.includes(body.status)) data.status = body.status;

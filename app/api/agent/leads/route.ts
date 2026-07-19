@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withBroker, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 import { effectiveStage } from '@/lib/services/crmService';
+import { validateBody } from '@/lib/validations/validate';
+import { createLeadSchema } from '@/lib/validations/schemas/crm';
 
 /**
  * GET /api/agent/leads?stage=new|warm|cold
@@ -46,8 +48,9 @@ export const GET = withBroker(async (req: AuthenticatedRequest) => {
 export const POST = withBroker(async (req: AuthenticatedRequest) => {
   try {
     const agentId = req.user!.id;
-    const body = await req.json();
-    const { clientName, clientEmail, clientPhone, propertyId, interest, budget, stage } = body;
+    const validation = validateBody(createLeadSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const { clientName, clientEmail, clientPhone, propertyId, interest, budget, stage } = validation.data;
 
     if (!clientName && !clientEmail && !clientPhone) {
       return NextResponse.json({ error: 'Client name or contact is required', success: false }, { status: 400 });
@@ -62,7 +65,7 @@ export const POST = withBroker(async (req: AuthenticatedRequest) => {
         property_id: propertyId || null,
         interest: interest || null,
         budget: budget != null ? Math.round(Number(budget)) : null,
-        stage: ['new', 'warm', 'cold'].includes(stage) ? stage : 'new',
+        stage: stage && ['new', 'warm', 'cold'].includes(stage) ? stage : 'new',
         source: 'manual',
         last_contact_at: new Date(),
       },

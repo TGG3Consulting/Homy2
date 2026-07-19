@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withBroker, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { validateBody } from '@/lib/validations/validate';
+import { createDealSchema } from '@/lib/validations/schemas/crm';
 
 const STAGES = ['negotiation', 'offer', 'contract', 'closed', 'lost'];
 const STATUSES = ['open', 'won', 'lost'];
@@ -40,8 +42,9 @@ export const GET = withBroker(async (req: AuthenticatedRequest) => {
 export const POST = withBroker(async (req: AuthenticatedRequest) => {
   try {
     const agentId = req.user!.id;
-    const body = await req.json();
-    const { title, clientName, propertyId, leadId, clientId, value, stage, commission } = body;
+    const validation = validateBody(createDealSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const { title, clientName, propertyId, leadId, clientId, value, stage, commission } = validation.data;
 
     // If created from a lead, inherit its context.
     let leadCtx: any = null;
@@ -61,7 +64,7 @@ export const POST = withBroker(async (req: AuthenticatedRequest) => {
         value: value != null ? Math.round(Number(value)) : (leadCtx?.budget ?? null),
         commission: commission != null ? Math.round(Number(commission))
           : (value != null ? Math.round(Number(value) * 0.02) : (leadCtx?.budget ? Math.round(leadCtx.budget * 0.02) : null)),
-        stage: STAGES.includes(stage) ? stage : 'negotiation',
+        stage: stage && STAGES.includes(stage) ? stage : 'negotiation',
         status: 'open',
       },
     });
