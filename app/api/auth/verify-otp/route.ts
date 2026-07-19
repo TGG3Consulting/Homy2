@@ -2,8 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import otpService from '@/lib/services/otpService';
 import jwtService from '@/lib/services/jwtService';
-import { checkRateLimit, getClientIP, RATE_LIMITS, rateLimitResponse } from '@/lib/rateLimiter';
+import {
+  checkRateLimit, getClientIP, RATE_LIMITS, rateLimitResponse,
+  isAccountLocked, recordLoginFailure, clearLoginFailures, accountLockResponse,
+} from '@/lib/rateLimiter';
 import { setAuthCookies } from '@/lib/cookies';
+import { verifyOtpSchema } from '@/lib/validations/schemas/auth';
+import { validateBody } from '@/lib/validations/validate';
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,34 +19,37 @@ export async function POST(req: NextRequest) {
       return rateLimitResponse(rateLimitResult);
     }
 
-    const { email, otpCode } = await req.json();
+    // Schema validation (VULN-022): email shape + strictly 6-digit numeric code.
+    const validation = validateBody(verifyOtpSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const { email: normalizedEmail, otpCode } = validation.data; // lowercased by schema
 
-    // Validate input
-    if (!email || !otpCode) {
-      return NextResponse.json(
-        { error: 'Email and verification code are required' },
-        { status: 400 }
-      );
+    // Per-account brute-force lockout (VULN-002): the per-IP limiter above is
+    // bypassable with rotating IPs; this caps failed code guesses per email
+    // (5 / 15 min, same policy as login) regardless of source IP.
+    const lockKey = `otp:${normalizedEmail}`;
+    const lock = isAccountLocked(lockKey);
+    if (lock.locked) {
+      return accountLockResponse(lock);
     }
-
-    if (otpCode.length !== 6) {
-      return NextResponse.json(
-        { error: 'Invalid verification code format' },
-        { status: 400 }
-      );
-    }
-
-    const normalizedEmail = email.toLowerCase();
 
     // Verify OTP
     const verification = await otpService.verifyOtp(normalizedEmail, otpCode);
     if (!verification.valid) {
+      // Only count failures when a pending OTP actually exists for this email,
+      // so attacker-supplied random emails can't fill the lockout store.
+      if (verification.hadPendingOtp) {
+        recordLoginFailure(lockKey);
+      }
       const status = verification.error === 'Code expired' ? 410 : 400;
       return NextResponse.json(
         { error: verification.error },
         { status }
       );
     }
+
+    // Correct code — reset the failure counter for this email.
+    clearLoginFailures(lockKey);
 
     // Find and update user
     const user = await prisma.user.findUnique({
@@ -61,9 +69,11 @@ export async function POST(req: NextRequest) {
       data: { emailVerified: true },
     });
 
-    // Generate tokens
-    const accessToken = jwtService.generateAccessToken(user.id, user.email);
-    const refreshToken = jwtService.generateRefreshToken(user.id);
+    // Generate tokens carrying the user's current token_version (revocable) —
+    // defaulting to 0 here broke OTP login for users whose version was bumped
+    // by a password change / force-reset.
+    const accessToken = jwtService.generateAccessToken(user.id, user.email, user.token_version);
+    const refreshToken = jwtService.generateRefreshToken(user.id, user.token_version);
 
     // Set tokens in HttpOnly cookies (secure against XSS)
     const response = NextResponse.json({

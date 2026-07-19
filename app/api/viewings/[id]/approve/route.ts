@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 import { viewingInclude, formatViewing, ViewingWithRelations } from '../../types';
@@ -97,31 +98,63 @@ async function approveViewingHandler(req: AuthenticatedRequest) {
       );
     }
 
-    // Prevent double-booking the agent's calendar (VULN-012): the per-client dedupe
-    // at creation does NOT stop two different clients being confirmed into the same
-    // agent slot. Reject if this agent already has another confirmed viewing at this time.
-    const slotConflict = await prisma.viewing.findFirst({
-      where: {
-        id: { not: viewingId },
-        agentId: viewing.agent.id,
-        scheduledAt: viewing.scheduledAt,
-        status: 'confirmed',
-      },
-      select: { id: true },
-    });
-    if (slotConflict) {
-      return NextResponse.json(
-        { error: 'На это время у агента уже подтверждён другой просмотр' },
-        { status: 409 }
-      );
-    }
+    // Prevent double-booking the agent's calendar (VULN-005 / VULN-012).
+    // The conflict check + confirm MUST be atomic: two pending viewings for the
+    // same agent+time, approved concurrently, would otherwise both read "no
+    // conflict" and both write 'confirmed' (TOCTOU). A Serializable transaction
+    // makes the read-then-write a single unit; the loser aborts with P2034 →
+    // we surface it as 409 (same class as a real slot conflict). The in-tx
+    // status re-check also blocks a double-approve of the SAME viewing.
+    let updatedViewing;
+    try {
+      updatedViewing = await prisma.$transaction(async (tx) => {
+        const current = await tx.viewing.findUnique({
+          where: { id: viewingId },
+          select: { status: true },
+        });
+        if (!current || (current.status !== 'pending_client' && current.status !== 'pending_agent')) {
+          throw new Error('ALREADY_HANDLED');
+        }
 
-    // Update viewing status to confirmed
-    const updatedViewing = await prisma.viewing.update({
-      where: { id: viewingId },
-      data: { status: 'confirmed' },
-      include: viewingInclude,
-    });
+        const slotConflict = await tx.viewing.findFirst({
+          where: {
+            id: { not: viewingId },
+            agentId: viewing.agent.id,
+            scheduledAt: viewing.scheduledAt,
+            status: 'confirmed',
+          },
+          select: { id: true },
+        });
+        if (slotConflict) throw new Error('SLOT_CONFLICT');
+
+        return tx.viewing.update({
+          where: { id: viewingId },
+          data: { status: 'confirmed' },
+          include: viewingInclude,
+        });
+      }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    } catch (e) {
+      if (e instanceof Error && e.message === 'SLOT_CONFLICT') {
+        return NextResponse.json(
+          { error: 'На это время у агента уже подтверждён другой просмотр' },
+          { status: 409 }
+        );
+      }
+      if (e instanceof Error && e.message === 'ALREADY_HANDLED') {
+        return NextResponse.json(
+          { error: 'Этот просмотр уже обработан' },
+          { status: 409 }
+        );
+      }
+      // Serializable write-write conflict (concurrent approval) → 409.
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2034') {
+        return NextResponse.json(
+          { error: 'На это время у агента уже подтверждён другой просмотр' },
+          { status: 409 }
+        );
+      }
+      throw e;
+    }
 
     // Create notification for the other party
     const notifyUserId = isClient ? viewing.agent.id : viewing.client.id;

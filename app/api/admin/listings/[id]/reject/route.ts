@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withModerator, AdminAuthenticatedRequest } from '@/lib/middleware/adminMiddleware';
 import prisma from '@/lib/db/prisma';
+import { z } from 'zod';
+import { validateBody } from '@/lib/validations/validate';
+
+// Schema validation (VULN-022): min length as before + upper cap.
+const rejectListingSchema = z.object({
+  reason: z.string().trim()
+    .min(10, 'Rejection reason is required (min 10 characters)')
+    .max(1000, 'Reason too long'),
+}).strict();
 
 async function rejectListing(
   req: AdminAuthenticatedRequest,
@@ -10,15 +19,9 @@ async function rejectListing(
   const adminId = req.user?.id;
 
   try {
-    const body = await req.json();
-    const { reason } = body;
-
-    if (!reason || reason.trim().length < 10) {
-      return NextResponse.json(
-        { error: 'Rejection reason is required (min 10 characters)' },
-        { status: 400 }
-      );
-    }
+    const validation = validateBody(rejectListingSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const { reason } = validation.data; // already trimmed by schema
 
     // Atomic claim: only a still-pending listing can be rejected, and only one
     // moderator wins. Concurrent moderators get 409.

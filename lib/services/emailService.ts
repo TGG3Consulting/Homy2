@@ -46,6 +46,45 @@ export const emailService = {
   },
 
   /**
+   * Send an "account already exists" email (VULN-006 anti-enumeration).
+   * When someone tries to register an email that already has a VERIFIED
+   * account, the API returns the SAME generic response as a normal signup —
+   * so an attacker can't tell registered emails apart. The real owner instead
+   * receives this email telling them to log in / reset, closing the UX gap.
+   */
+  async sendAccountExistsEmail(email: string): Promise<boolean> {
+    const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login`;
+    const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/forgot-password`;
+    try {
+      await transporter.sendMail({
+        from: EMAIL_FROM,
+        to: email,
+        subject: 'Homy - Account Already Registered',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h1 style="color: #0A6045;">You already have a Homy account</h1>
+            <p>Someone (probably you) tried to sign up with this email, but it is already registered.</p>
+            <p>There is no need to create a new account — just log in:</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${loginUrl}" style="background: #0A6045; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                Log in
+              </a>
+            </div>
+            <p style="color: #666;">Forgot your password? <a href="${resetUrl}">Reset it here</a>.</p>
+            <p style="color: #666;">If this wasn't you, you can safely ignore this email — no account changes were made.</p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+            <p style="color: #999; font-size: 12px;">Homy - Find your perfect home in Armenia</p>
+          </div>
+        `,
+      });
+      return true;
+    } catch (error) {
+      console.error('Failed to send account-exists email:', error);
+      return false;
+    }
+  },
+
+  /**
    * Send password reset email
    */
   async sendPasswordResetEmail(email: string, resetToken: string): Promise<boolean> {

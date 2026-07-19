@@ -3,6 +3,8 @@ import prisma from '@/lib/db/prisma';
 import otpService from '@/lib/services/otpService';
 import emailService from '@/lib/services/emailService';
 import { checkRateLimit, getClientIP, RATE_LIMITS, rateLimitResponse } from '@/lib/rateLimiter';
+import { resendOtpSchema } from '@/lib/validations/schemas/auth';
+import { validateBody } from '@/lib/validations/validate';
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,16 +15,10 @@ export async function POST(req: NextRequest) {
       return rateLimitResponse(rateLimitResult);
     }
 
-    const { email } = await req.json();
-
-    if (!email) {
-      return NextResponse.json(
-        { error: 'Email is required' },
-        { status: 400 }
-      );
-    }
-
-    const normalizedEmail = email.toLowerCase();
+    // Schema validation (VULN-022)
+    const validation = validateBody(resendOtpSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const { email: normalizedEmail } = validation.data; // lowercased by schema
 
     // Check if user exists
     const user = await prisma.user.findUnique({

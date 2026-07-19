@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { createPropertyListingSchema } from '@/lib/validations/schemas/property';
+import { validateBody } from '@/lib/validations/validate';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rateLimiter';
 
 async function handler(req: AuthenticatedRequest) {
   const userId = req.user?.id;
@@ -8,13 +12,28 @@ async function handler(req: AuthenticatedRequest) {
     return NextResponse.json({ error: 'User not found' }, { status: 401 });
   }
 
-  const body = await req.json();
+  // Per-user rate limit (VULN-012): otherwise an authenticated account can
+  // flood the moderation queue with pending listings. Keyed by user (not IP).
+  // withAuth requires a NextResponse return, so build the 429 here.
+  const rl = checkRateLimit(`listing-create:${userId}`, RATE_LIMITS.api);
+  if (!rl.success) {
+    const retryAfter = Math.ceil((rl.resetAt - Date.now()) / 1000);
+    return NextResponse.json(
+      { error: 'Too many requests', code: 'RATE_LIMIT_EXCEEDED', retryAfter },
+      { status: 429, headers: { 'Retry-After': String(retryAfter) } }
+    );
+  }
 
+  // Schema validation (VULN-022, supersedes the manual VULN-002 checks):
+  // coerced+bounded numbers, enum deal/property types, capped text/photos,
+  // unknown keys rejected.
+  const validation = validateBody(createPropertyListingSchema, await req.json());
+  if (!validation.success) return validation.error;
   const {
     property_type,
     location,
     price,
-    currency = 'AMD',
+    currency,
     area,
     rooms,
     description,
@@ -31,42 +50,20 @@ async function handler(req: AuthenticatedRequest) {
     deposit_months,
     utilities_estimate,
     minimum_lease_months,
-  } = body;
+  } = validation.data;
 
   // Build a human location from address / district (Yerevan) / city if not supplied.
   const loc = location || [address, district, city].filter(Boolean).join(' · ') || city || district || null;
-
-  // Validation (contact defaults to the submitter below)
-  if (!property_type || !price || !area || !rooms || !loc) {
+  if (!loc) {
     return NextResponse.json(
       { error: 'Missing required fields' },
       { status: 400 }
     );
   }
 
-  // Validate PARSED numbers, not raw strings — "0"/"-5000" are truthy and would
-  // otherwise pass the check above and land a negative/zero price in the catalogue
-  // (VULN-002). Enforce positive values with sane upper bounds.
-  const priceNum = parseFloat(price);
-  const areaNum = parseFloat(area);
-  const roomsNum = parseInt(rooms, 10);
-  const floorNum = floor != null && floor !== '' ? parseInt(floor, 10) : null;
-  if (!Number.isFinite(priceNum) || priceNum <= 0 || priceNum > 100_000_000_000) {
-    return NextResponse.json({ error: 'Invalid price' }, { status: 400 });
-  }
-  if (!Number.isFinite(areaNum) || areaNum <= 0 || areaNum > 100_000) {
-    return NextResponse.json({ error: 'Invalid area' }, { status: 400 });
-  }
-  if (!Number.isInteger(roomsNum) || roomsNum < 0 || roomsNum > 100) {
-    return NextResponse.json({ error: 'Invalid rooms' }, { status: 400 });
-  }
-  if (floorNum != null && (!Number.isInteger(floorNum) || floorNum < -5 || floorNum > 300)) {
-    return NextResponse.json({ error: 'Invalid floor' }, { status: 400 });
-  }
-  // Bound free-text / arrays to prevent storage abuse (VULN-022 partial).
-  const descriptionVal = description != null ? String(description).slice(0, 5000) : null;
-  const titleVal = title != null ? String(title).slice(0, 200) : null;
-  const photosVal = Array.isArray(photos) ? photos.slice(0, 30) : (photos || null);
+  const descriptionVal = description ?? null;
+  const titleVal = title ?? null;
+  const photosVal = photos ?? null;
 
   // Default the contact to the submitter's own account.
   let contactValue = contact;
@@ -80,12 +77,12 @@ async function handler(req: AuthenticatedRequest) {
       owner_id: userId,
       property_type,
       location: loc,
-      price: priceNum,
+      price,
       currency,
-      area: areaNum,
-      rooms: roomsNum,
+      area,
+      rooms,
       description: descriptionVal,
-      photos: photosVal,
+      photos: photosVal ?? Prisma.DbNull,
       contact: contactValue,
       status: 'pending',
       deal_type: deal_type || null,
@@ -94,11 +91,11 @@ async function handler(req: AuthenticatedRequest) {
       district: district || null,
       neighborhood: neighborhood || district || null,
       address: address || null,
-      floor: floorNum,
+      floor: floor ?? null,
       title: titleVal,
-      deposit_months: deposit_months != null && deposit_months !== '' ? parseInt(deposit_months) : null,
-      utilities_estimate: utilities_estimate != null && utilities_estimate !== '' ? parseFloat(utilities_estimate) : null,
-      minimum_lease_months: minimum_lease_months != null && minimum_lease_months !== '' ? parseInt(minimum_lease_months) : null,
+      deposit_months: deposit_months ?? null,
+      utilities_estimate: utilities_estimate ?? null,
+      minimum_lease_months: minimum_lease_months ?? null,
     }
   });
 

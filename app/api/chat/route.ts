@@ -1,9 +1,54 @@
 import { NextRequest } from 'next/server';
+import crypto from 'crypto';
 import { sessionManager } from '@/lib/sessionManager';
 import { checkRateLimit, getClientIP, RATE_LIMITS, rateLimitResponse } from '@/lib/rateLimiter';
+import { getAccessTokenFromRequest } from '@/lib/cookies';
+import jwtService from '@/lib/services/jwtService';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+const CHAT_OWNER_COOKIE = 'homy_chat_owner';
+
+/**
+ * Ownership binding for AI chat sessions (VULN-003).
+ *
+ * The client-supplied `sessionId` MUST NOT be trusted as the session key on
+ * its own — anyone who guesses/replays another client's id would resume their
+ * conversation. We namespace it with a server-controlled owner:
+ *   - authenticated users → `u:<userId>` (from the verified JWT cookie)
+ *   - anonymous users     → `a:<opaque>` where <opaque> is a 256-bit value we
+ *     store in an HttpOnly cookie the client cannot read or forge.
+ * The effective key `<owner>::<sessionId>` is what SessionManager sees, so one
+ * client can never address another client's history.
+ */
+function resolveSessionOwner(req: NextRequest): { owner: string; setCookie?: string } {
+  const token = getAccessTokenFromRequest(req);
+  if (token) {
+    const payload = jwtService.verifyAccessToken(token);
+    if (payload?.userId) return { owner: `u:${payload.userId}` };
+  }
+
+  const cookieHeader = req.headers.get('cookie') || '';
+  const existing = cookieHeader
+    .split(';')
+    .map((c) => c.trim())
+    .find((c) => c.startsWith(`${CHAT_OWNER_COOKIE}=`));
+  if (existing) {
+    return { owner: `a:${existing.slice(CHAT_OWNER_COOKIE.length + 1)}` };
+  }
+
+  const opaque = crypto.randomBytes(32).toString('hex');
+  const secure = process.env.NODE_ENV === 'production' || process.env.HTTPS_ENABLED === 'true';
+  const setCookie =
+    `${CHAT_OWNER_COOKIE}=${opaque}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${30 * 24 * 60 * 60}` +
+    (secure ? '; Secure' : '');
+  return { owner: `a:${opaque}`, setCookie };
+}
+
+function scopedKey(owner: string, sessionId: string): string {
+  return `${owner}::${sessionId}`;
+}
 
 interface ChatMessage {
   id: string;
@@ -58,13 +103,17 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // Bind the client sessionId to a server-controlled owner (VULN-003).
+    const { owner, setCookie } = resolveSessionOwner(request);
+    const effectiveKey = scopedKey(owner, sessionId);
+
     // Create SSE stream
     const stream = new ReadableStream({
       async start(controller) {
         try {
           // Send message to persistent Claude session
           await sessionManager.sendMessage(
-            sessionId,
+            effectiveKey,
             lastMessage.content,
             controller
           );
@@ -72,9 +121,11 @@ export async function POST(request: NextRequest) {
           console.error('[API] Error sending message:', error);
 
           const encoder = new TextEncoder();
+          // Do NOT leak upstream/SDK error detail to the client (VULN-010):
+          // it can disclose model IDs, quota/billing state, internal URLs.
           const errorData = {
             type: 'error',
-            error: error instanceof Error ? error.message : 'Failed to send message'
+            error: 'Failed to send message'
           };
 
           try {
@@ -94,14 +145,16 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    return new Response(stream, {
-      headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache, no-transform',
-        'Connection': 'keep-alive',
-        'X-Accel-Buffering': 'no',
-      },
-    });
+    const headers: Record<string, string> = {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache, no-transform',
+      'Connection': 'keep-alive',
+      'X-Accel-Buffering': 'no',
+    };
+    // Issue the anonymous owner cookie on first contact (VULN-003).
+    if (setCookie) headers['Set-Cookie'] = setCookie;
+
+    return new Response(stream, { headers });
 
   } catch (error) {
     console.error('[API] Route error:', error);
@@ -134,7 +187,10 @@ export async function DELETE(request: NextRequest) {
       });
     }
 
-    sessionManager.cleanupSession(sessionId);
+    // Only the owner can clean up their own session (VULN-003): scope the key
+    // exactly as POST does, so one client can't destroy another's session.
+    const { owner } = resolveSessionOwner(request);
+    sessionManager.cleanupSession(scopedKey(owner, sessionId));
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,

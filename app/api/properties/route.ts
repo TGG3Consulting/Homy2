@@ -147,7 +147,11 @@ export async function GET(req: NextRequest) {
     // client ranks by it, we must score the WHOLE matching set BEFORE paginating —
     // otherwise pagination/ranking would run on stale seed values in Property.matchScore.
     if (sortBy === 'match_score') {
-      const allMatching = await prisma.property.findMany({ where, include: ownerInclude });
+      // Cap the pre-scoring fetch (VULN-008): match_score is derived in-app, so we
+      // must load the matching set before paginating — but an anonymous caller with
+      // a broad filter could otherwise force loading + AI-scoring the whole table
+      // each request (CPU/memory DoS). 500 is well above any realistic result page.
+      const allMatching = await prisma.property.findMany({ where, include: ownerInclude, take: 500 });
       const scored = allMatching
         .map(p => propertyAdapter.toFrontendFormat(p))
         .map(p => propertyAdapter.enrichWithAI(p, criteria));

@@ -1,192 +1,275 @@
-# Security Audit Report — Homly (Re-Audit)
+# Security Audit Report — Homy
 
-**Project:** Homly Real Estate Platform
-**Date:** 2026-07-18
-**Auditor:** Claude Cybersecurity Skill (8 specialist agents)
-**Stack:** Next.js 15 / React 19 / TypeScript / Prisma / PostgreSQL / Socket.io
-**Mode:** READ-ONLY (no modifications, no commits, no package installs)
-**Note:** This is a **re-audit** after a remediation pass. The previous run scored **52/100 (D)** with 3 CRITICAL. All 16 prior fixes were **verified genuinely present** (see "Verified Fixed"). Findings below are residual/newly-surfaced issues.
+> ## Remediation status — applied 2026-07-19
+> Все находки обработаны. Кодовые/конфиг-фиксы применены и верифицированы (tsc app+server + eslint чисто); несколько пунктов — сознательные решения или действия владельца на этапе деплоя (отмечено ✎).
+>
+> **High** — VULN-001 ✅ (гейт отзыва: только `confirmed`/`completed` просмотр в прошлом).
+> **Medium** — VULN-002 ✅ (OTP: сверка новейшего кода constant-time + account-lockout по email) · VULN-003 ✅ (AI-сессия привязана к userId/opaque HttpOnly-cookie) · VULN-004 ✅ (WS `clientIpOf` → x-real-ip/правый XFF) · VULN-005 ✅ (approve в Serializable-tx + обработка P2034) · VULN-006 ✅ (регистрация: единый generic-ответ + письмо «account exists») · VULN-007 ✎ (осознанно оставлен `unsafe-inline` для скриптов; остальной CSP дожат: object-src/frame-src/worker-src/upgrade-insecure-requests).
+> **Low** — VULN-008 ✅ (`take:500` на match_score) · VULN-009 ✅ (constant-time bcrypt при отсутствии юзера) · VULN-010 ✅ (generic AI-ошибки, без утечки) · VULN-011 ✅ (WS-сообщение cap 5000) · VULN-012 ✅ (rate-limit на создание листинга) · VULN-013 ✅ (reset-pw лимитер + constant-time cron через `lib/cronAuth.ts`) · VULN-014 ✅ (удалён мёртвый `corsHelper.ts`) · VULN-015 ✅ (убран вводящий в заблуждение edge-гейд) · VULN-016 ✅ (`getCurrentUser` проверяет token_version+is_blocked) · VULN-017 ✅ (nginx сбрасывает XFF на `$remote_addr`) · VULN-019 ✅ (migrate под non-root uid 1000 + лимиты) · VULN-020 ✅ (redis healthcheck через `REDISCLI_AUTH`) · VULN-018 ✎ (пин образов по digest — деплой-действие владельца, команда ниже) · VULN-021 ✎ (dev-креды: оставлены рабочими — dev-only, loopback; prod-compose чист) · VULN-022 ✎ / VULN-023 ✎ (npm-гигиена: `@types/uuid`, `npm ci` — уже в Dockerfile).
+> **Info** — INFO-1 (Redis-лимитер при масштабировании — по `SECURITY-RATELIMIT-DESIGN.md`), INFO-3 (nginx OCSP/dhparam), INFO-4 (CI/CD), INFO-5/6 (uuid@14, strip-ansi — подтверждение), INFO-7 (seed — уже защищён) — действия/подтверждения владельца.
+>
+> ✎ **VULN-018 (пин образов, выполнить при деплое):** `docker pull node:20-alpine && docker inspect --format='{{index .RepoDigests 0}}' node:20-alpine` — подставить полученный `image@sha256:...` в Dockerfile/compose (аналогично для postgres/redis/nginx). Пинить вслепую нельзя — цифра берётся из реестра.
+
+**Project:** Homy Real Estate Platform
+**Date:** 2026-07-19
+**Auditor:** Claude Cybersecurity Skill (8 specialist agents, weighted scoring)
+**Mode:** READ-ONLY (no edits, no commits, no installs)
+**Stack:** Next.js 15 (app-router) · React 19 · TypeScript · custom `server.ts` (WebSocket `/ws/chat` + Socket.io) · Prisma 5 / PostgreSQL · Docker + nginx
 
 ---
 
 ## Executive Summary
 
-| Metric | Value |
-|--------|-------|
-| **Overall Security Score** | **79/100 (Grade: B)** — up from 52/100 |
-| **Findings** | Critical: 0 \| High: 3 \| Medium: 19 \| Low: 14 \| Info: 3 |
-| **Scope** | Full codebase — 536 source files, 84 API routes, 33 pages, IaC, no CI/CD |
-| **Agents Completed** | 8/8 |
-| **Auto-CRITICAL gate** | Not triggered (0 critical) |
+- **Overall Security Score: 88 / 100 — Grade B** (good posture; no Critical, one High)
+- **Agents completed:** 8 / 8
+- **Findings (deduplicated):** Critical 0 · High 1 · Medium 6 · Low 16 · Info 7
+- **Scope:** full — `app/**`, `lib/**`, `components/**`, `server.ts`, `middleware.ts`, `prisma/**`, `docker/**`, `package.json`/lockfile. Excluded by owner decision: `homly-search-flow*`, `HambarcumMC`, `VectorStock`, `test-arm*.txt` (stray prototypes, not in build).
+- **No prompt-injection** content found in scanned code. **No malware / backdoor / C2 / exfiltration / cryptominer** indicators (Agent 6 clean, score 100). **No leaked production secrets** in tracked source (`.env` untracked, `.gitignore` correct, JWT secrets fail-fast, Docker uses `${VAR}` injection).
 
-No malware, backdoors, C2, or exfiltration found (Threat Intel 96/100). No SQL injection, no SSRF, no IDOR, no self-service privilege escalation. Authorization model is strong and consistent. Residual risk concentrates in: two unprotected paid-LLM endpoints, business-logic validation gaps (listing price sign, review authenticity, agent↔property authorization), edge/IaC defense-in-depth, dependency hygiene (stale lockfile), and unrotated secrets sitting at-rest in `.env` (rotation intentionally deferred by the owner).
+This is a heavily and repeatedly remediated codebase. The classic vulnerability classes are closed: Prisma is fully parameterized (no raw SQL), JWT pins `HS256` with DB-backed `token_version` revocation, uploads sniff magic bytes with server-generated names, IDOR/ownership checks are present on essentially every `[id]` route, mass-assignment is blocked by zod `.strict()`, and every AI endpoint is rate-limited + length-capped. The residual findings cluster in **business-logic trust rules** (review gate), the **custom WebSocket/Socket.io layer** (which wasn't held to the HTTP layer's standard), and **defense-in-depth** (CSP, image pinning). None require halting the launch except VULN-001, which should be fixed first.
 
----
-
-## Remediation Status (applied 2026-07-18, local commits, not yet pushed)
-
-**Fixed & tsc-verified:** VULN-001 (LLM rate-limit+cap), 002+CHAIN-001 (listing price validation + approve re-check), 004 (virtual-tour token_version), 005 (removed export scripts), 006 (WS Origin), 007 (XFF trust), 008 (socket.io CORS), 010+CHAIN-003 (review broker+interaction), 011+CHAIN-002 (agent must own property), 012 (agent slot conflict), 013 (HSTS), 015 (prod app loopback), 016 (adminer/mailhog loopback), 019 (drop unused MCP sdk), 020 (drop @svgr rule), 021 (declare zod), 023 (JWT alg pin), 024 (error detail), 025 (compare cap), 026 (voice rate-limit), 028 (.gitignore), 029 (pin image tags), 030 (nginx static headers), 032 (no localhost CORS in prod), 036 (SMTP requireTLS). Bonus: fixed prod-compose env var names (SMTP_PASS/EMAIL_FROM/JWT_REFRESH_SECRET/CRON_SECRET/ANTHROPIC_API_KEY).
-
-**Deferred (owner / needs care):** VULN-003 (secret rotation — owner's final step); VULN-009 (CSP `unsafe-inline` → needs nonce-based CSP via Next middleware; no active XSS sink today); VULN-014 (nginx edge CSP — covered by app middleware); VULN-017 (run `npm install` to sync lockfile); VULN-018 (ESLint 9 flat-config migration); VULN-022 (wire zod into remaining write routes — critical ones already validate); VULN-027/031 (dev-only compose creds, DB loopback-bound); VULN-033 (Redis-backed limiter + account lockout — needs Redis); VULN-034/035 (dep version review); VULN-038 (remove stray vendor assets — owner to confirm).
+> **Priority-1 (fix before launch):** VULN-001 — the broker-review "real interaction" gate is bypassable, and reputation is the marketplace's core trust primitive.
 
 ---
 
 ## Category Scores
 
-| Category | Score | Grade | Weight | Key Finding |
-|----------|-------|-------|--------|-------------|
-| Vulnerability Detection | 78 | B | 20% | WebSocket origin not validated (CSWSH) |
-| Authorization & Access Control | 88 | B | 15% | Virtual-tour writes bypass session revocation |
-| Secret Management | 74 | C | 10% | Live unrotated secrets in `.env` + committed export script |
-| Dependency Security | 74 | C | 10% | Stale lockfile reintroduces node-pty/bcryptjs; ESLint 8 EOL |
-| Infrastructure Security | 80 | B | 10% | Missing HSTS; prod app port published bypassing nginx |
-| Threat Intelligence | 96 | A | 15% | Clean — only stray vendor assets |
-| AI Code Patterns | 72 | C | 10% | 2 of 4 LLM endpoints unprotected; unused zod layer |
-| Logic & Design | 62 | C | 10% | Negative price on listing; review/viewing authz gaps |
+| # | Category | Score | Weight | Key finding |
+|---|----------|-------|--------|-------------|
+| 1 | Vulnerability Detection | 88 | 20% | OTP verify has no per-account cap |
+| 2 | Authorization & Access Control | 91 | 15% | AI chat session keyed on client-supplied id |
+| 3 | Secret Management | 93 | 10% | Functional dev password committed in `.env.docker` |
+| 4 | Dependency Security | 90 | 10% | All deps on patched versions; caret ranges (lockfile-mitigated) |
+| 5 | Infrastructure Security | 82 | 10% | Floating image tags; migrate runs as root |
+| 6 | Threat Intelligence | 100 | 15% | No malicious indicators |
+| 7 | AI Code Patterns | 84 | 10% | WS anon limiter trusts spoofable XFF |
+| 8 | Logic & Design | 70 | 10% | Review-gate bypass; approve-path double-booking race |
+
+**Weighted total: 88.15 → 88/100 (B).**
 
 ---
 
-## Top 5 High Findings
-
-### 1. [VULN-001] Two paid-LLM endpoints have no auth, rate-limit, or input cap
-**HIGH** | CWE-770 | OWASP A04:2021 | `app/api/properties/[id]/opinion/route.ts:11-18`, `app/api/properties/[id]/chat/route.ts:16-19`
-Of the 4 endpoints calling Claude, `chat` and `chat/compare` are rate-limited but these two per-property ones are not — public, unbounded `conversationHistory`/`message` fed straight into paid LLM calls. Denial-of-wallet + prompt-injection surface.
-**Fix:** add `checkRateLimit(..., RATE_LIMITS.ai)` + 4000-char input cap (mirror `chat/route.ts`).
-
-### 2. [VULN-002] Negative / zero price, area, rooms accepted on listing create
-**HIGH** | CWE-20 / CWE-841 | OWASP A04:2021 | `app/api/properties/list/route.ts:40,59-61`
-Validation runs on raw strings before `parseFloat`/`parseInt`, so `"0"`/`"-5000"` are truthy and pass, storing negative/zero price. Corrupts sort/filter/statistics; chains through the approve route into the live catalogue (CHAIN-001).
-**Fix:** validate the parsed numbers: `price > 0`, `area > 0`, `rooms >= 0`, reject `NaN`, add upper bounds; re-validate in approve route.
-
-### 3. [VULN-003] Live, unrotated secrets stored at rest in `.env`
-**HIGH** | CWE-798 / CWE-312 | OWASP A02:2021 | `.env:11,14,15,18,21`
-Real values: `ANTHROPIC_API_KEY sk-a****gAAA`, `JWT_SECRET jqP5****1GQ==`, `JWT_REFRESH_SECRET 7hFM****TVw==`, `CRON_SECRET 72fb****00cd`. `.env` is correctly gitignored and never committed (verified) — exposure is at-rest only. A leaked `JWT_SECRET` permits token forgery.
-**Fix:** rotate all four (owner's deferred final step). Accepted-risk until launch per owner decision.
-
-### 4. [VULN-004] Virtual-tour write handlers bypass session revocation & block checks
-**MEDIUM** | CWE-613 / CWE-287 | OWASP A07:2021 | `app/api/properties/[id]/virtual-tour/route.ts:7-21,71`, `.../[roomId]/route.ts:6-19`
-These POST/PATCH/DELETE roll their own `verifyAccessToken` + `canManage` (owner/role only) and never check `token_version`/`is_blocked` — the sole mutating routes that skip the shared middleware. A revoked/blocked user's still-valid 15-min token can keep editing tours.
-**Fix:** route through `withAuth` (+ownership check) or add `token_version`/`is_blocked` checks inline.
-
-### 5. [VULN-005] `export-data.js` dumps full user table incl. password hashes — committed
-**MEDIUM** | CWE-312 / CWE-532 | OWASP A02:2021 | `export-data.js:8,17` (git-tracked)
-Runs `prisma.user.findMany()` (bcrypt hashes + PII) and writes unencrypted JSON to temp. A committed data-exfiltration helper.
-**Fix:** remove from repo, or exclude `passwordHash` + write to a secured/gitignored path.
-
----
-
-## Detailed Findings by Severity
+## Detailed Findings
 
 ### HIGH
 
-| ID | Title | Location | CWE | OWASP |
-|----|-------|----------|-----|-------|
-| VULN-001 | LLM endpoints (opinion/chat) unprotected — denial-of-wallet | app/api/properties/[id]/opinion:11, /chat:16 | 770 | A04 |
-| VULN-002 | Negative/zero price·area·rooms on listing create | app/api/properties/list/route.ts:40 | 20/841 | A04 |
-| VULN-003 | Live unrotated secrets at rest in .env | .env:11,14,15,18,21 | 798/312 | A02 |
-
-### MEDIUM
-
-| ID | Title | Location | CWE | OWASP |
-|----|-------|----------|-----|-------|
-| VULN-004 | Virtual-tour writes bypass token_version/is_blocked | app/api/properties/[id]/virtual-tour/route.ts:7 | 613/287 | A07 |
-| VULN-005 | export-data.js dumps users+hashes (committed) | export-data.js:8 | 312/532 | A02 |
-| VULN-006 | WebSocket /ws/chat no Origin validation (CSWSH) | server.ts:362-376 | 1385 | A05 |
-| VULN-007 | Rate-limit bypass via spoofable X-Forwarded-For (leftmost) | lib/rateLimiter.ts:69-83 | 807/770 | A07 |
-| VULN-008 | Socket.io CORS `*` fallback with credentials:true | server.ts:47-54 | 942 | A05 |
-| VULN-009 | Prod CSP keeps script-src 'unsafe-inline' | middleware.ts:43 | 79 | A05 |
-| VULN-010 | Reviews: no transaction relationship + any user_type reviewable | app/api/agents/[id]/reviews/route.ts:82-105 | 639 | A04 |
-| VULN-011 | Agent-typed user creates viewings for arbitrary clientId on unowned property | app/api/viewings/route.ts:127-180 | 639/770 | A04 |
-| VULN-012 | Double-booking tx guards per-client dup only; agent time-slot conflicts unguarded | app/api/viewings/route.ts:191-200 | 362 | A04 |
-| VULN-013 | Missing HSTS header (nginx 443) | docker/nginx/conf.d/default.conf:36-41 | 16 | A05 |
-| VULN-014 | No CSP at nginx edge (mitigated: app middleware sets it) | docker/nginx/conf.d/default.conf:35 | 16 | A05 |
-| VULN-015 | Prod app port 3000 published to host (bypasses nginx TLS/rate-limits) | docker-compose.prod.yml:31 | 200 | A05 |
-| VULN-016 | Adminer (+Mailhog) exposed on 0.0.0.0 in dev | docker-compose.yml:54-59,74 | 306 | A05 |
-| VULN-017 | Stale lockfile still resolves node-pty (PTY, install script) + bcryptjs | package-lock.json:8129,3612 | 1104/1395 | A06 |
-| VULN-018 | ESLint 8 end-of-life | package.json:78 | 1104 | A06 |
-| VULN-019 | @modelcontextprotocol/sdk ^0.5.0 majors behind (verify used) | package.json:24 | 1104 | A06 |
-| VULN-020 | @svgr/webpack referenced in next.config but not installed | next.config.ts:122-125 | 1104/20 | A06 |
-| VULN-021 | zod imported but not declared in package.json (transitive only) | lib/validations/*.ts:1 | 1104 | A06 |
-| VULN-022 | zod schema layer used by 1/84 routes — manual validation gaps | app/api/properties/list/route.ts:59 | 20 | A03 |
-
-### LOW
-
-| ID | Title | Location | CWE | OWASP |
-|----|-------|----------|-----|-------|
-| VULN-023 | JWT verify does not pin `algorithms:['HS256']` | lib/services/jwtService.ts:49-63 | 347 | A02 |
-| VULN-024 | Verbose error `details` leaked on chat route | app/api/chat/route.ts:108,146 | 209 | A09 |
-| VULN-025 | chat/compare: no input-length cap; client-supplied systemContext | app/api/chat/compare/route.ts:13-23 | 20/770 | A03 |
-| VULN-026 | search/voice: no rate-limit / transcript cap | app/api/search/voice/route.ts:7-19 | 770 | A04 |
-| VULN-027 | Weak default creds committed in .env.docker | .env.docker:11,13,21,23 | 798 | A02 |
-| VULN-028 | .gitignore gaps (`*.key`, `.env.*` catch-all, dump patterns) | .gitignore | 312 | A02 |
-| VULN-029 | Unpinned/mutable base image tags (:latest on adminer/mailhog) | Dockerfile:7; docker-compose*.yml | 16 | A05 |
-| VULN-030 | Security headers dropped on cached static nginx locations | docker/nginx/conf.d/default.conf:65-76 | 16 | A05 |
-| VULN-031 | Weak dev fallback creds in compose (homy_dev_password/redis) | docker-compose.yml:17,44 | 798 | A05 |
-| VULN-032 | CORS allowlist hardcodes localhost origins in production | middleware.ts:64-68 | 942 | A05 |
-| VULN-033 | In-memory rate limiter (not distributed) + no per-account lockout | lib/rateLimiter.ts:11; app/api/auth/login:12 | 770/307 | A04 |
-| VULN-034 | uuid@^14.0.0 unusual major; @types/uuid@10 mismatch — verify | package.json:64,75 | 1357 | A06 |
-| VULN-035 | Loose caret ranges on security-critical deps (jwt/bcrypt/ws/next) | package.json:42,47,50,65 | 1104 | A06 |
-| VULN-036 | SMTP `secure:false` without `requireTLS:true` (STARTTLS downgrade) | lib/services/emailService.ts:6 | 693 | A05 |
-
-### INFO
-
-| ID | Title | Location |
-|----|-------|----------|
-| VULN-037 | 7 packages with install scripts / native builds (bcrypt/sharp expected; node-pty not) | package-lock.json |
-| VULN-038 | Stray non-app assets in repo (HambarcumMC/*, VectorStock_files/ GTM dump) | repo root |
-| VULN-039 | Native SVG/analytics obfuscation hits are all vendored libs — benign | vendored |
+#### [VULN-001] Broker-review "real interaction" gate accepts an unconfirmed/self-created viewing
+- **Severity:** HIGH (72/100) · **Confidence:** HIGH · **CWE-840 / CWE-863** · **OWASP A04:2021**
+- **Location:** `app/api/agents/[id]/reviews/route.ts` (POST, interaction check) ← `app/api/viewings/route.ts` (POST create)
+- **WHAT:** The anti-review-bombing control requires only that *some* viewing row links reviewer→broker, with **no status filter**: `prisma.viewing.findFirst({ where: { clientId: req.user!.id, agentId } })`. But any authenticated user unilaterally creates a viewing row via `POST /api/viewings` with `{ propertyId, scheduledAt }` (status `pending_agent`, `agentId` = property owner) — the broker never has to confirm it (a cancelled row still matches).
+- **WHY:** To review broker X, an attacker requests a viewing on any property X owns (then optionally cancels it) and immediately posts a review. The one-review-per-author cap only limits to 1 fake review per broker per account; throwaway accounts scale it. This defeats the reputation system — the core trust primitive of the marketplace.
+- **FIX:** Require `status: 'completed'` (or at minimum `'confirmed'`) in the interaction lookup, ideally with `scheduledAt < now`. A viewing the broker never accepted is not an interaction.
 
 ---
 
-## Threat Intelligence Report (96/100 — CLEAN)
+### MEDIUM
 
-No backdoors, C2, data exfiltration, cryptominers, or malicious obfuscation in application code. MITRE ATT&CK screen negative (T1059/T1027/T1071/T1005/T1041/T1496). `eval`/`exec` hits are `regex.exec()` or vendored library codegen. Outbound calls are all legitimate: internal `/api/*`, OpenStreetMap/Overpass geocoding, and `api.anthropic.com` (keyed from env — the intended AI feature). Telegram `t.me/` links are property-share buttons. No prompt-injection payloads in any scanned file (including this report and `.md` files). `check_server.py` (prior CRITICAL SSH creds) confirmed removed from working tree.
+#### [VULN-002] OTP verification has no per-account attempt lockout (brute-forceable)
+- **Severity:** MEDIUM (58/100) · **Confidence:** MEDIUM · **CWE-307** · **OWASP A07:2021** · *(confirmed by Agents 1 & 8)*
+- **Location:** `app/api/auth/verify-otp/route.ts`, `lib/services/otpService.ts:42-69`
+- **WHAT:** OTP is a 6-digit code (`crypto.randomInt(100000,999999)`, 10-min validity). `verifyOtp` matches `(email, code, used:false)` with no per-record `attempts` counter; account lockout (`lib/rateLimiter.ts`) is wired to **login only**. The sole verification throttle is per-IP (`otpVerify`: 5/15min).
+- **WHY:** 900k keyspace + 10-min window + IP-only throttle → a distributed/rotating-IP attacker can brute an active code and obtain session cookies for a pending account. Chains with VULN-006 (see CHAIN-001).
+- **FIX:** Add an `attempts` column on the OTP record, invalidate after ~5 wrong tries; and/or extend the account-lockout axis (keyed by email/userId) to OTP verification, mirroring login.
+
+#### [VULN-003] AI chat session resumable via client-supplied `sessionId` (BOLA)
+- **Severity:** MEDIUM (55/100) · **Confidence:** HIGH · **CWE-639** · **OWASP A01:2021**
+- **Location:** `app/api/chat/route.ts` (POST, unauthenticated) + `lib/sessionManager.ts:32-58`
+- **WHAT:** The chat POST is unauthenticated (rate-limited only) and passes the client-supplied `sessionId` straight to `sessionManager.sendMessage`. `SessionManager` keys its in-memory map solely on that id, with no binding to a user or IP; supplying another id resumes that session and returns its retained `messageHistory` (last 20 messages).
+- **WHY:** The only thing protecting one conversation from another is the secrecy/entropy of the client-generated id — a classic user-controlled-key authorization gap.
+- **FIX:** Namespace the session key with `req.user.id` for authenticated users; for anonymous, issue a server-generated opaque id in an HttpOnly cookie rather than trusting a body value. Reject ids not owned by the caller.
+
+#### [VULN-004] WebSocket anon AI rate-limit bypass via X-Forwarded-For spoofing (denial-of-wallet)
+- **Severity:** MEDIUM (55/100) · **Confidence:** HIGH · **CWE-770 / CWE-348** · **OWASP A04:2021**
+- **Location:** `server.ts:357-361` (`clientIpOf`), consumed at `:392`, `:422`
+- **WHAT:** The anonymous allowance for `/ws/chat` (2 free Anthropic calls per IP) keys off `clientIpOf`, which trusts the **leftmost** `x-forwarded-for` value (`xff.split(',')[0]`) — fully client-controlled. The HTTP limiter was explicitly hardened for this (`getClientIP` prefers `x-real-ip`/rightmost XFF, VULN-007 in prior audit) but the WS path was not updated.
+- **WHY:** Rotating a spoofed header per connection yields unlimited free paid-LLM calls (billing abuse).
+- **FIX:** In `clientIpOf`, mirror `getClientIP`: prefer `x-real-ip` (set by trusted nginx), else rightmost XFF entry, else `socket.remoteAddress`.
+
+#### [VULN-005] TOCTOU double-booking on viewing approval
+- **Severity:** MEDIUM (52/100) · **Confidence:** HIGH · **CWE-367** · **OWASP A04:2021**
+- **Location:** `app/api/viewings/[id]/approve/route.ts`
+- **WHAT:** The slot-conflict guard is a non-atomic check-then-act (`findFirst` confirmed-conflict → `update` to confirmed), not wrapped in a transaction and with no unique constraint. Two pending viewings for the same agent+`scheduledAt` approved concurrently both read zero conflicts and both write `confirmed`.
+- **WHY:** Inconsistent with the *creation* path, which correctly uses a `Serializable` transaction. Approval is where `confirmed` slots are actually produced, so the guarantee matters most here.
+- **FIX:** Wrap check+update in a `Serializable` transaction, or add a partial unique index on `(agentId, scheduledAt) WHERE status='confirmed'` and handle the conflict.
+
+#### [VULN-006] Account enumeration on registration
+- **Severity:** MEDIUM (48/100) · **Confidence:** HIGH · **CWE-204** · **OWASP A07:2021**
+- **Location:** `app/api/auth/register/route.ts`
+- **WHAT:** Existing verified email → `400 { error: 'Email already registered' }`; new email → `200 { success: true }`. Distinct status+body reveals which emails have verified accounts. Login and password-reset are correctly generic; register is the lone oracle.
+- **WHY:** Enables user enumeration for targeted phishing / credential stuffing.
+- **FIX:** Return an identical generic response ("If this email can be registered, a verification code has been sent") for both cases; drive the distinction only via emailed content.
+
+#### [VULN-007] Production CSP allows `script-src 'unsafe-inline'`
+- **Severity:** MEDIUM (50/100) · **Confidence:** MEDIUM · **CWE-1021 / CWE-79 (defense-in-depth)** · **OWASP A05:2021** · *(confirmed by Agents 1, 5 & 8)*
+- **Location:** `middleware.ts:42-57`
+- **WHAT:** Prod `script-src` = `'self' 'unsafe-inline'`. `'unsafe-eval'` is correctly stripped in prod, but `'unsafe-inline'` remains, so CSP provides no script-XSS containment.
+- **WHY:** App XSS surface is low today (JSX auto-escaping; all `dangerouslySetInnerHTML` inject static CSS constants), but there is no backstop if an injection is ever introduced. This is a known Next.js tradeoff — nonce-based CSP costs static-page caching.
+- **FIX (if adopted):** per-request nonce in middleware → `script-src 'self' 'nonce-<random>' 'strict-dynamic'`, attach nonce to first-party inline scripts. Accepting the tradeoff and keeping `unsafe-inline` is a defensible engineering decision given no active sink.
+
+---
+
+### LOW
+
+#### [VULN-008] Unbounded `findMany` on public `/api/properties?sort_by=match_score`
+- **Severity:** LOW (40/100) · **Confidence:** MEDIUM · **CWE-770** · **OWASP A04:2021**
+- **Location:** `app/api/properties/route.ts:149-159`
+- **WHAT:** With `sort_by=match_score` the handler runs `findMany` with **no `take`**, then AI-enriches the entire matching set before slicing the page (all other sorts paginate in the DB).
+- **WHY:** A public caller with a broad filter forces loading + CPU-scoring the whole `Property` table each request. Bounded today by catalog size; grows with data.
+- **FIX:** Cap the pre-scoring fetch (`take: 500`) or precompute match ranking; never fan out an unbounded `findMany` on an anonymous endpoint.
+
+#### [VULN-009] Login timing side-channel enables email enumeration
+- **Severity:** LOW (30/100) · **Confidence:** MEDIUM · **CWE-208 / CWE-203** · **OWASP A07:2021**
+- **Location:** `app/api/auth/login/route.ts:32-56`
+- **WHAT:** Non-existent email returns immediately; existing account runs `bcrypt.compare` (~100ms). Bodies are identical but timing distinguishes registered emails.
+- **FIX:** Always compare against a constant dummy bcrypt hash when the user is absent, so both branches take the same time.
+
+#### [VULN-010] Upstream AI error message relayed to client
+- **Severity:** LOW (25/100) · **Confidence:** MEDIUM · **CWE-209** · **OWASP A05:2021** · *(confirmed by Agents 1 & 7)*
+- **Location:** `app/api/chat/route.ts:77`, `server.ts:461`
+- **WHAT:** Anthropic SDK `error.message` forwarded verbatim over SSE / `/ws/chat` (`{ type:'error', error: apiError.message }`). Every other route returns a generic string — this is the lone inconsistency.
+- **FIX:** Log detail server-side; emit a fixed generic message to the client.
+
+#### [VULN-011] Socket.io live-chat message has no length bound
+- **Severity:** LOW (30/100) · **Confidence:** HIGH · **CWE-770** · **OWASP A04:2021**
+- **Location:** `server.ts:133-173`
+- **WHAT:** The `message` socket event checks only `content?.trim()` truthiness, then persists + broadcasts. The HTTP twin (`chats/[id]/messages`) enforces a zod length cap; the realtime path bypasses it.
+- **FIX:** Reject `content.length > N` (align with the message schema) before persisting.
+
+#### [VULN-012] Listing creation has no rate limit
+- **Severity:** LOW (28/100) · **Confidence:** HIGH · **CWE-770** · **OWASP A04:2021**
+- **Location:** `app/api/properties/list/route.ts`
+- **WHAT:** `POST /api/properties/list` has no per-user rate limit (unlike viewing-create). An authenticated account can flood the moderation queue.
+- **FIX:** `checkRateLimit(\`listing-create:${userId}\`, RATE_LIMITS.api)`.
+
+#### [VULN-013] `reset-password` not rate-limited; cron secret compared non-constant-time
+- **Severity:** LOW (25/100) · **Confidence:** MEDIUM · **CWE-307 / CWE-208**
+- **Location:** `app/api/auth/reset-password/route.ts` (no limiter); `app/api/cron/*` (`header !== secret`)
+- **WHAT:** The token-consumption endpoint is unlimited (request endpoint is limited). Token is 256-bit one-time/1h so brute-force is infeasible (hence Low). Cron auth uses non-constant-time `!==`.
+- **FIX:** Add IP limiter to `reset-password`; compare cron secret with `crypto.timingSafeEqual`.
+
+#### [VULN-014] Dead duplicate security helper with weaker primitives
+- **Severity:** LOW (20/100) · **Confidence:** HIGH · **CWE-1041** · **OWASP A04:2021**
+- **Location:** `lib/middleware/corsHelper.ts` (no importers in `app/**`)
+- **WHAT:** Contains a second, weaker fixed-window rate limiter and a `getClientIp` trusting leftmost XFF — the exact patterns the real `rateLimiter.ts` was rewritten to avoid.
+- **WHY:** Latent trap — a future route could import this and silently reintroduce spoofable/weaker limiting.
+- **FIX:** Delete the file (or strip the duplicated helpers).
+
+#### [VULN-015] Edge middleware API guard incomplete (defense-in-depth)
+- **Severity:** LOW (18/100) · **Confidence:** HIGH · **CWE-284** · **OWASP A01:2021**
+- **Location:** `middleware.ts:126-154`
+- **WHAT:** `protectedApiRoutes` lists only 5 prefixes and merely checks a token is *present* (no signature/version/block verify). Most protected routes aren't listed. Real enforcement lives in the route wrappers (correct), so this is not exploitable — but it misleads.
+- **FIX:** Either remove the partial edge block (rely on wrappers) or make it a complete signature-verifying gate. Don't leave a half-list that looks authoritative.
+
+#### [VULN-016] `getCurrentUser()` helper skips revocation/block checks
+- **Severity:** LOW (18/100) · **Confidence:** MEDIUM · **CWE-613** · **OWASP A01:2021**
+- **Location:** `lib/middleware/authMiddleware.ts:156-172`
+- **WHAT:** Verifies JWT signature but not `token_version`/`is_blocked` (unlike the wrappers). No current caller in `app/api/**` (all use wrappers), so impact is latent.
+- **FIX:** Add the same checks, or delete the helper to force wrapper use.
+
+#### [VULN-017] nginx appends (does not reset) client-supplied X-Forwarded-For
+- **Severity:** LOW (25/100) · **Confidence:** MEDIUM · **CWE-348** · **OWASP A05:2021**
+- **Location:** `docker/nginx/conf.d/default.conf:53`
+- **WHAT:** `$proxy_add_x_forwarded_for` appends the real client IP to any client-sent XFF, so a spoofed leftmost value survives to the app. `X-Real-IP` is correctly `$remote_addr` and nginx zones key on `$binary_remote_addr` (not bypassable), so risk is only if app code trusts XFF — which VULN-004 does on the WS path.
+- **FIX:** Single trusted proxy → reset it: `proxy_set_header X-Forwarded-For $remote_addr;` and have the app read `X-Real-IP`. (Fixing VULN-004 also closes the practical impact.)
+
+#### [VULN-018] Unpinned container images
+- **Severity:** LOW (22/100) · **Confidence:** HIGH · **CWE-1104 / CWE-829** · **OWASP A08:2021**
+- **Location:** `Dockerfile:7,22,40`; `docker-compose.prod.yml:65,96,122`; `docker-compose.yml:12,36`
+- **WHAT:** Floating tags (`node:20-alpine`, `postgres:16-alpine`, `redis:7-alpine`, `nginx:alpine`). Adminer/Mailhog are correctly pinned exactly.
+- **FIX:** Pin by digest or exact patch tag; bump deliberately.
+
+#### [VULN-019] `migrate` service runs as root from the builder stage
+- **Severity:** LOW (25/100) · **Confidence:** HIGH · **CWE-250**
+- **Location:** `docker-compose.prod.yml:150-164`
+- **WHAT:** `migrate` builds `target: builder` — no `USER` (root), full source + devDeps, no resource limits, holds `DATABASE_URL`, runs `prisma migrate deploy`.
+- **FIX:** Run migrations from a non-root stage (reuse `runner`'s `USER nextjs`); add resource limits.
+
+#### [VULN-020] Redis password passed on command line in healthcheck
+- **Severity:** LOW (18/100) · **Confidence:** MEDIUM · **CWE-214**
+- **Location:** `docker-compose.prod.yml:108` (`redis-cli -a ${REDIS_PASSWORD} ping`)
+- **WHAT:** Password visible via `ps` inside the container.
+- **FIX:** Use `REDISCLI_AUTH` env var for the healthcheck instead of `-a`.
+
+#### [VULN-021] Functional dev credentials committed in `.env.docker` / dev compose
+- **Severity:** LOW (20/100) · **Confidence:** HIGH · **CWE-798 / CWE-1188** · **OWASP A05:2021** · *(confirmed by Agents 3 & 5)*
+- **Location:** `.env.docker:11,17,20`; `docker-compose.yml:17,44`
+- **WHAT:** Working dev Postgres/Redis passwords (`homy****word`, `homy****edis`) committed as functional values / `${VAR:-default}` fallbacks. Bounded: dev-only, all dev services bind loopback (`127.0.0.1`), prod never uses them.
+- **FIX:** Replace with non-functional placeholders (`CHANGE_ME`) so no working credential lands in git history.
+
+#### [VULN-022] `@types/uuid` a major version behind runtime `uuid`
+- **Severity:** LOW (12/100) · **Confidence:** HIGH · **CWE-1104** · **OWASP A06:2021**
+- **Location:** `package.json:60` (`@types/uuid ^10` vs `uuid ^14`)
+- **WHAT:** Type-definition drift; dev-time only, no runtime impact.
+- **FIX:** Bump or drop `@types/uuid` (modern `uuid` ships its own types).
+
+#### [VULN-023] Caret (`^`) version ranges on all dependencies
+- **Severity:** LOW (15/100) · **Confidence:** HIGH · **CWE-1104** · **OWASP A06:2021**
+- **Location:** `package.json` (all deps)
+- **WHAT:** Fresh `npm install` could pull newer minors/patches than audited. **Already mitigated** by the committed integrity-pinned lockfile + `npm ci` in `Dockerfile:18`.
+- **FIX:** Keep `npm ci` everywhere (CI + docs), never `npm install` on deploy paths.
+
+---
+
+### Informational
+
+- **INFO-1 — In-memory rate limiter / account lockout are per-process.** `lib/rateLimiter.ts` — with N app instances effective limits become N×; restart clears state. Already documented; Redis design in `SECURITY-RATELIMIT-DESIGN.md`. Weakens the practical efficacy of the IP-based throttles above at scale.
+- **INFO-2 — No explicit JSON body-size limit on route handlers.** `req.json()` is unbounded (`serverActions.bodySizeLimit` is 2mb but doesn't cover App-Router routes). Low-priority DoS; consider a guard on non-AI POST bodies.
+- **INFO-3 — nginx TLS hardening gaps.** Strong protocols/ciphers + `server_tokens off` present; missing OCSP stapling and custom `dhparam`; deprecated `listen 443 ssl http2;` syntax (functional).
+- **INFO-4 — No CI/CD pipeline.** `.github/workflows` absent — no automated SAST/dependency/secret-scan gate. Consider adding Trivy/Grype + secret scanning.
+- **INFO-5 — `uuid@14` is an unusually high major.** Verified genuine (official registry, real maintainers, integrity hash). Owner should confirm the bump was intentional.
+- **INFO-6 — `strip-ansi` declared as a direct dependency** (usually transitive). Confirm it's imported by app code, else drop.
+- **INFO-7 — Dev seed password fallback** (`prisma/seed.ts:1101`, `SEED_PASSWORD || 'devpassword123'`) — guarded by `NODE_ENV=production` + `ALLOW_PROD_SEED` gate. No action.
+
+---
+
+## Threat Intelligence Report (Agent 6 — score 100/100)
+
+No backdoors, C2, exfiltration, cryptominers, or logic bombs in the production codebase.
+- No dynamic code execution (`eval`/`new Function`/`child_process`) in `app/**` or `lib/**`; all `.exec(` hits are JS regex.
+- Outbound network is expected and hardcoded: `api.anthropic.com` (AI), `nominatim.openstreetmap.org` + `overpass-api.de` (geocoding), relative `/api/*`. No IPs, no Telegram/Discord/Pastebin/webhook channels. The `*.ngrok` entries are legit `allowedDevOrigins` in `next.config.ts`.
+- Upload path is not a web shell: `withAuth`-gated, magic-byte sniffed, UUID names, extension derived from sniffed type, 5MB/10-file caps, writes only under `public/uploads`.
+- `server.ts` WS/Socket.io handshakes are JWT-verified with an origin allowlist (anti-CSWSH) and participant checks.
+- MITRE ATT&CK: no techniques observed.
 
 ---
 
 ## Attack Path Analysis
 
-- **[CHAIN-001] Price manipulation → live catalogue** — VULN-002 (negative/zero price passes create validation) + approve route copies `listing.price` into live `Property` with no re-validation and `verified:true`. A moderator eyeballing photos publishes a `-1`/`0` AMD listing that corrupts platform-wide sort/filter/stats. **Combined: HIGH.**
-- **[CHAIN-002] Notification/CRM spam** — VULN-011 (agent-typed account creates viewings naming arbitrary clientId on any property) + generous `RATE_LIMITS.api` (60/min) → thousands of forged "viewing proposed" notifications/leads into arbitrary users' feeds. **Combined: MEDIUM.**
-- **[CHAIN-003] Reputation manipulation** — VULN-010 (no interaction check, any user reviewable) + no per-target review rate limit + registration bypassable across IPs → review-bomb/inflate any broker. **Combined: MEDIUM.**
-
----
-
-## Verified Fixed (prior remediation — confirmed present)
-
-AI chat rate-limiting · upload magic-byte sniffing + extension-from-sniffed-type · avatar delete path-traversal guard · `token_version` revocation (withAuth/withOptionalAuth/withBroker/withAdmin/withModerator/refresh/reset-password/password-change) · cookie Secure-in-prod + HttpOnly + SameSite=lax · CSP `unsafe-eval` gated to dev · public listing GET no longer leaks owner PII · viewing double-booking Serializable tx · rate limits (viewings/messages/waitlist) · admin approve atomic `updateMany` claim + adminActionLog · no direct Property create bypassing moderation · dev Postgres/Redis loopback-bound + Redis `--requirepass` · prod DB/Redis internal-only · nginx `X-XSS-Protection "0"` (correct modern setting) · Dockerfile non-root + healthcheck + `.dockerignore` blocking `.env` · leaked secret files removed from working tree · mass-assignment blocked on `users/me` (role not self-assignable) · cron routes fail-closed without `CRON_SECRET`.
+#### [CHAIN-001] Pending-account takeover
+**Path:** VULN-006 (register enumeration → confirm an email has an unverified pending account) **+** VULN-002 (OTP verify has no per-account lockout → brute the 6-digit code from rotating IPs) **→** attacker verifies and receives session cookies for a pending account.
+**Combined severity:** HIGH (individual: MEDIUM + MEDIUM). Fixing either link breaks the chain; fix both.
 
 ---
 
 ## Remediation Priority Queue
 
-**Fix now (High):**
-1. VULN-001 — rate-limit + input-cap `properties/[id]/opinion` & `properties/[id]/chat`.
-2. VULN-002 — validate parsed price/area/rooms (>0) on create + re-validate in approve (breaks CHAIN-001).
-3. VULN-003 — rotate `.env` secrets (owner's deferred step).
+### Fix Now (before launch)
+1. **VULN-001** — Require `status:'completed'`/`'confirmed'` in the review interaction check.
 
-**Fix this sprint (Medium):**
-4. VULN-004 — virtual-tour writes → `withAuth` / token_version check.
-5. VULN-006/008 — WebSocket Origin validation; drop socket.io `*` CORS fallback.
-6. VULN-007 — trust `x-real-ip` (rightmost hop), not leftmost XFF.
-7. VULN-010/011/012 — review relationship+broker check; agent must own property; agent time-slot conflict check.
-8. VULN-005 — remove/neuter `export-data.js`.
-9. VULN-013/015/016 — HSTS header; drop prod `app` host port; loopback-bind Adminer/Mailhog.
-10. VULN-017/020/021 — `npm install` to sync lockfile; declare `zod` + `@svgr/webpack` (or remove).
-11. VULN-009/022 — nonce-based CSP (drop `unsafe-inline`); wire zod schemas into write routes.
+### Fix This Sprint (High-value Medium)
+2. **VULN-002** — OTP per-account attempt lockout (also breaks CHAIN-001).
+3. **VULN-004** — WS `clientIpOf` → prefer `x-real-ip`/rightmost XFF (denial-of-wallet).
+4. **VULN-003** — Bind AI chat session to user/cookie, not client-supplied id.
+5. **VULN-005** — Serializable tx / unique index on viewing approval.
+6. **VULN-006** — Generic registration response (also breaks CHAIN-001).
 
-**Fix this month (Low):** VULN-023..036 — algorithm pinning, generic errors, input caps on compare/voice, `.env.docker` placeholders, `.gitignore` hardening, image digest pinning, static-location headers, prod CORS allowlist, Redis-backed rate limiter + account lockout, dep version verification, `requireTLS` on SMTP.
+### Fix This Month (Medium/Low)
+7. **VULN-007** — Decide nonce-CSP vs. accept `unsafe-inline` tradeoff (documented).
+8. VULN-008..VULN-014 — unbounded match-score query, timing enum, AI error leak, Socket.io length cap, listing rate limit, reset-password limiter + timing-safe cron compare, delete dead `corsHelper.ts`.
 
-**Backlog (Info):** VULN-037..039 — CI `--ignore-scripts`, remove stray vendor assets.
+### Backlog (Low/Infra hygiene)
+- VULN-015..VULN-023 — edge-guard cleanup, `getCurrentUser` hardening, nginx XFF reset, image pinning, non-root migrate, Redis healthcheck auth, dev-cred placeholders, type/dep hygiene.
+- INFO-1..INFO-7 — Redis limiter at scale, body-size guard, TLS stapling, CI/CD pipeline.
 
 ---
 
 ## Methodology
 
-OWASP Top 10:2021 · CWE Top 25:2024 · STRIDE per trust boundary · MITRE ATT&CK v15 · framework-aware false-positive suppression (Prisma parameterization, React auto-escaping) · 4-tier confidence · 8 specialist agents with weighted scoring. Deduplicated cross-agent findings (AI endpoints, CSP, secrets) and renumbered.
+- OWASP Top 10:2021, CWE Top 25:2024, STRIDE per trust boundary, MITRE ATT&CK v15.
+- 8 specialist agents (vuln, authz, secrets, deps, IaC, threat-intel, AI-code, logic) in parallel, READ-ONLY (Read/Grep/Glob + read-only shell only).
+- Framework-aware false-positive suppression (Prisma parameterization, JSX auto-escaping, static-CSS `dangerouslySetInnerHTML`).
+- 4-tier confidence (HIGH/MEDIUM/LOW/INFO); cross-agent confirmations raise confidence.
+- Weighted category scoring; findings deduplicated and renumbered VULN-001…023.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Built by agricidaniel — Join the AI Marketing Hub community
-🆓 Free  → https://www.skool.com/ai-marketing-hub
-⚡ Pro   → https://www.skool.com/ai-marketing-hub-pro
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
+_READ-ONLY audit — no files other than this report were created or modified; nothing was committed or installed._

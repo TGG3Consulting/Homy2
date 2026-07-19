@@ -102,10 +102,15 @@ services:
       --maxmemory 512mb
       --maxmemory-policy allkeys-lru
       --requirepass ${REDIS_PASSWORD}
+    # REDISCLI_AUTH lets the healthcheck authenticate WITHOUT putting the
+    # password in argv (VULN-020) — redis-cli reads it from the env, so it
+    # no longer shows up in `ps` inside the container.
+    environment:
+      REDISCLI_AUTH: ${REDIS_PASSWORD}
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -153,6 +158,10 @@ services:
       dockerfile: Dockerfile
       target: builder
     container_name: homy-migrate
+    # Run migrations as the non-root built-in `node` user (uid 1000) instead of
+    # root (VULN-019): migrate only reads the schema and connects to the DB, so
+    # least-privilege applies. Bound resources too.
+    user: "1000:1000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
     command: npx prisma migrate deploy
@@ -162,6 +171,11 @@ services:
     networks:
       - homy-network
     restart: "no"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
 volumes:
   postgres_data:

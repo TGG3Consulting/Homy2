@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 import { deriveNotifyCriteria, generateNotifications, getUnseenCounts } from '@/lib/services/savedSearchMatcher';
+import { createSavedSearchSchema } from '@/lib/validations/schemas/user';
+import { validateBody } from '@/lib/validations/validate';
 
 const MAX_SAVED_SEARCHES = 20;
 
@@ -48,7 +51,10 @@ export const GET = withAuth(async (req: AuthenticatedRequest) => {
 export const POST = withAuth(async (req: AuthenticatedRequest) => {
   try {
     const userId = req.user!.id;
-    const body = await req.json();
+    // Schema validation (VULN-022): required fields + element counts +
+    // serialized-size caps on every stored JSON blob.
+    const validation = validateBody(createSavedSearchSchema, await req.json());
+    if (!validation.success) return validation.error;
     const {
       name,
       comment,
@@ -58,36 +64,7 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
       criteriaChips,
       insights,
       topChoiceId,
-    } = body;
-
-    // Validate required fields
-    if (!query) {
-      return NextResponse.json(
-        { error: 'Query is required', success: false },
-        { status: 400 }
-      );
-    }
-
-    if (!chatMessages) {
-      return NextResponse.json(
-        { error: 'Chat messages are required', success: false },
-        { status: 400 }
-      );
-    }
-
-    if (!properties) {
-      return NextResponse.json(
-        { error: 'Properties are required', success: false },
-        { status: 400 }
-      );
-    }
-
-    if (!criteriaChips) {
-      return NextResponse.json(
-        { error: 'Criteria chips are required', success: false },
-        { status: 400 }
-      );
-    }
+    } = validation.data;
 
     // Check limit
     const currentCount = await prisma.savedSearch.count({
@@ -115,10 +92,10 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
         name: name || null,
         comment: comment || null,
         query,
-        chatMessages,
-        properties,
+        chatMessages: chatMessages as Prisma.InputJsonValue,
+        properties: properties as Prisma.InputJsonValue,
         criteriaChips,
-        insights: insights || null,
+        insights: insights == null ? Prisma.DbNull : (insights as Prisma.InputJsonValue),
         topChoiceId: topChoiceId || null,
         notifyCriteria: notifyCriteria as any,
         knownPropertyIds,

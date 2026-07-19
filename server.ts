@@ -138,6 +138,14 @@ app.prepare().then(() => {
         return;
       }
 
+      // Length cap (VULN-011): the realtime path must enforce the same bound as
+      // the HTTP twin (chats/[id]/messages, zod max 5000) — otherwise unbounded
+      // content abuses DB storage and broadcast amplification.
+      if (content.length > 5000) {
+        socket.emit('error', { message: 'Message too long (max 5000 chars)' });
+        return;
+      }
+
       try {
         // Verify user is participant
         const conversation = await prisma.conversation.findFirst({
@@ -355,8 +363,19 @@ app.prepare().then(() => {
   }, ANON_AI_WINDOW_MS);
   if (typeof anonCleanup.unref === 'function') anonCleanup.unref();
   function clientIpOf(request: IncomingMessage): string {
+    // Mirror lib/rateLimiter.getClientIP (VULN-004): a client can prepend
+    // arbitrary values to the LEFT of X-Forwarded-For, so the leftmost entry is
+    // spoofable and MUST NOT key the anonymous denial-of-wallet allowance.
+    // Prefer X-Real-IP (set by our nginx from $remote_addr, not client-controllable);
+    // else take the RIGHTMOST XFF entry (appended by the trusted proxy); else socket.
+    const realIp = request.headers['x-real-ip'];
+    if (typeof realIp === 'string' && realIp.trim()) return realIp.trim();
+
     const xff = request.headers['x-forwarded-for'];
-    if (typeof xff === 'string' && xff.length) return xff.split(',')[0].trim();
+    if (typeof xff === 'string' && xff.length) {
+      const parts = xff.split(',').map((p) => p.trim()).filter(Boolean);
+      if (parts.length) return parts[parts.length - 1];
+    }
     return request.socket.remoteAddress || 'unknown';
   }
 
@@ -456,9 +475,11 @@ app.prepare().then(() => {
           } catch (apiError) {
             console.error(`[WebSocket] API error for session ${sessionId}:`, apiError);
             if (ws.readyState === WebSocket.OPEN) {
+              // Generic message only (VULN-010): never forward SDK/upstream
+              // error detail to the client.
               ws.send(JSON.stringify({
                 type: 'error',
-                error: apiError instanceof Error ? apiError.message : 'Failed to get response'
+                error: 'Failed to get response'
               }));
             }
           }

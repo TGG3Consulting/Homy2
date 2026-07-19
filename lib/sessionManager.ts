@@ -127,9 +127,10 @@ class SessionManager {
     } catch (error) {
       console.error(`[SessionManager] Error for session ${sessionId}:`, error);
 
+      // Generic message only (VULN-010): don't leak SDK/upstream error detail.
       const errorData = {
         type: 'error',
-        error: error instanceof Error ? error.message : 'Failed to get response'
+        error: 'Failed to get response'
       };
 
       try {

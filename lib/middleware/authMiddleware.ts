@@ -165,6 +165,12 @@ export async function getCurrentUser(req: NextRequest) {
     const user = await prisma.user.findUnique({
       where: { id: payload.userId }
     });
+    if (!user) return null;
+    // Enforce the same revocation guarantees as withAuth/withOptionalAuth
+    // (VULN-016): a force-reset/logout (token_version bump) or a block must
+    // invalidate the session immediately, not linger until token expiry.
+    if (user.is_blocked) return null;
+    if ((payload.tokenVersion ?? 0) !== user.token_version) return null;
     return user;
   } catch {
     return null;

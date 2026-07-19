@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
+import { updateListingSchema } from '@/lib/validations/schemas/property';
+import { validateBody } from '@/lib/validations/validate';
 
 /** Admins/moderators may edit any pending listing before approving it (2.3). */
 async function isAdminUser(userId: string): Promise<boolean> {
@@ -102,7 +104,11 @@ async function patchHandler(
       );
     }
 
-    const body = await req.json();
+    // Schema validation (VULN-022): replaces the manual per-field checks with
+    // the same rules + upper bounds + capped text + unknown-key rejection.
+    // rooms:0 is now allowed (studio) — consistent with create and approve.
+    const validation = validateBody(updateListingSchema, await req.json());
+    if (!validation.success) return validation.error;
     const {
       property_type,
       location,
@@ -119,102 +125,25 @@ async function patchHandler(
       deposit_months,
       utilities_estimate,
       minimum_lease_months,
-    } = body;
+    } = validation.data;
 
     // Build update data with only provided fields
     const updateData: Record<string, unknown> = {};
-    if (deposit_months !== undefined) updateData.deposit_months = deposit_months === '' || deposit_months == null ? null : parseInt(deposit_months);
-    if (utilities_estimate !== undefined) updateData.utilities_estimate = utilities_estimate === '' || utilities_estimate == null ? null : parseFloat(utilities_estimate);
-    if (minimum_lease_months !== undefined) updateData.minimum_lease_months = minimum_lease_months === '' || minimum_lease_months == null ? null : parseInt(minimum_lease_months);
+    if (deposit_months !== undefined) updateData.deposit_months = deposit_months;
+    if (utilities_estimate !== undefined) updateData.utilities_estimate = utilities_estimate;
+    if (minimum_lease_months !== undefined) updateData.minimum_lease_months = minimum_lease_months;
     if (province !== undefined) updateData.province = province || null;
     if (city !== undefined) updateData.city = city || null;
     if (district !== undefined) updateData.district = district || null;
-
-    if (property_type !== undefined) {
-      const validTypes = ['apartment', 'house', 'studio'];
-      if (!validTypes.includes(property_type)) {
-        return NextResponse.json(
-          { error: 'Invalid property type. Must be one of: apartment, house, studio' },
-          { status: 400 }
-        );
-      }
-      updateData.property_type = property_type;
-    }
-
-    if (location !== undefined) {
-      if (typeof location !== 'string' || location.trim().length === 0) {
-        return NextResponse.json(
-          { error: 'Location is required and must be a non-empty string' },
-          { status: 400 }
-        );
-      }
-      updateData.location = location.trim();
-    }
-
-    if (price !== undefined) {
-      if (typeof price !== 'number' || price <= 0) {
-        return NextResponse.json(
-          { error: 'Price must be a positive number' },
-          { status: 400 }
-        );
-      }
-      updateData.price = price;
-    }
-
-    if (currency !== undefined) {
-      const validCurrencies = ['USD', 'AMD', 'EUR', 'RUB'];
-      if (!validCurrencies.includes(currency)) {
-        return NextResponse.json(
-          { error: 'Invalid currency. Must be one of: USD, AMD, EUR, RUB' },
-          { status: 400 }
-        );
-      }
-      updateData.currency = currency;
-    }
-
-    if (area !== undefined) {
-      if (typeof area !== 'number' || area <= 0) {
-        return NextResponse.json(
-          { error: 'Area must be a positive number' },
-          { status: 400 }
-        );
-      }
-      updateData.area = area;
-    }
-
-    if (rooms !== undefined) {
-      if (!Number.isInteger(rooms) || rooms <= 0) {
-        return NextResponse.json(
-          { error: 'Rooms must be a positive integer' },
-          { status: 400 }
-        );
-      }
-      updateData.rooms = rooms;
-    }
-
-    if (description !== undefined) {
-      updateData.description = description;
-    }
-
-    if (photos !== undefined) {
-      if (!Array.isArray(photos)) {
-        return NextResponse.json(
-          { error: 'Photos must be an array' },
-          { status: 400 }
-        );
-      }
-      updateData.photos = photos;
-    }
-
-    if (contact !== undefined) {
-      if (typeof contact !== 'string' || contact.trim().length === 0) {
-        return NextResponse.json(
-          { error: 'Contact is required and must be a non-empty string' },
-          { status: 400 }
-        );
-      }
-      updateData.contact = contact.trim();
-    }
+    if (property_type !== undefined) updateData.property_type = property_type;
+    if (location !== undefined) updateData.location = location;
+    if (price !== undefined) updateData.price = price;
+    if (currency !== undefined) updateData.currency = currency;
+    if (area !== undefined) updateData.area = area;
+    if (rooms !== undefined) updateData.rooms = rooms;
+    if (description !== undefined) updateData.description = description;
+    if (photos !== undefined) updateData.photos = photos;
+    if (contact !== undefined) updateData.contact = contact;
 
     // Check if there are any fields to update
     if (Object.keys(updateData).length === 0) {

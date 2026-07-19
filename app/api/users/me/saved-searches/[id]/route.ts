@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 import { markSearchSeen } from '@/lib/services/savedSearchMatcher';
+import { updateSavedSearchSchema, patchSavedSearchSchema } from '@/lib/validations/schemas/user';
+import { validateBody } from '@/lib/validations/validate';
 
 /**
  * Extract saved search ID from URL
@@ -102,7 +104,9 @@ export const PUT = withAuth(async (req: AuthenticatedRequest) => {
       );
     }
 
-    const body = await req.json();
+    // Schema validation (VULN-022): counts + serialized-size caps on blobs.
+    const validation = validateBody(updateSavedSearchSchema, await req.json());
+    if (!validation.success) return validation.error;
     const {
       name,
       comment,
@@ -111,7 +115,7 @@ export const PUT = withAuth(async (req: AuthenticatedRequest) => {
       criteriaChips,
       insights,
       topChoiceId,
-    } = body;
+    } = validation.data;
 
     // Build update data - only include fields that are provided
     const updateData: Record<string, unknown> = {};
@@ -180,8 +184,10 @@ export const PATCH = withAuth(async (req: AuthenticatedRequest) => {
       return NextResponse.json({ error: 'Access denied', success: false }, { status: 403 });
     }
 
-    const body = await req.json().catch(() => ({} as any));
-    const { notify, markSeen } = body;
+    // Schema validation (VULN-022): booleans only, unknown keys rejected.
+    const validation = validateBody(patchSavedSearchSchema, await req.json().catch(() => ({})));
+    if (!validation.success) return validation.error;
+    const { notify, markSeen } = validation.data;
 
     if (markSeen) {
       await markSearchSeen(userId, searchId);

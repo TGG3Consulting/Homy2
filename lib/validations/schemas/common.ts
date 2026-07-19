@@ -43,6 +43,26 @@ export const uuidSchema = z
   .uuid('Invalid ID format');
 
 /**
+ * CUID validation schema (PropertyListing ids use @default(cuid()))
+ */
+export const cuidSchema = z
+  .string()
+  .regex(/^c[a-z0-9]{20,32}$/, 'Invalid ID format');
+
+/**
+ * Entity ID: UUID (most models) or CUID (PropertyListing).
+ * Use where a route may legitimately receive either.
+ */
+export const idSchema = z.union([uuidSchema, cuidSchema]);
+
+/**
+ * Bounded free-text helper: trims and caps length.
+ * Use for every client-supplied string that gets stored or displayed.
+ */
+export const textSchema = (max: number, min = 0) =>
+  z.string().trim().min(min).max(max, `Must be at most ${max} characters`);
+
+/**
  * Pagination schema with defaults
  * - Page: positive integer, default 1
  * - Limit: 1-100, default 20

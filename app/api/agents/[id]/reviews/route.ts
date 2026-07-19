@@ -88,15 +88,22 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
     if (agent.user_type !== 'agent' && agent.user_type !== 'owner') {
       return NextResponse.json({ error: 'Отзывы можно оставлять только брокерам' }, { status: 400 });
     }
-    // Require a real interaction: reviewer must have had a viewing with this broker,
-    // so reputation can't be fabricated/review-bombed by throwaway accounts (CHAIN-003).
+    // Require a REAL, HONOURED interaction (VULN-001): a viewing the broker
+    // actually confirmed/completed, in the past. A self-created 'pending_*'
+    // request (or a cancelled one) must NOT unlock a review — otherwise a
+    // throwaway account could request-then-review to fabricate reputation.
     const interaction = await prisma.viewing.findFirst({
-      where: { clientId: req.user!.id, agentId },
+      where: {
+        clientId: req.user!.id,
+        agentId,
+        status: { in: ['confirmed', 'completed'] },
+        scheduledAt: { lt: new Date() },
+      },
       select: { id: true },
     });
     if (!interaction) {
       return NextResponse.json(
-        { error: 'Оставить отзыв можно только после просмотра с этим брокером' },
+        { error: 'Оставить отзыв можно только после состоявшегося просмотра с этим брокером' },
         { status: 403 }
       );
     }

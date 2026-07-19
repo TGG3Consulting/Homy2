@@ -3,6 +3,8 @@ import crypto from 'crypto';
 import prisma from '@/lib/db/prisma';
 import emailService from '@/lib/services/emailService';
 import { checkRateLimit, getClientIP, RATE_LIMITS, rateLimitResponse } from '@/lib/rateLimiter';
+import { resetPasswordRequestSchema } from '@/lib/validations/schemas/auth';
+import { validateBody } from '@/lib/validations/validate';
 
 const TOKEN_EXPIRY_HOURS = 1;
 
@@ -15,16 +17,10 @@ export async function POST(req: NextRequest) {
       return rateLimitResponse(rateLimitResult);
     }
 
-    const { email } = await req.json();
-
-    if (!email) {
-      return NextResponse.json(
-        { error: 'Email is required' },
-        { status: 400 }
-      );
-    }
-
-    const normalizedEmail = email.toLowerCase();
+    // Schema validation (VULN-022)
+    const validation = validateBody(resetPasswordRequestSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const { email: normalizedEmail } = validation.data; // lowercased by schema
 
     // Find user (but always return success for security)
     const user = await prisma.user.findUnique({

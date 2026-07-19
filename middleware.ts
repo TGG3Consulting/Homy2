@@ -42,6 +42,7 @@ export function middleware(request: NextRequest) {
   const scriptSrc = process.env.NODE_ENV === 'production'
     ? "script-src 'self' 'unsafe-inline'"
     : "script-src 'self' 'unsafe-inline' 'unsafe-eval'";
+  const isProd = process.env.NODE_ENV === 'production';
   const cspDirectives = [
     "default-src 'self'",
     scriptSrc,
@@ -49,9 +50,16 @@ export function middleware(request: NextRequest) {
     "img-src 'self' data: blob: https:",
     "font-src 'self' data: https://fonts.gstatic.com",
     "connect-src 'self' https: wss: https://api.openai.com https://*.anthropic.com",
+    // Defense-in-depth: the app uses no plugins, iframes or web workers, so lock
+    // these to the safest values (free hardening, no functional impact).
+    "object-src 'none'",
+    "frame-src 'none'",
+    "worker-src 'self'",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",
+    // Force any stray http subresource to https in production.
+    ...(isProd ? ['upgrade-insecure-requests'] : []),
   ].join('; ');
 
   response.headers.set('Content-Security-Policy', cspDirectives);
@@ -120,38 +128,12 @@ export function middleware(request: NextRequest) {
     return redirectResponse;
   }
 
-  // ============================================
-  // PROTECTED API ROUTES
-  // ============================================
-  const protectedApiRoutes = [
-    '/api/users/me',
-    '/api/favorites',
-    '/api/viewing/schedule',
-    '/api/properties/list',
-    '/api/consultant',
-  ];
-
-  const isProtectedApiRoute = protectedApiRoutes.some(route =>
-    pathname.startsWith(route)
-  );
-
-  // Check Authorization header for API routes
-  if (isProtectedApiRoute) {
-    const authHeader = request.headers.get('authorization');
-    const bearerToken = authHeader?.startsWith('Bearer ')
-      ? authHeader.slice(7)
-      : null;
-
-    if (!bearerToken && !token) {
-      return NextResponse.json(
-        { error: 'Unauthorized', code: 'AUTH_REQUIRED' },
-        {
-          status: 401,
-          headers: response.headers,
-        }
-      );
-    }
-  }
+  // NOTE (VULN-015): API-route authorization is enforced authoritatively inside
+  // each route via the withAuth/withBroker/withAdmin/withModerator wrappers,
+  // which verify the JWT signature AND token_version AND is_blocked. A partial
+  // edge allow-list that merely checked token *presence* used to live here; it
+  // covered only a few prefixes and gave a false impression of coverage, so it
+  // was removed. Do not reintroduce edge auth unless it fully verifies tokens.
 
   return response;
 }

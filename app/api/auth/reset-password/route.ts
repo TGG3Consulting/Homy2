@@ -1,28 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
 import prisma from '@/lib/db/prisma';
+import { resetPasswordSchema } from '@/lib/validations/schemas/auth';
+import { validateBody } from '@/lib/validations/validate';
+import { checkRateLimit, getClientIP, RATE_LIMITS, rateLimitResponse } from '@/lib/rateLimiter';
 
 const SALT_ROUNDS = 12;
-const MIN_PASSWORD_LENGTH = 8;
 
 export async function POST(req: NextRequest) {
   try {
-    const { resetToken, newPassword } = await req.json();
+    // Rate limit the token-consumption endpoint too (VULN-013), matching the
+    // request endpoint. The token is 256-bit/one-time so brute-force is already
+    // infeasible; this is defence-in-depth + abuse throttling.
+    const rl = checkRateLimit(`passwordReset:${getClientIP(req)}`, RATE_LIMITS.passwordReset);
+    if (!rl.success) return rateLimitResponse(rl);
 
-    // Validate input
-    if (!resetToken) {
-      return NextResponse.json(
-        { error: 'Reset token is required' },
-        { status: 400 }
-      );
-    }
-
-    if (!newPassword || newPassword.length < MIN_PASSWORD_LENGTH) {
-      return NextResponse.json(
-        { error: `Password must be at least ${MIN_PASSWORD_LENGTH} characters` },
-        { status: 422 }
-      );
-    }
+    // Schema validation (VULN-022): token must be exactly 64 hex chars,
+    // password length-bounded — junk never reaches the DB lookup.
+    const validation = validateBody(resetPasswordSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const { resetToken, newPassword } = validation.data;
 
     // Find token
     const tokenRecord = await prisma.passwordResetToken.findFirst({

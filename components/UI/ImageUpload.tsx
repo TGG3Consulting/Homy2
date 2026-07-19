@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useRef } from "react";
+import Image from "next/image";
 import { Upload, X, Loader2, AlertCircle, Image as ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/api/client";
@@ -24,6 +25,21 @@ interface UploadingFile {
   name: string;
   progress: number;
   error?: string;
+}
+
+/** Preview thumbnail that hides itself on load error (fallback icon behind stays visible). */
+function PreviewImage({ url, index }: { url: string; index: number }) {
+  const [failed, setFailed] = useState(false);
+  return (
+    <Image
+      src={url}
+      alt={`Upload ${index + 1}`}
+      fill
+      sizes="(max-width: 640px) 33vw, 200px"
+      className={cn("object-cover", failed && "hidden")}
+      onError={() => setFailed(true)}
+    />
+  );
 }
 
 export function ImageUpload({
@@ -286,15 +302,7 @@ export function ImageUpload({
               key={url}
               className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 group"
             >
-              <img
-                src={url}
-                alt={`Upload ${index + 1}`}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "";
-                  (e.target as HTMLImageElement).classList.add("hidden");
-                }}
-              />
+              <PreviewImage url={url} index={index} />
               {/* Fallback for broken images */}
               <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
                 <ImageIcon className="w-6 h-6 text-gray-300" />

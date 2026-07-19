@@ -11,7 +11,7 @@ export const registerSchema = z.object({
   first_name: z.string().min(1, 'First name is required').max(100),
   last_name: z.string().min(1, 'Last name is required').max(100),
   patronymic: z.string().max(100).optional(),
-});
+}).strict();
 
 /**
  * POST /api/auth/login
@@ -19,8 +19,8 @@ export const registerSchema = z.object({
  */
 export const loginSchema = z.object({
   email: emailSchema,
-  password: z.string().min(1, 'Password is required'),
-});
+  password: z.string().min(1, 'Password is required').max(200, 'Password too long'),
+}).strict();
 
 /**
  * POST /api/auth/verify-otp
@@ -32,7 +32,7 @@ export const verifyOtpSchema = z.object({
     .string()
     .length(6, 'OTP must be 6 digits')
     .regex(/^\d+$/, 'OTP must contain only digits'),
-});
+}).strict();
 
 /**
  * POST /api/auth/resend-otp
@@ -40,7 +40,7 @@ export const verifyOtpSchema = z.object({
  */
 export const resendOtpSchema = z.object({
   email: emailSchema,
-});
+}).strict();
 
 /**
  * POST /api/auth/reset-password-request
@@ -48,16 +48,21 @@ export const resendOtpSchema = z.object({
  */
 export const resetPasswordRequestSchema = z.object({
   email: emailSchema,
-});
+}).strict();
 
 /**
  * POST /api/auth/reset-password
  * Password reset schema with token and new password
  */
 export const resetPasswordSchema = z.object({
-  resetToken: z.string().min(1, 'Reset token is required'),
+  // Token is crypto.randomBytes(32).toString('hex') — exactly 64 hex chars.
+  // Enforcing the shape rejects fuzzing junk before it reaches the DB.
+  resetToken: z
+    .string()
+    .length(64, 'Invalid reset token')
+    .regex(/^[0-9a-f]+$/, 'Invalid reset token'),
   newPassword: passwordSchema,
-});
+}).strict();
 
 // Type exports for use in handlers
 export type RegisterInput = z.infer<typeof registerSchema>;

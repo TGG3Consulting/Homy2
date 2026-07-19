@@ -29,70 +29,54 @@ export async function POST(req: NextRequest) {
     // Email is already normalized to lowercase by the schema
     const { email, password, first_name, last_name, patronymic }: RegisterInput = validation.data;
 
-    // Check if user exists
+    // Anti-enumeration (VULN-006): every branch below returns the SAME generic
+    // 200 body, so a caller cannot tell "new", "already registered", or
+    // "pending verification" apart from the response. The distinction is driven
+    // only by which email the real owner receives.
+    const GENERIC_OK = NextResponse.json({
+      success: true,
+      message: 'Verification code sent to your email',
+    });
+
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
 
     if (existingUser) {
       if (existingUser.emailVerified) {
-        return NextResponse.json(
-          { error: 'Email already registered' },
-          { status: 400 }
-        );
+        // Do NOT reveal the account exists. Email the owner a "log in instead"
+        // note (fire-and-forget) and return the identical generic response.
+        emailService.sendAccountExistsEmail(email).catch(() => {});
+        return GENERIC_OK;
       }
-      // SECURITY FIX: Don't update password for unverified users
-      // This prevents account hijacking where attacker could register
-      // with someone else's email and set their own password
-      // Instead, just resend OTP to the original email
-      const canSend = await otpService.checkRateLimit(email);
-      if (!canSend) {
-        return NextResponse.json(
-          { error: 'Too many attempts. Please wait before trying again.' },
-          { status: 429 }
-        );
+      // Unverified existing account: never overwrite the password (prevents
+      // hijack by re-registering someone else's pending email). Resend OTP.
+      if (await otpService.checkRateLimit(email)) {
+        const otpCode = await otpService.createOtpRecord(email, 'registration');
+        await emailService.sendOtpEmail(email, otpCode);
       }
+      return GENERIC_OK;
+    }
 
+    // Brand-new account.
+    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+    await prisma.user.create({
+      data: {
+        email,
+        passwordHash,
+        emailVerified: false,
+        first_name,
+        last_name,
+        patronymic,
+      },
+    });
+
+    if (await otpService.checkRateLimit(email)) {
       const otpCode = await otpService.createOtpRecord(email, 'registration');
       await emailService.sendOtpEmail(email, otpCode);
-
-      return NextResponse.json({
-        success: true,
-        message: 'Verification code sent to your email',
-        code: 'PENDING_VERIFICATION'
-      });
-    } else {
-      // Create new user
-      const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-      await prisma.user.create({
-        data: {
-          email,
-          passwordHash,
-          emailVerified: false,
-          first_name,
-          last_name,
-          patronymic,
-        },
-      });
     }
 
-    // Check rate limit
-    const canSend = await otpService.checkRateLimit(email);
-    if (!canSend) {
-      return NextResponse.json(
-        { error: 'Too many attempts. Please wait before trying again.' },
-        { status: 429 }
-      );
-    }
-
-    // Generate and send OTP
-    const otpCode = await otpService.createOtpRecord(email, 'registration');
-    await emailService.sendOtpEmail(email, otpCode);
-
-    return NextResponse.json({
-      success: true,
-      message: 'Verification code sent to your email',
-    });
+    return GENERIC_OK;
   } catch (error) {
     console.error('Registration error:', error);
     return NextResponse.json(

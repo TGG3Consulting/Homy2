@@ -4,6 +4,8 @@ import propertyAdapter from '@/lib/adapters/propertyAdapter';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 import { getAccessTokenFromRequest } from '@/lib/cookies';
 import jwtService from '@/lib/services/jwtService';
+import { updatePropertySchema } from '@/lib/validations/schemas/property';
+import { validateBody } from '@/lib/validations/validate';
 
 function propIdFromUrl(url: string): string | null {
   const parts = new URL(url).pathname.split('/');
@@ -94,25 +96,22 @@ export const PATCH = withAuth(async (req: AuthenticatedRequest) => {
     if (!existing) return NextResponse.json({ error: 'Property not found', success: false }, { status: 404 });
     if (existing.owner_id !== userId && !(await isAdminUser(userId))) return NextResponse.json({ error: 'Access denied', success: false }, { status: 403 });
 
-    const b = await req.json().catch(() => ({} as any));
+    // Schema validation (VULN-022): bounded numbers, enums, capped strings,
+    // unknown keys rejected. Field-by-field whitelist below is kept as-is.
+    const validation = validateBody(updatePropertySchema, await req.json().catch(() => ({})));
+    if (!validation.success) return validation.error;
+    const b = validation.data;
     const data: Record<string, unknown> = {};
-    const str = ['address', 'province', 'city', 'district', 'description', 'imageUrl', 'dealType', 'propertyType'];
-    for (const k of str) if (b[k] !== undefined) data[k] = b[k];
-    if (b.title !== undefined) data.title = typeof b.title === 'object' ? JSON.stringify(b.title) : b.title;
-    if (b.neighborhood !== undefined) data.neighborhood = typeof b.neighborhood === 'object' ? JSON.stringify(b.neighborhood) : b.neighborhood;
-    if (b.price !== undefined) data.price = b.price != null ? Number(b.price) : null;
-    if (b.rooms !== undefined) data.rooms = b.rooms != null ? Number(b.rooms) : null;
-    if (b.bedrooms !== undefined) data.bedrooms = b.bedrooms != null ? Number(b.bedrooms) : null;
-    if (b.area !== undefined) data.area = b.area != null ? Number(b.area) : null;
-    if (b.sizeSqm !== undefined) data.sizeSqm = b.sizeSqm != null ? Number(b.sizeSqm) : null;
-    if (b.floor !== undefined) data.floor = b.floor != null ? Number(b.floor) : null;
-    if (b.totalFloors !== undefined) data.totalFloors = b.totalFloors != null ? Number(b.totalFloors) : null;
+    const strKeys = ['address', 'province', 'city', 'district', 'description', 'imageUrl', 'dealType', 'propertyType'] as const;
+    for (const k of strKeys) if (b[k] !== undefined) data[k] = b[k];
+    if (b.title !== undefined) data.title = typeof b.title === 'object' && b.title !== null ? JSON.stringify(b.title) : b.title;
+    if (b.neighborhood !== undefined) data.neighborhood = typeof b.neighborhood === 'object' && b.neighborhood !== null ? JSON.stringify(b.neighborhood) : b.neighborhood;
+    // Numbers are already coerced+bounded by the schema.
+    const numKeys = ['price', 'rooms', 'bedrooms', 'area', 'sizeSqm', 'floor', 'totalFloors', 'depositMonths', 'utilitiesEstimate', 'minimumLeaseMonths'] as const;
+    for (const k of numKeys) if (b[k] !== undefined) data[k] = b[k];
     if (Array.isArray(b.images)) data.images = b.images;
     if (typeof b.available === 'boolean') data.available = b.available;
     if (typeof b.virtual_tour_enabled === 'boolean') data.virtual_tour_enabled = b.virtual_tour_enabled;
-    if (b.depositMonths !== undefined) data.depositMonths = b.depositMonths != null && b.depositMonths !== '' ? Number(b.depositMonths) : null;
-    if (b.utilitiesEstimate !== undefined) data.utilitiesEstimate = b.utilitiesEstimate != null && b.utilitiesEstimate !== '' ? Number(b.utilitiesEstimate) : null;
-    if (b.minimumLeaseMonths !== undefined) data.minimumLeaseMonths = b.minimumLeaseMonths != null && b.minimumLeaseMonths !== '' ? Number(b.minimumLeaseMonths) : null;
 
     const property = await prisma.property.update({ where: { id }, data });
     return NextResponse.json({ success: true, property: propertyAdapter.toFrontendFormat(property) });

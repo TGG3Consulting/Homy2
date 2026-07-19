@@ -37,26 +37,39 @@ export const otpService = {
   },
 
   /**
-   * Verify OTP code
+   * Verify OTP code.
+   *
+   * Fetches the NEWEST live OTP for the email and compares the code in-app
+   * (constant-time), rather than matching on (email, code). This bounds
+   * guessing to the single active code and lets the caller distinguish
+   * "no pending verification" (hadPendingOtp:false) from "wrong code"
+   * (hadPendingOtp:true) — so the account-lockout in the route only counts
+   * failures against emails that actually have a pending OTP, never against
+   * attacker-supplied random emails (avoids lock-store DoS). VULN-002.
    */
-  async verifyOtp(email: string, code: string): Promise<{ valid: boolean; error?: string }> {
+  async verifyOtp(
+    email: string,
+    code: string
+  ): Promise<{ valid: boolean; error?: string; hadPendingOtp: boolean }> {
     const otpRecord = await prisma.otpCode.findFirst({
-      where: {
-        email,
-        code,
-        used: false,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      where: { email, used: false },
+      orderBy: { createdAt: 'desc' },
     });
 
     if (!otpRecord) {
-      return { valid: false, error: 'Invalid verification code' };
+      return { valid: false, error: 'Invalid verification code', hadPendingOtp: false };
     }
 
     if (otpRecord.expiresAt < new Date()) {
-      return { valid: false, error: 'Code expired' };
+      return { valid: false, error: 'Code expired', hadPendingOtp: true };
+    }
+
+    // Constant-time compare (both are 6-digit numeric strings of equal length).
+    const a = Buffer.from(otpRecord.code);
+    const b = Buffer.from(code);
+    const matches = a.length === b.length && crypto.timingSafeEqual(a, b);
+    if (!matches) {
+      return { valid: false, error: 'Invalid verification code', hadPendingOtp: true };
     }
 
     // Mark as used
@@ -65,7 +78,7 @@ export const otpService = {
       data: { used: true },
     });
 
-    return { valid: true };
+    return { valid: true, hadPendingOtp: true };
   },
 
   /**

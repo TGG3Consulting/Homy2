@@ -6,6 +6,8 @@ import bcrypt from 'bcrypt';
 import jwtService from '@/lib/services/jwtService';
 import { setAuthCookies } from '@/lib/cookies';
 import { SELF_ASSIGNABLE_USER_TYPES, isSelfAssignableUserType } from '@/lib/auth/userTypes';
+import { updateMeSchema, deleteAccountSchema } from '@/lib/validations/schemas/user';
+import { validateBody } from '@/lib/validations/validate';
 
 // User data shape returned from API
 interface UserResponse {
@@ -137,7 +139,11 @@ async function patchHandler(req: AuthenticatedRequest) {
   }
 
   try {
-    const body = await req.json();
+    // Schema gate (VULN-022): types, length caps, bounded search_preferences
+    // JSON, unknown keys rejected (mass-assignment). Business rules below.
+    const validation = validateBody(updateMeSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const body = validation.data;
     const {
       phone,
       first_name,
@@ -349,16 +355,10 @@ async function deleteHandler(req: AuthenticatedRequest) {
   }
 
   try {
-    const body = await req.json();
-    const { password, confirmation } = body;
-
-    // Require confirmation text
-    if (confirmation !== 'DELETE MY ACCOUNT') {
-      return NextResponse.json(
-        { error: 'Please type "DELETE MY ACCOUNT" to confirm' },
-        { status: 400 }
-      );
-    }
+    // Schema gate (VULN-022): confirmation literal enforced by schema.
+    const validation = validateBody(deleteAccountSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const { password } = validation.data;
 
     // Verify password
     const user = await prisma.user.findUnique({

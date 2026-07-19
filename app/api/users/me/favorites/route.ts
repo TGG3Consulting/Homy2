@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { withAuth, AuthenticatedRequest } from '@/lib/middleware/authMiddleware';
 import propertyAdapter from '@/lib/adapters/propertyAdapter';
+import { addFavoriteSchema, removeFavoriteSchema } from '@/lib/validations/schemas/user';
+import { validateBody } from '@/lib/validations/validate';
 
 /**
  * GET /api/users/me/favorites
@@ -50,15 +52,10 @@ export const GET = withAuth(async (req: AuthenticatedRequest) => {
 export const POST = withAuth(async (req: AuthenticatedRequest) => {
   try {
     const userId = req.user!.id;
-    const body = await req.json();
-    const { propertyId } = body;
-
-    if (!propertyId) {
-      return NextResponse.json(
-        { error: 'Property ID is required', success: false },
-        { status: 400 }
-      );
-    }
+    // Schema validation (VULN-022): propertyId must be a UUID.
+    const validation = validateBody(addFavoriteSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const { propertyId } = validation.data;
 
     // Check if property exists
     const property = await prisma.property.findUnique({
@@ -125,15 +122,10 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
 export const DELETE = withAuth(async (req: AuthenticatedRequest) => {
   try {
     const userId = req.user!.id;
-    const body = await req.json();
-    const { propertyId, favoriteId } = body;
-
-    if (!propertyId && !favoriteId) {
-      return NextResponse.json(
-        { error: 'Property ID or Favorite ID is required', success: false },
-        { status: 400 }
-      );
-    }
+    // Schema validation (VULN-022): either id, both must be UUIDs.
+    const validation = validateBody(removeFavoriteSchema, await req.json());
+    if (!validation.success) return validation.error;
+    const { propertyId, favoriteId } = validation.data;
 
     // Find the favorite
     const favorite = await prisma.favorite.findFirst({

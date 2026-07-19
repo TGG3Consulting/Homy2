@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
+import { verifyCronSecret } from '@/lib/cronAuth';
 
 /**
  * POST /api/cron/complete-viewings
@@ -14,14 +15,9 @@ import prisma from '@/lib/db/prisma';
  * endpoint only runs outside production (local/dev convenience).
  */
 export async function POST(req: NextRequest) {
-  const secret = process.env.CRON_SECRET;
-  if (secret) {
-    if (req.headers.get('x-cron-secret') !== secret) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-  } else if (process.env.NODE_ENV === 'production') {
-    return NextResponse.json({ error: 'CRON_SECRET not configured' }, { status: 503 });
-  }
+  // Constant-time cron auth (VULN-013).
+  const unauthorized = verifyCronSecret(req);
+  if (unauthorized) return unauthorized;
 
   try {
     const result = await prisma.viewing.updateMany({
