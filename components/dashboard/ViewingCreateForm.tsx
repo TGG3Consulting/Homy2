@@ -499,7 +499,10 @@ export default function ViewingCreateForm({
       if (isAgentOrOwner) {
         requestBody.clientEmail = selectedClient?.email || clientEmail;
         if (selectedClient?.id) {
-          requestBody.clientUserId = selectedClient.id;
+          // The API expects `clientId` (direct user lookup, faster than the
+          // email fallback). Historically this was sent as `clientUserId`
+          // and silently ignored.
+          requestBody.clientId = selectedClient.id;
         }
       }
 

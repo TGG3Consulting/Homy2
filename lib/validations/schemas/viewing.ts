@@ -17,12 +17,8 @@ import {
  * POST /api/viewings — create a viewing request.
  * - Client flow: { propertyId, scheduledAt, message? }
  * - Owner/agent flow additionally sends client identification:
- *   clientEmail and/or clientId.
- * - NOTE: the dashboard form (components/dashboard/ViewingCreateForm.tsx) sends
- *   `clientUserId` (not `clientId`). The route has always ignored it and fallen
- *   back to the clientEmail lookup; it is accepted here so .strict() does not
- *   break the existing agent-created flow. Do not wire it into logic without a
- *   deliberate FE/BE alignment.
+ *   clientEmail and/or clientId (ViewingCreateForm was aligned to send
+ *   `clientId`; the legacy `clientUserId` alias is gone).
  * - `message` may be an explicit null (FE sends `message: message || null`).
  * - The route already required a future date, so futureDateTimeSchema is correct.
  */
@@ -33,7 +29,6 @@ export const createViewingSchema = z
     message: textSchema(2000).nullish(),
     clientEmail: emailSchema.optional(),
     clientId: uuidSchema.optional(),
-    clientUserId: uuidSchema.optional(),
   })
   .strict();
 

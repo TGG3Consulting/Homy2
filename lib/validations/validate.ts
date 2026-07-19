@@ -75,6 +75,24 @@ export function parseBody<T>(schema: ZodSchema<T>, body: unknown): T {
 }
 
 /**
+ * Human-readable summary of the FIRST validation issue — surfaced as `error`
+ * so any FE that renders `d.error` shows something actionable instead of a
+ * generic "Validation failed". Schema-provided custom messages (incl. Russian
+ * admin texts) pass through as-is; zod defaults get the field name prefixed.
+ */
+const ZOD_DEFAULTISH = /^(Required|Invalid|Expected|Unrecognized|String must|Number must|Array must)/;
+function firstIssueMessage(error: ZodError): string {
+  const issue = error.issues[0];
+  if (!issue) return 'Validation failed';
+  const field = issue.path.join('.');
+  // Default zod texts ("Required", "Invalid input", …) are meaningless without
+  // the field; custom messages are already self-explanatory.
+  return field && ZOD_DEFAULTISH.test(issue.message)
+    ? `${field}: ${issue.message}`
+    : issue.message;
+}
+
+/**
  * Format ZodError into standardized API response
  * Groups errors by field path
  */
@@ -91,7 +109,7 @@ function formatZodError(error: ZodError): NextResponse {
 
   return NextResponse.json(
     {
-      error: 'Validation failed',
+      error: firstIssueMessage(error),
       errors,
       code: 'VALIDATION_ERROR',
     },
@@ -120,20 +138,7 @@ export function formatZodErrorFlat(error: ZodError): string {
  */
 export function handleValidationError(error: unknown): NextResponse | null {
   if (error instanceof ZodError) {
-    const errors: Record<string, string[]> = {};
-    for (const issue of error.issues) {
-      const path = issue.path.join('.') || '_root';
-      if (!errors[path]) errors[path] = [];
-      errors[path].push(issue.message);
-    }
-    return NextResponse.json(
-      {
-        error: 'Validation failed',
-        errors,
-        code: 'VALIDATION_ERROR',
-      },
-      { status: 422 }
-    );
+    return formatZodError(error);
   }
   return null;
 }

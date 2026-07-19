@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { emailSchema, textSchema, uuidSchema } from './common';
+import { textSchema, uuidSchema } from './common';
 
 /**
  * Admin domain input gates (VULN-022).
@@ -63,10 +63,14 @@ export const adminUpdateUserSchema = z.discriminatedUnion('action', [
  * FE: createForm { email, first_name, last_name, phone, user_type, role }.
  */
 export const adminCreateUserSchema = z.object({
-  email: emailSchema,
-  first_name: textSchema(100).optional(),
-  last_name: textSchema(100).optional(),
-  phone: textSchema(30).optional(),
+  email: z.string()
+    .min(1, 'Укажите email')
+    .max(254, 'Email слишком длинный')
+    .email('Некорректный email')
+    .transform((e) => e.toLowerCase()),
+  first_name: z.string().trim().max(100, 'Имя — до 100 символов').optional(),
+  last_name: z.string().trim().max(100, 'Фамилия — до 100 символов').optional(),
+  phone: z.string().trim().max(30, 'Телефон — до 30 символов').optional(),
   user_type: adminUserTypeEnum.default('buyer'),
   role: adminRoleEnum.default('user'),
 }).strict();
@@ -84,8 +88,13 @@ export const adminBroadcastTargetEnum = z.enum(['all', 'buyer', 'renter', 'owner
  * FE: app/admin/notifications/page.tsx sends { title, body, target }.
  */
 export const adminBroadcastSchema = z.object({
-  title: textSchema(200, 1),
-  body: textSchema(2000, 1),
+  // Admin UI is Russian — keep the pre-VULN-022 UX texts.
+  title: z.string().trim()
+    .min(1, 'Укажите заголовок')
+    .max(200, 'Заголовок — до 200 символов'),
+  body: z.string().trim()
+    .min(1, 'Укажите текст уведомления')
+    .max(2000, 'Текст — до 2000 символов'),
   target: adminBroadcastTargetEnum.default('all'),
 }).strict();
 

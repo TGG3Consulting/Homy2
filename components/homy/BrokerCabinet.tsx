@@ -218,7 +218,8 @@ function ListingsView({ lang, router, showToast }: any) {
 }
 
 /* ---------------- D3 Create listing modal ---------------- */
-function CreateListingModal({ lang, onClose, onDone, showToast, editing }: any) {
+// Exported: /list-property renders the SAME create form standalone (single source of truth).
+export function CreateListingModal({ lang, onClose, onDone, showToast, editing }: any) {
   const isEdit = !!editing;
   const d = editing?.data || {};
   const [f, setF] = useState<any>(isEdit ? {
