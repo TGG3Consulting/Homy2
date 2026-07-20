@@ -14,6 +14,7 @@
     "db:push": "prisma db push",
     "db:seed": "ts-node prisma/seed.ts",
     "backfill:geo": "ts-node -r tsconfig-paths/register --project tsconfig.server.json scripts/backfill-geo.ts",
+    "seed:properties": "ts-node -r tsconfig-paths/register --project tsconfig.server.json scripts/seed-properties.ts",
     "db:studio": "prisma studio"
   },
   "prisma": {

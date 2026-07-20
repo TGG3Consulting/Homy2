@@ -46,14 +46,21 @@ function AllResultsInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  const PAGE_SIZE = 50;
   const [properties, setProperties] = useState<PropertyShowcase[]>([]);
   const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [detailId, setDetailId] = useState<string | null>(null);
 
-  const fetchProperties = useCallback(async () => {
-    setIsLoading(true);
+  // Fetch a page. append=false replaces (new filters / first load), append=true
+  // adds the next page. Uses a STABLE sort (listing_date) so the whole catalogue
+  // is reachable via "Показать ещё" and `total` is the true DB count — unlike
+  // match_score, which is AI-ranked and capped for denial-of-wallet protection.
+  const fetchPage = useCallback(async (pageNum: number, append: boolean) => {
+    if (append) setLoadingMore(true); else setIsLoading(true);
     setError(null);
     try {
       const params = new URLSearchParams();
@@ -61,22 +68,33 @@ function AllResultsInner() {
         const v = searchParams.get(k);
         if (v) params.set(k, v);
       });
-      params.set('limit', '50');
-      params.set('sort_by', 'match_score');
+      params.set('limit', String(PAGE_SIZE));
+      params.set('page', String(pageNum));
+      params.set('sort_by', 'listing_date');
       params.set('sort_order', 'desc');
       const res = await fetch(`/api/properties?${params.toString()}`);
       if (!res.ok) throw new Error('Не удалось загрузить объекты');
       const data = await res.json();
-      setProperties(data.properties || []);
-      setTotal(data.total ?? (data.properties?.length || 0));
-      setIsLoading(false);
+      const items: PropertyShowcase[] = data.properties || [];
+      setProperties((prev) => (append ? [...prev, ...items] : items));
+      setTotal(data.total ?? items.length);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Не удалось загрузить объекты');
+    } finally {
       setIsLoading(false);
+      setLoadingMore(false);
     }
   }, [searchParams]);
 
-  useEffect(() => { fetchProperties(); }, [fetchProperties]);
+  // Reset to page 1 whenever the filters change.
+  useEffect(() => { setPage(1); fetchPage(1, false); }, [fetchPage]);
+
+  const loadMore = () => {
+    const next = page + 1;
+    setPage(next);
+    fetchPage(next, true);
+  };
+  const hasMore = properties.length < total;
 
   // filter chips derived from search params (faithful to A8 mockup)
   const chips: { label: string; active: boolean }[] = [];
@@ -125,7 +143,7 @@ function AllResultsInner() {
         {error && !isLoading && (
           <div className="cstate">
             <div className="ct2">{error}</div>
-            <button className="cbtn" onClick={fetchProperties}>Повторить</button>
+            <button className="cbtn" onClick={() => fetchPage(1, false)}>Повторить</button>
           </div>
         )}
 
@@ -159,6 +177,15 @@ function AllResultsInner() {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* load more */}
+        {!isLoading && !error && hasMore && (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '24px 0' }}>
+            <button className="cbtn" onClick={loadMore} disabled={loadingMore}>
+              {loadingMore ? 'Загрузка…' : `Показать ещё (${total - properties.length})`}
+            </button>
           </div>
         )}
       </div>
